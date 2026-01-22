@@ -13,13 +13,13 @@ export function scoreDestinations(
       const reasons: string[] = [];
 
       if (pref.island !== "any" && d.island === pref.island) {
-        score += 2; reasons.push("Matches island group");
+        score += 100; reasons.push(`in ${pref.island}`);
       }
       if (pref.environment && d.environments?.includes(pref.environment)) {
-        score += 3; reasons.push("Matches environment");
+        score += 100; reasons.push("Matches environment");
       }
       if (d.activities.includes(pref.activity)) {
-        score += 4; reasons.push("Fits your main activity");
+        score += 100; reasons.push("Fits your main activity");
       }
       if (pref.season !== "any" && d.bestSeasons.includes(pref.season)) {
         score += 2; reasons.push("Good for your travel season");
@@ -33,6 +33,6 @@ export function scoreDestinations(
 
       return { ...d, score, reasons };
     })
-    .filter((d) => d.score > 0)
+    .filter((d) => d.score > 300)
     .sort((a, b) => b.score - a.score);
 }

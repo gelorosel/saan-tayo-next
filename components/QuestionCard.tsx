@@ -43,6 +43,7 @@ export function QuestionCard({
                             <Button
                                 key={opt.value}
                                 variant="outline"
+                                size="lg"
                                 onClick={() => onSelect(opt.value)}
                             >
                                 {opt.label}

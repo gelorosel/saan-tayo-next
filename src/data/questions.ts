@@ -29,9 +29,9 @@ export const questions = [
       id: "season",
       question: "When are you traveling?",
       options: [
-        { label: "Cool dry season", value: "cool_dry" },
-        { label: "Hot dry season", value: "hot_dry" },
-        { label: "Wet season", value: "wet" },
+        { label: "Cool dry season (Dec - Feb)", value: "cool_dry" },
+        { label: "Hot dry season (March - May)", value: "hot_dry" },
+        { label: "Wet season (June - Nov)", value: "wet" },
         { label: "Surprise me", value: "surprise" },
       ],
     },

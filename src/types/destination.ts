@@ -36,8 +36,8 @@ import { Environment } from "../data/activities";
     highlights?: string[]; // bullet points
     image?: string; // URL or /public path
     location?: {
-      lat: number;
-      lng: number;
+      lat?: number;
+      lng?: number;
       region?: string; // e.g. "Palawan", "Cebu", "Bohol"
     };
   

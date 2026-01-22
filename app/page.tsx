@@ -7,6 +7,11 @@ import { questions } from "@/src/data/questions";
 import { activityOptionsByEnvironment, Environment, EnvironmentOrSurprise } from "@/src/data/activities";
 import { pickUnique } from "@/lib/random";
 import { uniqueByValue } from "@/lib/utils";
+import { toPreference } from "@/lib/preference";
+import { scoreDestinations } from "@/lib/score";
+import { destinations } from "@/src/data/destinations";
+
+import DestinationResultCard from "@/components/DestinationCard";
 
 const ENV_SURPRISE_FLAG = "__envSurprise";
 
@@ -48,6 +53,7 @@ function resolveSurprise(questionId: string, options: Option[], answers: Record<
 
 export default function Home() {
   const [step, setStep] = useState(0);
+  const [pick, setPick] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const canGoBack = useMemo(() => step > 0, [step])
 
@@ -149,6 +155,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-xl w-full">
+        <h1 className="text-center text-3xl font-bold mb-6">Saan Tayo Punta?</h1>
         {current ?
           <QuestionCard
             question={current.question}
@@ -158,21 +165,30 @@ export default function Home() {
             canGoBack={canGoBack}
             showSurprise={true}
           /> :
-          <>
-            <h2 className="text-xl font-semibold mb-4">Your preferences</h2>
-            <pre className="text-sm bg-muted p-4 rounded">
-              {JSON.stringify(answers, null, 2)}
-            </pre>
-          </>}
+          <DestinationResultCard destination={scoreDestinations(toPreference(answers), destinations)[pick]} />
+        }
 
 
         {canGoBack &&
-          <button
-            className="mt-4 underline text-sm"
-            onClick={() => setStep(0)}
-          >
-            Start over
-          </button>
+          <div className="my-3">
+            <button
+              className="mt-4 underline text-sm"
+              onClick={() => {
+                setStep(0)
+                setPick(0)
+              }}
+            >
+              Start over
+            </button>
+            {!current &&
+              <button
+                className="ml-[20px] mt-4 underline text-sm"
+                onClick={() => setPick(pick + 1)}
+              >
+                I've been here!
+              </button>
+            }
+          </div>
         }
       </div>
     </main>

@@ -1,37 +1,180 @@
+// src/app/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { QuestionCard } from "@/components/QuestionCard";
 import { questions } from "@/src/data/questions";
+import { activityOptionsByEnvironment, Environment, EnvironmentOrSurprise } from "@/src/data/activities";
+import { pickUnique } from "@/lib/random";
+import { uniqueByValue } from "@/lib/utils";
+
+const ENV_SURPRISE_FLAG = "__envSurprise";
+
+type Option = { label: string; value: string };
+
+const randomPick = <T,>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
+
+const environments: Environment[] = ["beach", "mountains", "city"];
+
+const allActivityOptions = uniqueByValue(
+  Object.values(activityOptionsByEnvironment)
+    .flat()
+    .filter((o) => o.value !== "surprise")
+);
+
+// pick an option value for "surprise" based on the current step + answers
+function resolveSurprise(questionId: string, options: Option[], answers: Record<string, string>) {
+  if (questionId === "environment") {
+    return randomPick(environments);
+  }
+
+  if (questionId === "activity") {
+    const environment = (answers.environment as EnvironmentOrSurprise) || "beach";
+
+    if (environment === "surprise") {
+      // choose from the 4 currently shown (exclude surprise)
+      const shown = options.filter((o) => o.value !== "surprise");
+      return randomPick(shown).value;
+    }
+
+    const envOpts = activityOptionsByEnvironment[environment].filter((o) => o.value !== "surprise");
+    return randomPick(envOpts).value;
+  }
+
+  // default: pick from this question's options, excluding surprise itself
+  const pool = options.filter((o) => o.value !== "surprise");
+  return randomPick(pool).value;
+}
 
 export default function Home() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const canGoBack = useMemo(() => step > 0, [step])
 
-  const current = questions[step];
+  const baseCurrent = questions[step];
 
-  const handleSelect = (value: string) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [current.id]: value.toLowerCase().replace(/\s/g, "_"),
-    }));
+  const current = useMemo(() => {
+    if (!baseCurrent) return null;
+
+    if (baseCurrent.id === "activity") {
+      const environment = (answers.environment as Environment) || "beach";
+      const envWasSurprise = answers[ENV_SURPRISE_FLAG] === "true";
+
+      // If user picked Surprise me on environment, show 6 random unique activities
+      if (envWasSurprise) {
+        const sixRandom = pickUnique(allActivityOptions, 6);
+
+        return {
+          ...baseCurrent,
+          options: [
+            ...sixRandom,
+            { label: "Surprise me", value: "surprise" },
+          ],
+        };
+      }
+
+      return {
+        ...baseCurrent,
+        options: activityOptionsByEnvironment[environment],
+      };
+    }
+
+
+    return baseCurrent;
+  }, [baseCurrent, answers.environment]);
+
+  const goNext = (questionId: string, chosenValue: string, meta?: { envWasSurprise?: boolean }) => {
+    setAnswers((prev) => {
+      const next = { ...prev, [questionId]: chosenValue };
+
+      if (questionId === "environment") {
+        delete next.activity; // changing environment invalidates activity
+
+        if (meta?.envWasSurprise) next[ENV_SURPRISE_FLAG] = "true";
+        else delete next[ENV_SURPRISE_FLAG];
+      }
+
+      return next;
+    });
 
     setStep((prev) => prev + 1);
   };
 
+  const handleSelect = (value: string) => {
+    if (!current) return;
+
+    // Surprise behavior
+    if (value === "surprise") {
+      // Special case: environment surprise should still pick an environment,
+      // but we keep a flag that it was chosen via surprise.
+      if (current.id === "environment") {
+        const resolvedEnv = randomPick(environments); // beach/mountains/city
+        goNext("environment", resolvedEnv, { envWasSurprise: true });
+        return;
+      }
+
+      const resolved = resolveSurprise(current.id, current.options as Option[], answers);
+      goNext(current.id, resolved);
+      return;
+    }
+
+    // Normal select
+    goNext(current.id, value);
+  };
+
+  const handleBack = () => {
+    setAnswers((prev) => {
+      const next = { ...prev };
+
+      const currentQuestion = questions[step];
+
+      if (!currentQuestion) return next;
+
+      // If we're backing out of the activity step, clear activity
+      if (currentQuestion.id === "activity") {
+        delete next.activity;
+      }
+
+      // If we're backing out of the environment step, clear the surprise flag
+      if (currentQuestion.id === "environment") {
+        delete next.__envSurprise;
+      }
+
+      return next;
+    });
+
+    setStep((prev) => Math.max(0, prev - 1));
+  };
+
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
-      {current ? (
-        <QuestionCard
-          question={current.question}
-          options={current.options}
-          onSelect={handleSelect}
-        />
-      ) : (
-        <pre className="text-sm">
-          {JSON.stringify(answers, null, 2)}
-        </pre>
-      )}
+      <div className="max-w-xl w-full">
+        {current ?
+          <QuestionCard
+            question={current.question}
+            options={current.options as Option[]}
+            onSelect={handleSelect}
+            onBack={handleBack}
+            canGoBack={canGoBack}
+            showSurprise={true}
+          /> :
+          <>
+            <h2 className="text-xl font-semibold mb-4">Your preferences</h2>
+            <pre className="text-sm bg-muted p-4 rounded">
+              {JSON.stringify(answers, null, 2)}
+            </pre>
+          </>}
+
+
+        {canGoBack &&
+          <button
+            className="mt-4 underline text-sm"
+            onClick={() => setStep(0)}
+          >
+            Start over
+          </button>
+        }
+      </div>
     </main>
   );
 }

@@ -12,6 +12,8 @@ import { scoreDestinations } from "@/lib/score";
 import { destinations } from "@/src/data/destinations";
 
 import DestinationResultCard from "@/components/DestinationCard";
+import MiniCard from "@/components/MiniCard";
+import { Preference } from "@/src/types/preference";
 import { de } from "zod/v4/locales";
 
 const FAST_MODE_KEY = "fastMode";
@@ -63,6 +65,7 @@ export default function Home() {
   const [hasShownDestination, setHasShownDestination] = useState(false);
   const canGoBack = useMemo(() => step > 0, [step])
   const finalDestinations = useMemo(() => scoreDestinations(toPreference(answers), destinations), [answers, destinations])
+  const preferences = useMemo(() => toPreference(answers), [answers])
 
   useEffect(() => {
     // Load fast mode preference from localStorage
@@ -125,6 +128,35 @@ export default function Home() {
       setHasShownDestination(true);
     }
   }, [baseCurrent, finalDestinations.length, hasShownDestination]);
+
+  // Get related destinations in the same region
+  const relatedDestinations = useMemo(() => {
+    if (current || finalDestinations.length === 0) {
+      return [];
+    }
+
+    const currentDestination = finalDestinations[pick];
+    if (!currentDestination.location?.region) {
+      return [];
+    }
+
+    // Filter by region, exclude current destination
+    const regionDestinations = destinations
+      .filter(d =>
+        d.location?.region === currentDestination.location?.region &&
+        d.id !== currentDestination.id
+      );
+
+    if (regionDestinations.length === 0) {
+      return [];
+    }
+
+    // Score the destinations using user preferences
+    const scored = scoreDestinations(preferences, regionDestinations);
+
+    // Return top 5
+    return scored.slice(0, 5);
+  }, [current, finalDestinations, pick, preferences]);
 
   const goNext = (questionId: string, chosenValue: string, meta?: { envWasSurprise?: boolean }) => {
     setAnswers((prev) => {
@@ -192,7 +224,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-xl w-full">
-        <h1 className="text-styled uppercase text-4xl mt-6">Saan Tayo Next?</h1>
+        <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
         <h2 className="text-xl font-semibold mb-2">Where to next?</h2>
         {hasShownDestination && (
           <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
@@ -214,15 +246,19 @@ export default function Home() {
             canGoBack={canGoBack}
             showSurprise={true}
           /> :
-          finalDestinations.length ?
-            <DestinationResultCard
-              key={finalDestinations[pick].id}
-              destination={finalDestinations[pick]}
-              preferredActivity={toPreference(answers).activity}
-              reasons={finalDestinations[pick].reasons}
-              onLoadingChange={setIsDestinationLoading}
-            /> :
+          finalDestinations.length ? (
+            <div className="flex flex-col lg:flex-row gap-6 items-start">
+              <DestinationResultCard
+                key={finalDestinations[pick].id}
+                destination={finalDestinations[pick]}
+                preferredActivity={preferences.activity}
+                reasons={finalDestinations[pick].reasons}
+                onLoadingChange={setIsDestinationLoading}
+              />
+            </div>
+          ) : (
             <p>no destinations matched your criteria</p>
+          )
         }
 
 
@@ -249,6 +285,21 @@ export default function Home() {
             }
           </div>
         }
+
+
+        {/* More to see in region section */}
+        {relatedDestinations.length > 0 && (
+          <div className="lg:w-72 xl:w-80 flex-shrink-0">
+            <h3 className="text-base font-semibold mb-3">
+              More to see in {finalDestinations[pick].location?.region}
+            </h3>
+            <div className="flex flex-col gap-2.5">
+              {relatedDestinations.map((relatedDest) => (
+                <MiniCard key={relatedDest.id} destination={relatedDest} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

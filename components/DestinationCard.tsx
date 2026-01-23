@@ -229,7 +229,7 @@ export default function DestinationResultCard({
 
     if (!isFastMode && (isLoadingImage || isLoadingDescription)) {
         return (
-            <Card className="overflow-hidden rounded-2xl shadow-sm pt-0">
+            <Card className="overflow-hidden rounded-2xl shadow-sm pt-0 w-full">
                 {/* Skeleton Image */}
                 <div className="relative h-72 w-full bg-muted animate-pulse">
                     <p className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-muted-foreground z-10">
@@ -329,7 +329,7 @@ export default function DestinationResultCard({
                 <div>
                     <div className="flex flex-col gap-4 mb-2 sm:flex-row sm:items-start sm:justify-between">
                         <div className="flex-1 min-w-[33%]">
-                            <h2 className="text-styled uppercase text-3xl mt-2">{destination.name}</h2>
+                            <h2 className="text-styled text-3xl mt-2">{destination.name}</h2>
                             {destination.location?.region && (
                                 <p className="text-sm font-semibold mb-2">
                                     {destination.location.region}
@@ -380,6 +380,6 @@ export default function DestinationResultCard({
                     Know more about {destination.name}
                 </Button>
             </CardContent>
-        </Card >
+        </Card>
     );
 }

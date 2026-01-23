@@ -8,4 +8,5 @@
 
 .text-styled {
   font-family: 'BARABARA', sans-serif !important;
+  text-transform: uppercase;
 }

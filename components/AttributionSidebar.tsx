@@ -69,7 +69,7 @@ export default function AttributionSidebar({
         <div className="p-6 space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h2 className="text-3xl uppercase text-styled mt-6">Attributions</h2>
+            <h2 className="text-3xl text-styled mt-6">Attributions</h2>
             <Button
               variant="ghost"
               size="icon"
@@ -105,7 +105,7 @@ export default function AttributionSidebar({
                   href="https://www.ffonts.net/BARABARA-FINAL.font"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="uppercase text-styled"
+                  className="text-styled"
                 >
                   Barabara
                 </a>

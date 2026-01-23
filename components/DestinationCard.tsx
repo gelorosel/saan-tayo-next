@@ -23,7 +23,7 @@ type Props = {
 const pretty = (v: string) =>
     v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
-const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1519046904884-53103b34b206";
+const FALLBACK_IMAGE = "/images/default-img.jpeg";
 
 interface UnsplashImageData {
     id?: string;

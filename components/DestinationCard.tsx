@@ -93,7 +93,7 @@ export default function DestinationResultCard({
             setImageData(null);
 
             // First try: query by destination name
-            let imageDataResult = await fetchUnsplashImage(destination.name);
+            let imageDataResult = await fetchUnsplashImage(destination.overrideUnsplashName || destination.name);
 
             // Fallback: query by environment + philippines (random from top 10)
             if (!imageDataResult && destination.environments && destination.environments.length > 0) {

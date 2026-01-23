@@ -157,7 +157,8 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-xl w-full">
-        <h1 className="text-styled uppercase text-4xl mb-6">Saan Tayo Punta?</h1>
+        <h1 className="text-styled uppercase text-4xl">Saan Tayo Next?</h1>
+        <h2 className="text-xl font-semibold mb-6">Where to next?</h2>
         {current ?
           <QuestionCard
             question={current.question}

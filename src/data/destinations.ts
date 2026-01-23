@@ -996,6 +996,7 @@ export const destinations: Destination[] = [
   {
     id: "liwliwa-zambales",
     name: "Liwliwa, Zambales",
+    overrideUnsplashName: "Zambales",
     island: "luzon",
     environments: ["beach"],
     activities: ["surf", "swim", "camp", "relax"],
@@ -1006,6 +1007,7 @@ export const destinations: Destination[] = [
   {
     id: "kawasan-canyoneering",
     name: "Kawasan Canyoneering",
+    overrideUnsplashName: "Kawasan",
     island: "visayas",
     environments: ["mountains"],
     activities: ["waterfalls", "natural_wonders", "explore"],
@@ -1016,6 +1018,7 @@ export const destinations: Destination[] = [
   {
     id: "butuan",
     name: "Butuan City",
+    overrideUnsplashName: "Mindanao", // usplash image of butuan is shitty
     island: "mindanao",
     environments: ["city"],
     activities: ["explore", "history", "food_trip", "history"],
@@ -1026,6 +1029,7 @@ export const destinations: Destination[] = [
   {
     id: "hanging-coffins-sagada",
     name: "Hanging Coffins of Sagada",
+    overrideUnsplashName: "Sagada",
     island: "luzon",
     environments: ["mountains"],
     activities: ["explore", "history", "natural_wonders"],
@@ -1036,6 +1040,7 @@ export const destinations: Destination[] = [
   {
     id: "puerto-princesa-underground-river",
     name: "Puerto Princesa Underground River",
+    overrideUnsplashName: "Puerto Princesa",
     island: "luzon",
     environments: ["mountains"],
     activities: ["explore", "natural_wonders"],

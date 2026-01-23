@@ -168,7 +168,11 @@ export default function Home() {
             showSurprise={true}
           /> :
           finalDestinations.length ?
-            <DestinationResultCard key={finalDestinations[pick].id} destination={finalDestinations[pick]} /> :
+            <DestinationResultCard
+              key={finalDestinations[pick].id}
+              destination={finalDestinations[pick]}
+              preferredActivity={toPreference(answers).activity}
+            /> :
             <p>no destinations matched your criteria</p>
         }
 

@@ -42,15 +42,25 @@ export async function GET(request: NextRequest) {
       if (perPage > 1) {
         return NextResponse.json({
           results: data.results.map((image: any) => ({
+            id: image.id,
             url: image.urls?.regular || image.urls?.full || image.urls?.raw,
             alt: image.alt_description || query,
+            photographerName: image.user?.name || 'Unknown',
+            photographerUsername: image.user?.username || 'unknown',
+            photographerUrl: image.user?.links?.html || `https://unsplash.com/@${image.user?.username || 'unknown'}`,
+            downloadLocation: image.links?.download_location,
           })),
         });
       } else {
         const image = data.results[0];
         return NextResponse.json({
+          id: image.id,
           url: image.urls?.regular || image.urls?.full || image.urls?.raw,
           alt: image.alt_description || query,
+          photographerName: image.user?.name || 'Unknown',
+          photographerUsername: image.user?.username || 'unknown',
+          photographerUrl: image.user?.links?.html || `https://unsplash.com/@${image.user?.username || 'unknown'}`,
+          downloadLocation: image.links?.download_location,
         });
       }
     }

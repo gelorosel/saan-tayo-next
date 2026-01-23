@@ -7,7 +7,18 @@ import { Destination } from "@/src/types/destination";
 export function openGoogleSearch(destination: Destination): void {
     const name = destination.name
     const region = destination.location?.region
-    const searchQuery = encodeURIComponent(name === region ? name : `${name} ${region}`);
+    const includeRegion = region && region.toLowerCase() !== name.toLowerCase()
+        && !name.toLowerCase().includes(region.toLowerCase());
+
+    const searchQuery = encodeURIComponent(toQueryName(destination));
     const googleSearchUrl = `https://www.google.com/search?q=${searchQuery}`;
     window.open(googleSearchUrl, '_blank', 'noopener,noreferrer');
+}
+
+export function toQueryName(destination: Destination): string {
+    const name = destination.name
+    const region = destination.location?.region
+    const includeRegion = region && region.toLowerCase() !== name.toLowerCase()
+        && !name.toLowerCase().includes(region.toLowerCase());
+    return includeRegion ? `${name} ${region}` : name;
 }

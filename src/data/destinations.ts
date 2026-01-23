@@ -632,7 +632,8 @@ export const destinations: Destination[] = [
   },
   {
     id: "mindanao-beach-tinago-dinagat",
-    name: "Tinago Beach, Dinagat Islands",
+    name: "Tinago Beach",
+    overrideUnsplashName: "Dinagat",
     island: "mindanao",
     environments: ["beach"],
     activities: ["swim", "snorkel", "relax", "natural_wonders"],
@@ -839,21 +840,11 @@ export const destinations: Destination[] = [
     location: { region: "Dinagat Islands" },
   },
   {
-    id: "mindanao-relax-gumasa",
-    name: "Gumasa Beach",
-    island: "mindanao",
-    environments: ["beach"],
-    activities: ["relax", "swim"],
-    bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
-    location: { region: "Sarangani" },
-  },
-  {
     id: "mindanao-relax-enchanted-river",
     name: "Enchanted River, Surigao del Sur",
     island: "mindanao",
     environments: ["mountains"],
-    activities: ["natural_wonders", "explore", "relax"],
+    activities: ["natural_wonders", "explore", "relax", "swim"],
     bestSeasons: ["cool_dry", "hot_dry"],
     budget: "low",
     location: { region: "Surigao del Sur" },
@@ -866,6 +857,7 @@ export const destinations: Destination[] = [
   {
     id: "bucas-grande",
     name: "Bucas Grande (Sohoton Cove)",
+    overrideUnsplashName: "Siargao",
     island: "mindanao",
     environments: ["beach"],
     activities: ["snorkel", "swim", "natural_wonders", "explore", "relax", "island_hop"],
@@ -1129,6 +1121,16 @@ export const destinations: Destination[] = [
     bestSeasons: ["cool_dry", "hot_dry"],
     budget: "low",
     location: { region: "Cebu" },
+  },
+  {
+    id: "nasugbu",
+    name: "Nasugbu",
+    island: "luzon",
+    environments: ["beach"],
+    activities: ["swim", "relax", "explore"],
+    bestSeasons: ["cool_dry", "hot_dry"],
+    budget: "low",
+    location: { region: "Batangas" },
   },
 
   // ─────────────────────────────────────────────────────────────

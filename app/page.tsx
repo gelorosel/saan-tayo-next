@@ -332,31 +332,38 @@ export default function Home() {
           }
         </div>
 
-        {/* More to see in region section */}
+        {/* More destinations section */}
         {!isDestinationLoading && relatedDestinations.length > 0 && (
           <div className="w-full mt-10">
             <h3 className="text-base font-semibold mb-3">
               More {answers.activity ? prettifyActivity(answers.activity) : "to see"} in {finalDestinations[pick].island.charAt(0).toUpperCase() + finalDestinations[pick].island.slice(1)}
             </h3>
-            <div className="flex flex-row gap-3.5 overflow-x-auto pb-2 -mx-6 px-6">
-              {relatedDestinations.map((relatedDest) => (
-                <div
-                  key={relatedDest.id}
-                  className="flex-shrink-0 cursor-pointer"
-                  style={{ width: "18rem" }}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => handleMiniCardClick(relatedDest.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      handleMiniCardClick(relatedDest.id);
-                    }
-                  }}
-                >
-                  <MiniCard destination={relatedDest} />
-                </div>
-              ))}
+            <div className="relative -mx-6 px-6">
+              {/* Scrollable container */}
+              <div className="flex flex-row gap-3.5 overflow-x-auto pb-2">
+                {relatedDestinations.map((relatedDest) => (
+                  <div
+                    key={relatedDest.id}
+                    className="flex-shrink-0 cursor-pointer"
+                    style={{ width: "18rem" }}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleMiniCardClick(relatedDest.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleMiniCardClick(relatedDest.id);
+                      }
+                    }}
+                  >
+                    <MiniCard destination={relatedDest} />
+                  </div>
+                ))}
+              </div>
+              {/* Scroll hint text */}
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                ← Scroll to see more →
+              </p>
             </div>
           </div>
         )}

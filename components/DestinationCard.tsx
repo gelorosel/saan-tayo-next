@@ -132,7 +132,7 @@ export default function DestinationResultCard({
 
             // Fallback: query by environment + philippines (random from top 10)
             if (!imageDataResult && destination.environments && destination.environments.length > 0) {
-                const fallbackQuery = `${destination.environments[0]} philippines`;
+                const fallbackQuery = `${destination.island} ${destination.environments[0]} philippines`;
                 setIsFallbackImage(true);
                 imageDataResult = await fetchUnsplashImage(fallbackQuery, true);
             }

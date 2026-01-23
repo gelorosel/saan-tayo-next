@@ -16,6 +16,8 @@ type Props = {
     preferredActivity?: string;
     /** Reasons why this destination was recommended */
     reasons?: string[];
+    /** Callback when loading state changes */
+    onLoadingChange?: (isLoading: boolean) => void;
 };
 
 const pretty = (v: string) =>
@@ -69,6 +71,7 @@ export default function DestinationResultCard({
     activitiesOverride,
     preferredActivity,
     reasons,
+    onLoadingChange,
 }: Props) {
     const [heroImgSrc, setHeroImgSrc] = useState<string>(FALLBACK_IMAGE);
     const [isLoadingImage, setIsLoadingImage] = useState(true);
@@ -164,6 +167,12 @@ export default function DestinationResultCard({
         };
     }, [destination, preferredActivity, activities]);
 
+    // Notify parent of loading state changes
+    useEffect(() => {
+        const isLoading = isLoadingImage || isLoadingDescription;
+        onLoadingChange?.(isLoading);
+    }, [isLoadingImage, isLoadingDescription, onLoadingChange]);
+
     const handleGoogleSearch = () => {
         openGoogleSearch(destination);
     };
@@ -203,7 +212,7 @@ export default function DestinationResultCard({
                 {/* Unsplash Attribution */}
                 {imageData && (
                     <>
-                        {isFallbackImage && <div className="absolute bottom-2 left-2 text-white text-xs opacity-50 hover:opacity-100 transition-opacity">
+                        {isFallbackImage && <div className="absolute bottom-6 right-2 text-white text-xs opacity-50 hover:opacity-100 transition-opacity">
                             (may not be the actual destination)
                         </div>}
                         <div className="absolute bottom-2 right-2 text-white text-xs opacity-80 hover:opacity-100 transition-opacity">
@@ -233,7 +242,14 @@ export default function DestinationResultCard({
                 {/* Header */}
                 <div>
                     <div className="flex items-start justify-between gap-4 mb-2">
-                        <h2 className="text-2xl font-semibold flex-1">{destination.name}</h2>
+                        <div className="flex-1 min-w-[25%]">
+                            <h2 className="text-styled uppercase text-3xl">{destination.name}</h2>
+                            {destination.location?.region && (
+                                <p className="text-muted-foreground">
+                                    {destination.location.region}
+                                </p>
+                            )}
+                        </div>
                         <div className="flex flex-wrap gap-2 justify-end">
                             {[...new Set(activities)].sort().map((a) => (
                                 <Badge key={a} variant="outline" className="px-3 py-1">
@@ -242,11 +258,6 @@ export default function DestinationResultCard({
                             ))}
                         </div>
                     </div>
-                    <p className="text-muted-foreground">
-                        {destination.location?.region
-                            ? `${destination.location.region}`
-                            : ""}
-                    </p>
                 </div>
 
                 {/* Description */}
@@ -283,6 +294,6 @@ export default function DestinationResultCard({
                     Know more about {destination.name}
                 </Button>
             </CardContent>
-        </Card>
+        </Card >
     );
 }

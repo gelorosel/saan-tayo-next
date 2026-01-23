@@ -56,6 +56,7 @@ export default function Home() {
   const [step, setStep] = useState(0);
   const [pick, setPick] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [isDestinationLoading, setIsDestinationLoading] = useState(false);
   const canGoBack = useMemo(() => step > 0, [step])
   const finalDestinations = useMemo(() => scoreDestinations(toPreference(answers), destinations), [answers, destinations])
 
@@ -157,7 +158,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-xl w-full">
-        <h1 className="text-styled uppercase text-4xl">Saan Tayo Next?</h1>
+        <h1 className="text-styled uppercase text-4xl mt-6">Saan Tayo Next?</h1>
         <h2 className="text-xl font-semibold mb-6">Where to next?</h2>
         {current ?
           <QuestionCard
@@ -174,26 +175,29 @@ export default function Home() {
               destination={finalDestinations[pick]}
               preferredActivity={toPreference(answers).activity}
               reasons={finalDestinations[pick].reasons}
+              onLoadingChange={setIsDestinationLoading}
             /> :
             <p>no destinations matched your criteria</p>
         }
 
 
         {canGoBack &&
-          <div className="my-3">
+          <div className="my-3 flex flex-row justify-between gap-4">
             <button
-              className="mt-4 underline text-sm"
+              className="underline text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => {
                 setStep(0)
                 setPick(0)
               }}
+              disabled={isDestinationLoading}
             >
               Start over
             </button>
             {!current && pick + 1 < finalDestinations.length &&
               <button
-                className="ml-[20px] mt-4 underline text-sm"
+                className="underline text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => setPick(pick + 1)}
+                disabled={isDestinationLoading}
               >
                 I've been here!
               </button>

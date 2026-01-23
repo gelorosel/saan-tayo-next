@@ -1,0 +1,141 @@
+"use client";
+
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+
+const dataSources = [
+  "tourism.gov.ph",
+  "lonelyplanet.com/philippines",
+  "tripadvisor.com.ph",
+  "guidetothephilippines.ph",
+  "lakwatsero.com",
+  "pinoymountaineer.com",
+  "thepoortraveler.net",
+  "klook.com/blog/ph/",
+  "besttime.tips",
+];
+
+interface AttributionSidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function AttributionSidebar({
+  isOpen,
+  onClose,
+}: AttributionSidebarProps) {
+  // Close on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape);
+      // Prevent body scroll when sidebar is open
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen, onClose]);
+
+  return (
+    <>
+      {/* Overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 transition-opacity animate-in fade-in-0"
+          onClick={onClose}
+        />
+      )}
+      {/* Sidebar */}
+      <div
+        className={`fixed right-0 top-0 h-full w-full max-w-md bg-background shadow-lg z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${isOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+      >
+        <div className="p-6 space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <h2 className="text-3xl uppercase text-styled">Attributions</h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-8 w-8"
+            >
+              <span className="text-xl">×</span>
+            </Button>
+          </div>
+
+          {/* Content */}
+          <div className="space-y-6 text-sm">
+            <section>
+              <h3 className="font-semibold mb-2">Inspiration</h3>
+              <p className="text-muted-foreground">
+                Inspired by{" "}
+                <a
+                  href="https://github.com/bchiang7/time-to-have-more-fun/tree/main"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-styled"
+                >
+                  bchiang7/time-to-have-more-fun
+                </a>
+              </p>
+            </section>
+
+            <section>
+              <h3 className="font-semibold mb-2">Font</h3>
+              <p className="text-muted-foreground">
+                Font used:{" "}
+                <a
+                  href="https://www.ffonts.net/BARABARA-FINAL.font"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="uppercase text-styled"
+                >
+                  Barabara
+                </a>
+              </p>
+            </section>
+
+            <section>
+              <h3 className="font-semibold mb-2">Images</h3>
+              <p className="text-muted-foreground">
+                Images are provided by{" "}
+                <a
+                  href="https://unsplash.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  Unsplash
+                </a>
+                . Each image is attributed to its photographer.
+              </p>
+            </section>
+
+            <section>
+              <h3 className="font-semibold mb-2">Data Sources</h3>
+              <p className="text-muted-foreground mb-2">
+                Information gathered from the following sites:
+              </p>
+              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                {dataSources.map((source, index) => (
+                  <li className="underline text-muted-foreground" key={index}>
+                    {source}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

@@ -34,7 +34,6 @@ export const activityOptionsByEnvironment: Record<Environment, ActivityOption[]>
     { label: "Museums", value: "museums" },
     { label: "Historical sites", value: "history" },
     { label: "Nightlife", value: "nightlife" },
-    { label: "Markets", value: "markets" },
     { label: "Explore", value: "explore" },
   ]),
   reef: withSurprise([

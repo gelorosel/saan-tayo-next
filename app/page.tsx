@@ -168,7 +168,7 @@ export default function Home() {
             showSurprise={true}
           /> :
           finalDestinations.length ?
-            <DestinationResultCard destination={finalDestinations[pick]} /> :
+            <DestinationResultCard key={finalDestinations[pick].id} destination={finalDestinations[pick]} /> :
             <p>no destinations matched your criteria</p>
         }
 

@@ -27,8 +27,8 @@ export function prettifyActivity(activity: string): string {
   const activityMap: Record<string, string> = {
     island_hop: "island hopping",
     natural_wonders: "natural wonders",
-    waterfalls: "waterfalls",
     food_trip: "food trips",
+    waterfalls: "to see",
     museums: "to see",
     history: "to see",
     nightlife: "to see", // not much nightlife outside cities

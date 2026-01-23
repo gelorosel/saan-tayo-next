@@ -20,6 +20,7 @@ export const activityOptionsByEnvironment: Record<Environment, ActivityOption[]>
     { label: "Surf", value: "surf" },
     { label: "Relax", value: "relax" },
     { label: "Natural wonders", value: "natural_wonders" },
+    { label: "Nightlife", value: "nightlife" },
   ]),
   mountains: withSurprise([
     { label: "Hike", value: "hike" },

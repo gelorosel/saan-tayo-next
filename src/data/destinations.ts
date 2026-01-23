@@ -1182,5 +1182,60 @@ export const destinations: Destination[] = [
     bestSeasons: ["cool_dry", "hot_dry"],
     budget: "low",
     location: { region: "Iloilo" },
-  }
-];
+  },
+
+  // ─────────────────────────────────────────────────────────────
+  // some reefs
+  // ─────────────────────────────────────────────────────────────
+
+  {
+    id: "tubbataha-reefs",
+    name: "Tubbataha Reefs Natural Park",
+    island: "visayas",
+    environments: ["reef", "beach"],
+    activities: ["dive", "snorkel", "natural_wonders"],
+    bestSeasons: ["cool_dry"],
+    budget: "high",
+    location: { region: "Sulu Sea (Palawan)" },
+  },
+  {
+    id: "apo-reef",
+    name: "Apo Reef Natural Park",
+    island: "luzon",
+    environments: ["reef", "beach"],
+    activities: ["dive", "snorkel", "natural_wonders"],
+    bestSeasons: ["cool_dry"],
+    budget: "high",
+    location: { region: "Occidental Mindoro" },
+  },
+  {
+    id: "malapascua-island",
+    name: "Malapascua Island",
+    island: "visayas",
+    environments: ["reef", "beach"],
+    activities: ["dive", "snorkel", "swim"],
+    bestSeasons: ["cool_dry", "hot_dry"],
+    budget: "mid",
+    location: { region: "Cebu" },
+  },
+  {
+    id: "dauin-negros-oriental",
+    name: "Dauin",
+    island: "visayas",
+    environments: ["reef", "beach"],
+    activities: ["dive", "snorkel", "natural_wonders"],
+    bestSeasons: ["cool_dry", "hot_dry"],
+    budget: "mid",
+    location: { region: "Negros Oriental" },
+  },
+  {
+    id: "balicasag-island",
+    name: "Balicasag Island",
+    island: "visayas",
+    environments: ["reef", "beach"],
+    activities: ["dive", "snorkel", "swim"],
+    bestSeasons: ["cool_dry", "hot_dry"],
+    budget: "mid",
+    location: { region: "Bohol" },
+  },
+]

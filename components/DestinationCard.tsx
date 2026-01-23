@@ -92,6 +92,28 @@ export default function DestinationResultCard({
             setIsLoadingImage(true);
             setImageData(null);
 
+            // Check fast mode
+            let fastMode = false;
+            try {
+                const configResponse = await fetch('/api/config');
+                if (configResponse.ok) {
+                    const config = await configResponse.json();
+                    fastMode = config.fastMode || false;
+                }
+            } catch (error) {
+                // Silently fail
+            }
+
+            if (fastMode) {
+                // Fast mode: use fallback image immediately
+                if (isMounted) {
+                    setHeroImgSrc(FALLBACK_IMAGE);
+                    setIsFallbackImage(true);
+                    setIsLoadingImage(false);
+                }
+                return;
+            }
+
             // First try: query by destination name
             let imageDataResult = await fetchUnsplashImage(destination.overrideUnsplashName || destination.name);
 
@@ -130,19 +152,29 @@ export default function DestinationResultCard({
             setIsLoadingDescription(true);
             setDescription(null);
 
-            const queryName = toQueryName(destination);
-
-            // Get priority configuration
+            // Get configuration
             let prioritizeGemini = false;
+            let fastMode = false;
             try {
                 const configResponse = await fetch('/api/config');
                 if (configResponse.ok) {
                     const config = await configResponse.json();
                     prioritizeGemini = config.prioritizeGemini || false;
+                    fastMode = config.fastMode || false;
                 }
             } catch (error) {
-                console.error("Error fetching config:", error);
+                // Silently fail
             }
+
+            // Fast mode: skip description fetching
+            if (fastMode) {
+                if (isMounted) {
+                    setIsLoadingDescription(false);
+                }
+                return;
+            }
+
+            const queryName = toQueryName(destination);
 
             if (prioritizeGemini) {
                 // Try Gemini first

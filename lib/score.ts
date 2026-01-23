@@ -29,11 +29,14 @@ export function scoreDestinations(
       if (d.goodForGroups?.includes(pref.group)) {
         score += 1; reasons.push("Good for your travel group");
       }
+      if (d.environments.includes("reef") && pref.activity === "dive") {
+        score += 5; reasons.push("Perfect reef diving destination");
+      }
 
       return { ...d, score, reasons };
     })
     // .filter((d) => d.score > 300)
     .sort((a, b) => b.score - a.score);
 
-    return scoredDestinations
+  return scoredDestinations
 }

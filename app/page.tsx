@@ -361,7 +361,7 @@ export default function Home() {
                 ))}
               </div>
               {/* Scroll hint text */}
-              <p className="text-xs text-muted-foreground mt-2 text-center">
+              <p className="text-xs text-muted-foreground mt-2 text-center hidden sm:block">
                 ← Scroll to see more →
               </p>
             </div>

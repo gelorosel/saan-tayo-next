@@ -5,7 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Destination } from "@/src/types/destination";
-import { openGoogleSearch, toQueryName } from "@/lib/destination";
+import { openGoogleSearch } from "@/lib/destination";
+import { loadDescription, DescriptionData } from "@/lib/description";
 
 type Props = {
     destination: Destination;
@@ -13,6 +14,8 @@ type Props = {
     activitiesOverride?: Destination["activities"];
     /** Preferred activity from user's preferences */
     preferredActivity?: string;
+    /** Reasons why this destination was recommended */
+    reasons?: string[];
 };
 
 const pretty = (v: string) =>
@@ -45,7 +48,7 @@ async function fetchUnsplashImage(query: string, randomFromTop10: boolean = fals
         }
 
         return data || null;
-    } catch (error) {
+    } catch {
         return null;
     }
 }
@@ -55,27 +58,17 @@ async function triggerDownload(downloadLocation: string | undefined) {
 
     try {
         await fetch(`/api/unsplash/download?download_location=${encodeURIComponent(downloadLocation)}`);
-    } catch (error) {
+    } catch {
         // Silently fail - download tracking is not critical
     }
 }
 
-interface WikiDescription {
-    query: string;
-    title: string | null;
-    description: string | null;
-    url: string | null;
-}
-
-interface DescriptionData {
-    description: string;
-    source: 'gemini' | 'wiki';
-}
 
 export default function DestinationResultCard({
     destination,
     activitiesOverride,
     preferredActivity,
+    reasons,
 }: Props) {
     const [heroImgSrc, setHeroImgSrc] = useState<string>(FALLBACK_IMAGE);
     const [isLoadingImage, setIsLoadingImage] = useState(true);
@@ -148,114 +141,23 @@ export default function DestinationResultCard({
     useEffect(() => {
         let isMounted = true;
 
-        async function loadDescription() {
+        async function fetchDescription() {
             setIsLoadingDescription(true);
             setDescription(null);
 
-            // Get configuration
-            let prioritizeGemini = false;
-            let fastMode = false;
-            try {
-                const configResponse = await fetch('/api/config');
-                if (configResponse.ok) {
-                    const config = await configResponse.json();
-                    prioritizeGemini = config.prioritizeGemini || false;
-                    fastMode = config.fastMode || false;
-                }
-            } catch (error) {
-                // Silently fail
-            }
-
-            // Fast mode: skip description fetching
-            if (fastMode) {
-                if (isMounted) {
-                    setIsLoadingDescription(false);
-                }
-                return;
-            }
-
-            const queryName = toQueryName(destination);
-
-            if (prioritizeGemini) {
-                // Try Gemini first
-                try {
-                    const activityParam = preferredActivity || activities[0] || 'travel';
-                    const geminiResponse = await fetch(`/api/gemini?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`);
-                    if (geminiResponse.ok) {
-                        const geminiData = await geminiResponse.json();
-                        if (geminiData.description && isMounted) {
-                            setDescription({
-                                description: geminiData.description,
-                                source: 'gemini'
-                            });
-                            setIsLoadingDescription(false);
-                            return;
-                        }
-                    }
-                } catch (error) {
-                    // Silently fail - will fallback to Wiki
-                }
-
-                // Fallback to Wiki if Gemini fails
-                try {
-                    const activityParam = preferredActivity || activities[0] || 'travel';
-                    const wikiResponse = await fetch(`/api/wiki?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`);
-                    if (wikiResponse.ok) {
-                        const wikiData = await wikiResponse.json();
-                        if (wikiData.description && isMounted) {
-                            setDescription({
-                                description: wikiData.description,
-                                source: 'wiki'
-                            });
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error fetching wiki description:", error);
-                }
-            } else {
-                // Try Wiki first
-                try {
-                    const activityParam = preferredActivity || activities[0] || 'travel';
-                    const wikiResponse = await fetch(`/api/wiki?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`);
-                    if (wikiResponse.ok) {
-                        const wikiData = await wikiResponse.json();
-                        if (wikiData.description && isMounted) {
-                            setDescription({
-                                description: wikiData.description,
-                                source: 'wiki'
-                            });
-                            setIsLoadingDescription(false);
-                            return;
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error fetching wiki description:", error);
-                }
-
-                // Fallback to Gemini if Wiki fails
-                try {
-                    const activityParam = preferredActivity || activities[0] || 'travel';
-                    const geminiResponse = await fetch(`/api/gemini?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`);
-                    if (geminiResponse.ok) {
-                        const geminiData = await geminiResponse.json();
-                        if (geminiData.description && isMounted) {
-                            setDescription({
-                                description: geminiData.description,
-                                source: 'gemini'
-                            });
-                        }
-                    }
-                } catch (error) {
-                    // Silently fail - will fallback to Wiki
-                }
-            }
+            const descriptionData = await loadDescription({
+                destination,
+                preferredActivity,
+                activities,
+            });
 
             if (isMounted) {
+                setDescription(descriptionData);
                 setIsLoadingDescription(false);
             }
         }
 
-        loadDescription();
+        fetchDescription();
 
         return () => {
             isMounted = false;
@@ -330,21 +232,21 @@ export default function DestinationResultCard({
             <CardContent className="p-6 space-y-4">
                 {/* Header */}
                 <div>
-                    <h2 className="text-2xl font-semibold">{destination.name}</h2>
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                        <h2 className="text-2xl font-semibold flex-1">{destination.name}</h2>
+                        <div className="flex flex-wrap gap-2 justify-end">
+                            {[...new Set(activities)].sort().map((a) => (
+                                <Badge key={a} variant="outline" className="px-3 py-1">
+                                    {pretty(a)}
+                                </Badge>
+                            ))}
+                        </div>
+                    </div>
                     <p className="text-muted-foreground">
                         {destination.location?.region
                             ? `${destination.location.region}`
                             : ""}
                     </p>
-                </div>
-
-                {/* Activities */}
-                <div className="flex flex-wrap gap-2">
-                    {[...new Set(activities)].sort().map((a) => (
-                        <Badge key={a} variant="outline" className="px-3 py-1">
-                            {pretty(a)}
-                        </Badge>
-                    ))}
                 </div>
 
                 {/* Description */}
@@ -357,6 +259,20 @@ export default function DestinationResultCard({
                         {description.description}
                     </p>
                 ) : null}
+
+                {/* Best Time to Visit */}
+                {reasons && reasons.length > 0 && (
+                    <div>
+                        <h3 className="text-sm font-semibold mb-2">Why choose {destination.name}?</h3>
+                        <div className="flex flex-wrap gap-2">
+                            {reasons.map((reason, index) => (
+                                <Badge key={index} variant="secondary" className="px-3 py-1">
+                                    {pretty(reason)}
+                                </Badge>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* Google Search Button */}
                 <Button

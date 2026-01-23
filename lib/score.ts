@@ -23,12 +23,6 @@ export function scoreDestinations(
       } else {
         score += 1;
       }
-      if (d.budget === pref.budget) {
-        score += 1; reasons.push("Matches your budget");
-      }
-      if (d.goodForGroups?.includes(pref.group)) {
-        score += 1; reasons.push("Good for your travel group");
-      }
       if (d.environments.includes("reef") && pref.activity === "dive") {
         score += 5; reasons.push("Perfect reef diving destination");
       }

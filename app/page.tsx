@@ -173,6 +173,7 @@ export default function Home() {
               key={finalDestinations[pick].id}
               destination={finalDestinations[pick]}
               preferredActivity={toPreference(answers).activity}
+              reasons={finalDestinations[pick].reasons}
             /> :
             <p>no destinations matched your criteria</p>
         }

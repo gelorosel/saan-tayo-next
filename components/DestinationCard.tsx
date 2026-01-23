@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Destination } from "@/src/types/destination";
 import { Badge } from "lucide-react";
 
@@ -19,6 +20,12 @@ export default function DestinationResultCard({
 }: Props) {
     const hero = "https://images.unsplash.com/photo-1519046904884-53103b34b206";
     const activities = activitiesOverride ?? destination.activities;
+
+    const handleGoogleSearch = () => {
+        const searchQuery = encodeURIComponent(`${destination.name} ${destination.island} Philippines`);
+        const googleSearchUrl = `https://www.google.com/search?q=${searchQuery}`;
+        window.open(googleSearchUrl, '_blank', 'noopener,noreferrer');
+    };
 
     return (
         <Card className="overflow-hidden rounded-2xl shadow-sm">
@@ -59,6 +66,15 @@ export default function DestinationResultCard({
                         {destination.description}
                     </p>
                 )}
+
+                {/* Google Search Button */}
+                <Button
+                    onClick={handleGoogleSearch}
+                    variant="outline"
+                    className="w-full"
+                >
+                    Know more about {destination.name}
+                </Button>
             </CardContent>
         </Card>
     );

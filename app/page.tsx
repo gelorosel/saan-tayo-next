@@ -12,6 +12,7 @@ import { scoreDestinations } from "@/lib/score";
 import { destinations } from "@/src/data/destinations";
 
 import DestinationResultCard from "@/components/DestinationCard";
+import { de } from "zod/v4/locales";
 
 const ENV_SURPRISE_FLAG = "__envSurprise";
 
@@ -56,6 +57,7 @@ export default function Home() {
   const [pick, setPick] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const canGoBack = useMemo(() => step > 0, [step])
+  const finalDestinations = useMemo(() => scoreDestinations(toPreference(answers), destinations), [answers, destinations])
 
   const baseCurrent = questions[step];
 
@@ -63,7 +65,7 @@ export default function Home() {
     if (!baseCurrent) return null;
 
     if (baseCurrent.id === "activity") {
-      const environment = (answers.environment as Environment) || "beach";
+      const environment = (answers.environment as Environment);
       const envWasSurprise = answers[ENV_SURPRISE_FLAG] === "true";
 
       // If user picked Surprise me on environment, show 6 random unique activities
@@ -155,7 +157,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-xl w-full">
-        <h1 className="text-center text-3xl font-bold mb-6">Saan Tayo Punta?</h1>
+        <h1 className="text-styled uppercase text-4xl mb-6">Saan Tayo Punta?</h1>
         {current ?
           <QuestionCard
             question={current.question}
@@ -165,7 +167,9 @@ export default function Home() {
             canGoBack={canGoBack}
             showSurprise={true}
           /> :
-          <DestinationResultCard destination={scoreDestinations(toPreference(answers), destinations)[pick]} />
+          finalDestinations.length ?
+            <DestinationResultCard destination={finalDestinations[pick]} /> :
+            <p>no destinations matched your criteria</p>
         }
 
 
@@ -180,7 +184,7 @@ export default function Home() {
             >
               Start over
             </button>
-            {!current &&
+            {!current && pick + 1 < finalDestinations.length &&
               <button
                 className="ml-[20px] mt-4 underline text-sm"
                 onClick={() => setPick(pick + 1)}

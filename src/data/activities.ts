@@ -1,5 +1,7 @@
+import { Activity } from "../types/preference";
+
 // src/data/activities.ts
-export type ActivityOption = { label: string; value: string };
+export type ActivityOption = { label: string; value: Activity };
 export type Environment = "beach" | "mountains" | "city";
 export type EnvironmentOrSurprise = Environment | "surprise";
 
@@ -24,8 +26,6 @@ export const activityOptionsByEnvironment: Record<Environment, ActivityOption[]>
       { label: "Trek / multi-day", value: "trek" },
       { label: "Camping", value: "camp" },
       { label: "Waterfalls", value: "waterfalls" },
-      { label: "Historical sites", value: "history" },
-      { label: "Relax", value: "relax" },
       { label: "Natural wonders", value: "natural_wonders" },
     ]),
     city: withSurprise([
@@ -34,7 +34,6 @@ export const activityOptionsByEnvironment: Record<Environment, ActivityOption[]>
       { label: "Historical sites", value: "history" },
       { label: "Nightlife", value: "nightlife" },
       { label: "Markets", value: "markets" },
-      { label: "Cafés", value: "cafes" },
       { label: "Explore", value: "explore" },
     ]),
   };

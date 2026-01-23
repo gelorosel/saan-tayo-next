@@ -25,21 +25,21 @@ export type Activity =
   | "museums"
   | "nightlife"
   | "markets"
-  | "cafes"
-  | "explore";
+  | "explore"
+  | "surprise"
 
 export interface Preference {
   /** Always resolved to a concrete value (never "surprise") */
-  island: IslandGroup | "any";
+  island: IslandGroup | "surprise";
 
   /** Resolved environment, even if chosen via Surprise */
-  environment: Environment;
+  environment: Environment | "surprise";
 
   /** Resolved activity (never "surprise") */
   activity: Activity;
 
   /** Season user is traveling in */
-  season: Season | "any";
+  season: Season | "surprise";
 
   /** Budget preference */
   budget: Budget;

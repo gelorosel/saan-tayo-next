@@ -271,16 +271,16 @@ export default function DestinationResultCard({
             <CardContent className="p-6 space-y-4">
                 {/* Header */}
                 <div>
-                    <div className="flex items-start justify-between gap-4 mb-2">
+                    <div className="flex flex-col gap-4 mb-2 sm:flex-row sm:items-start sm:justify-between">
                         <div className="flex-1 min-w-[25%]">
-                            <h2 className="text-styled uppercase text-3xl">{destination.name}</h2>
+                            <h2 className="text-styled uppercase text-3xl mt-2">{destination.name}</h2>
                             {destination.location?.region && (
                                 <p className="text-muted-foreground">
                                     {destination.location.region}
                                 </p>
                             )}
                         </div>
-                        <div className="flex flex-wrap gap-2 justify-end">
+                        <div className="flex flex-wrap gap-2 sm:justify">
                             {[...new Set(activities)].sort().map((a) => (
                                 <Badge key={a} variant="outline" className="px-3 py-1">
                                     {pretty(a)}

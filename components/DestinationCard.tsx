@@ -180,14 +180,44 @@ export default function DestinationResultCard({
     if (isLoadingImage || isLoadingDescription) {
         return (
             <Card className="overflow-hidden rounded-2xl shadow-sm pt-0">
-                <div className="relative h-72 w-full bg-muted" />
+                {/* Skeleton Image */}
+                <div className="relative h-72 w-full bg-muted animate-pulse" />
+
                 <CardContent className="p-6 space-y-4">
-                    <div className="flex items-center justify-center min-h-[200px]">
-                        <div className="flex flex-col items-center gap-3">
-                            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-                            <p className="text-sm text-muted-foreground">Looking for your next destination...</p>
+                    {/* Skeleton Header */}
+                    <div>
+                        <div className="flex items-start justify-between gap-4 mb-2">
+                            <div className="flex-1 min-w-[25%]">
+                                <div className="h-8 w-32 bg-muted animate-pulse rounded mb-2" />
+                                <div className="h-4 w-24 bg-muted animate-pulse rounded" />
+                            </div>
+                            <div className="flex flex-wrap gap-2 justify-end">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="h-6 w-20 bg-muted animate-pulse rounded-full" />
+                                ))}
+                            </div>
                         </div>
                     </div>
+
+                    {/* Skeleton Description */}
+                    <div className="space-y-2">
+                        <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                        <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                        <div className="h-4 w-3/4 bg-muted animate-pulse rounded" />
+                    </div>
+
+                    {/* Skeleton Why Choose Section */}
+                    <div>
+                        <div className="h-5 w-40 bg-muted animate-pulse rounded mb-2" />
+                        <div className="flex flex-wrap gap-2">
+                            {[1, 2].map((i) => (
+                                <div key={i} className="h-6 w-24 bg-muted animate-pulse rounded-full" />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Skeleton Button */}
+                    <div className="h-9 w-full bg-muted animate-pulse rounded-md" />
                 </CardContent>
             </Card>
         );

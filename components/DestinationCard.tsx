@@ -212,8 +212,6 @@ export default function DestinationResultCard({
 
         fetchDescription();
 
-        fetchDescription();
-
         return () => {
             isMounted = false;
         };
@@ -233,7 +231,11 @@ export default function DestinationResultCard({
         return (
             <Card className="overflow-hidden rounded-2xl shadow-sm pt-0">
                 {/* Skeleton Image */}
-                <div className="relative h-72 w-full bg-muted animate-pulse" />
+                <div className="relative h-72 w-full bg-muted animate-pulse">
+                    <p className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-muted-foreground z-10">
+                        Looking for your next destination...
+                    </p>
+                </div>
 
                 <CardContent className="p-6 space-y-4">
                     {/* Skeleton Header */}
@@ -326,7 +328,7 @@ export default function DestinationResultCard({
                 {/* Header */}
                 <div>
                     <div className="flex flex-col gap-4 mb-2 sm:flex-row sm:items-start sm:justify-between">
-                        <div className="flex-1 min-w-[25%]">
+                        <div className="flex-1 min-w-[33%]">
                             <h2 className="text-styled uppercase text-3xl mt-2">{destination.name}</h2>
                             {destination.location?.region && (
                                 <p className="text-sm font-semibold mb-2">

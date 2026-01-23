@@ -60,6 +60,7 @@ export default function Home() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isDestinationLoading, setIsDestinationLoading] = useState(false);
   const [fastMode, setFastMode] = useState(false);
+  const [hasShownDestination, setHasShownDestination] = useState(false);
   const canGoBack = useMemo(() => step > 0, [step])
   const finalDestinations = useMemo(() => scoreDestinations(toPreference(answers), destinations), [answers, destinations])
 
@@ -71,6 +72,15 @@ export default function Home() {
     }
   }, []);
 
+  const baseCurrent = questions[step];
+
+  // Mark that we've shown a destination for the first time
+  useEffect(() => {
+    if (!baseCurrent && finalDestinations.length > 0 && !hasShownDestination) {
+      setHasShownDestination(true);
+    }
+  }, [baseCurrent, finalDestinations.length, hasShownDestination]);
+
   const toggleFastMode = () => {
     const newValue = !fastMode;
     setFastMode(newValue);
@@ -78,8 +88,6 @@ export default function Home() {
     // Trigger a custom event to notify other components
     window.dispatchEvent(new CustomEvent("fastModeChanged", { detail: newValue }));
   };
-
-  const baseCurrent = questions[step];
 
   const current = useMemo(() => {
     if (!baseCurrent) return null;
@@ -110,6 +118,13 @@ export default function Home() {
 
     return baseCurrent;
   }, [baseCurrent, answers.environment]);
+
+  // Mark that we've shown a destination for the first time
+  useEffect(() => {
+    if (!baseCurrent && finalDestinations.length > 0 && !hasShownDestination) {
+      setHasShownDestination(true);
+    }
+  }, [baseCurrent, finalDestinations.length, hasShownDestination]);
 
   const goNext = (questionId: string, chosenValue: string, meta?: { envWasSurprise?: boolean }) => {
     setAnswers((prev) => {
@@ -179,15 +194,17 @@ export default function Home() {
       <div className="max-w-xl w-full">
         <h1 className="text-styled uppercase text-4xl mt-6">Saan Tayo Next?</h1>
         <h2 className="text-xl font-semibold mb-2">Where to next?</h2>
-        <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={fastMode}
-            onChange={toggleFastMode}
-            className="cursor-pointer"
-          />
-          <span>Fast mode (skip loading images and description)</span>
-        </label>
+        {hasShownDestination && (
+          <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={fastMode}
+              onChange={toggleFastMode}
+              className="cursor-pointer"
+            />
+            <span>Fast mode (skip loading images and description)</span>
+          </label>
+        )}
         {current ?
           <QuestionCard
             question={current.question}

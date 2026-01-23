@@ -10,9 +10,7 @@ export function scoreDestinations(
   const scoredDestinations = dests
     .filter((d) => pref.island == "surprise" || d.island === pref.island)
     .filter((d) => pref.environment == "surprise" || d.environments?.includes(pref.environment))
-    // .map((d) => {
-    //   return { ...d, score: 100, reasons: [] };
-    // })
+    .sort(() => Math.random() - 0.5)
     .map((d) => {
       let score = 0;
       const reasons: string[] = [`Found in ${d.island}`];
@@ -31,7 +29,6 @@ export function scoreDestinations(
 
       return { ...d, score, reasons };
     })
-    // .filter((d) => d.score > 300)
     .sort((a, b) => b.score - a.score);
 
   return scoredDestinations

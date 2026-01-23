@@ -30,7 +30,7 @@ export async function loadDescription(
         if (saved !== null) {
             fastMode = saved === "true";
         }
-        
+
         // Get prioritizeGemini from API
         const configResponse = await fetch('/api/config');
         if (configResponse.ok) {
@@ -86,36 +86,27 @@ export async function loadDescription(
             console.error("Error fetching wiki description:", error);
         }
     } else {
-        // Try Wiki first
-        try {
-            const wikiResponse = await fetch(`/api/wiki?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`);
-            if (wikiResponse.ok) {
-                const wikiData = await wikiResponse.json();
-                if (wikiData.description) {
-                    return {
-                        description: wikiData.description,
-                        source: 'wiki'
-                    };
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching wiki description:", error);
-        }
+        // Try Wiki and Gemini in parallel, prefer Gemini if both succeed
+        const [wikiResult, geminiResult] = await Promise.allSettled([
+            fetch(`/api/wiki?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => data?.description ? { description: data.description, source: 'wiki' as const } : null)
+                .catch(() => null),
+            fetch(`/api/gemini?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`)
+                .then(res => res.ok ? res.json() : null)
+                .then(data => data?.description ? { description: data.description, source: 'gemini' as const } : null)
+                .catch(() => null)
+        ]);
 
-        // Fallback to Gemini if Wiki fails
-        try {
-            const geminiResponse = await fetch(`/api/gemini?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`);
-            if (geminiResponse.ok) {
-                const geminiData = await geminiResponse.json();
-                if (geminiData.description) {
-                    return {
-                        description: geminiData.description,
-                        source: 'gemini'
-                    };
-                }
-            }
-        } catch {
-            // Silently fail - will fallback to Wiki
+        // Prefer Gemini if both succeed, otherwise use whichever succeeded
+        const geminiData = geminiResult.status === 'fulfilled' ? geminiResult.value : null;
+        const wikiData = wikiResult.status === 'fulfilled' ? wikiResult.value : null;
+
+        if (geminiData) {
+            return geminiData;
+        }
+        if (wikiData) {
+            return wikiData;
         }
     }
 

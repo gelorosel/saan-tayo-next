@@ -904,6 +904,17 @@ export const destinations: Destination[] = [
     location: { region: "Laguna" },
   },
   {
+    id: "masungi-georeserve",
+    name: "Masungi Georeserve",
+    overrideUnsplashName: "Masungi",
+    island: "luzon",
+    environments: ["mountains"],
+    activities: ["explore", "natural_wonders", "hike"],
+    bestSeasons: ["cool_dry"],
+    budget: "mid",
+    location: { region: "Rizal" },
+  },
+  {
     id: "clark",
     name: "Clark",
     island: "luzon",

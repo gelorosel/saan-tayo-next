@@ -1115,7 +1115,7 @@ export const destinations: Destination[] = [
     name: "Manolo Fortich",
     island: "mindanao",
     environments: ["mountains", "city"],
-    activities: ["explore", "natural_wonders", "relax"],
+    activities: ["explore", "hike", "relax", "camp"],
     bestSeasons: ["cool_dry", "hot_dry"],
     budget: "low",
     location: { region: "Bukidnon" },

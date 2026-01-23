@@ -10,10 +10,10 @@ import { uniqueByValue } from "@/lib/utils";
 import { toPreference } from "@/lib/preference";
 import { scoreDestinations } from "@/lib/score";
 import { destinations } from "@/src/data/destinations";
+import { prettifyActivity } from "@/lib/utils";
 
 import DestinationResultCard from "@/components/DestinationCard";
 import MiniCard from "@/components/MiniCard";
-import { Preference } from "@/src/types/preference";
 import { de } from "zod/v4/locales";
 
 const FAST_MODE_KEY = "fastMode";
@@ -64,8 +64,24 @@ export default function Home() {
   const [fastMode, setFastMode] = useState(false);
   const [hasShownDestination, setHasShownDestination] = useState(false);
   const canGoBack = useMemo(() => step > 0, [step])
-  const finalDestinations = useMemo(() => scoreDestinations(toPreference(answers), destinations), [answers, destinations])
   const preferences = useMemo(() => toPreference(answers), [answers])
+  const scoredDestinations = useMemo(
+    () => scoreDestinations(preferences, destinations),
+    [preferences]
+  );
+  const [finalDestinations, setFinalDestinations] = useState<typeof scoredDestinations>([]);
+
+  useEffect(() => {
+    setFinalDestinations(scoredDestinations);
+    setPick(0);
+  }, [scoredDestinations]);
+
+  // keep pick in range if list size changes
+  useEffect(() => {
+    if (pick >= finalDestinations.length) {
+      setPick(Math.max(0, finalDestinations.length - 1));
+    }
+  }, [pick, finalDestinations.length]);
 
   useEffect(() => {
     // Load fast mode preference from localStorage
@@ -129,34 +145,62 @@ export default function Home() {
     }
   }, [baseCurrent, finalDestinations.length, hasShownDestination]);
 
-  // Get related destinations in the same region
+  // Get related destinations: region destinations first, then rest of finalDestinations
   const relatedDestinations = useMemo(() => {
     if (current || finalDestinations.length === 0) {
       return [];
     }
 
     const currentDestination = finalDestinations[pick];
-    if (!currentDestination.location?.region) {
-      return [];
+    const currentDestinationId = currentDestination.id;
+
+    // Get region destinations (from all destinations, filtered by region)
+    let regionDestinations: typeof finalDestinations = [];
+    if (currentDestination.location?.region) {
+      const regionDests = destinations
+        .filter(d =>
+          d.location?.region === currentDestination.location?.region &&
+          d.id !== currentDestinationId
+        );
+
+      if (regionDests.length > 0) {
+        // Score the region destinations using user preferences
+        const scoredRegionDests = scoreDestinations(preferences, regionDests);
+        // Get top 5 region destinations
+        regionDestinations = scoredRegionDests.slice(0, 5);
+      }
     }
 
-    // Filter by region, exclude current destination
-    const regionDestinations = destinations
-      .filter(d =>
-        d.location?.region === currentDestination.location?.region &&
-        d.id !== currentDestination.id
-      );
+    // Get the rest of finalDestinations (excluding current and region destinations)
+    const regionDestinationIds = new Set(regionDestinations.map(d => d.id));
+    const restOfFinalDestinations = finalDestinations
+      .filter(d => d.id !== currentDestinationId && !regionDestinationIds.has(d.id));
 
-    if (regionDestinations.length === 0) {
-      return [];
-    }
+    // Combine: region destinations first, then rest of finalDestinations
+    // Limit total to a reasonable number (e.g., 10)
+    const combined = [...regionDestinations, ...restOfFinalDestinations].slice(0, 5);
 
-    // Score the destinations using user preferences
-    const scored = scoreDestinations(preferences, regionDestinations);
-
-    // Return top 5
-    return scored.slice(0, 5);
+    return combined;
   }, [current, finalDestinations, pick, preferences]);
+
+  const handleMiniCardClick = (destinationId: string) => {
+    setFinalDestinations((prev) => {
+      if (prev.length === 0) return prev;
+
+      const fromIndex = prev.findIndex((d) => d.id === destinationId);
+      if (fromIndex === -1) return prev;
+
+      // Move clicked destination to "next" position (right after current pick)
+      const nextIndexRaw = Math.min(pick + 1, prev.length - 1);
+      const arr = [...prev];
+      const [item] = arr.splice(fromIndex, 1);
+      const insertIndex = fromIndex < nextIndexRaw ? nextIndexRaw - 1 : nextIndexRaw;
+      arr.splice(insertIndex, 0, item);
+      return arr;
+    });
+
+    setPick((prevPick) => Math.min(prevPick + 1, Math.max(0, finalDestinations.length - 1)));
+  };
 
   const goNext = (questionId: string, chosenValue: string, meta?: { envWasSurprise?: boolean }) => {
     setAnswers((prev) => {
@@ -224,78 +268,94 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-xl w-full">
-        <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
-        <h2 className="text-xl font-semibold mb-2">Where to next?</h2>
-        {hasShownDestination && (
-          <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={fastMode}
-              onChange={toggleFastMode}
-              className="cursor-pointer"
-            />
-            <span>Fast mode (skip loading images and description)</span>
-          </label>
-        )}
-        {current ?
-          <QuestionCard
-            question={current.question}
-            options={current.options as Option[]}
-            onSelect={handleSelect}
-            onBack={handleBack}
-            canGoBack={canGoBack}
-            showSurprise={true}
-          /> :
-          finalDestinations.length ? (
-            <div className="flex flex-col lg:flex-row gap-6 items-start">
-              <DestinationResultCard
-                key={finalDestinations[pick].id}
-                destination={finalDestinations[pick]}
-                preferredActivity={preferences.activity}
-                reasons={finalDestinations[pick].reasons}
-                onLoadingChange={setIsDestinationLoading}
+        <div className="max-w-xl w-full mx-auto">
+          <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
+          <h2 className="text-xl font-semibold mb-2">Where to next?</h2>
+          {hasShownDestination && (
+            <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={fastMode}
+                onChange={toggleFastMode}
+                className="cursor-pointer"
               />
-            </div>
-          ) : (
-            <p>no destinations matched your criteria</p>
-          )
-        }
+              <span>Fast mode (skip loading images and description)</span>
+            </label>
+          )}
+          {current ?
+            <QuestionCard
+              question={current.question}
+              options={current.options as Option[]}
+              onSelect={handleSelect}
+              onBack={handleBack}
+              canGoBack={canGoBack}
+              showSurprise={true}
+            /> :
+            finalDestinations.length ? (
+              <div className="flex flex-col lg:flex-row gap-6 items-start">
+                <DestinationResultCard
+                  key={finalDestinations[pick].id}
+                  destination={finalDestinations[pick]}
+                  preferredActivity={preferences.activity}
+                  reasons={finalDestinations[pick].reasons}
+                  onLoadingChange={setIsDestinationLoading}
+                />
+              </div>
+            ) : (
+              <p>no destinations matched your criteria</p>
+            )
+          }
 
 
-        {canGoBack &&
-          <div className="my-3 flex flex-row justify-between gap-4">
-            <button
-              className="underline text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => {
-                setStep(0)
-                setPick(0)
-              }}
-              disabled={isDestinationLoading}
-            >
-              Start over
-            </button>
-            {!current && pick + 1 < finalDestinations.length &&
+          {canGoBack &&
+            <div className="my-3 flex flex-row justify-between gap-4">
               <button
                 className="underline text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={() => setPick(pick + 1)}
+                onClick={() => {
+                  setStep(0)
+                  setPick(0)
+                }}
                 disabled={isDestinationLoading}
               >
-                I've been here!
+                Start over
               </button>
-            }
-          </div>
-        }
-
+              {!current && pick + 1 < finalDestinations.length &&
+                <button
+                  className="underline text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => setPick(pick + 1)}
+                  disabled={isDestinationLoading}
+                >
+                  I've been here!
+                </button>
+              }
+            </div>
+          }
+        </div>
 
         {/* More to see in region section */}
-        {relatedDestinations.length > 0 && (
-          <div className="lg:w-72 xl:w-80 flex-shrink-0">
+        {!isDestinationLoading && relatedDestinations.length > 0 && (
+          <div className="w-full mt-10">
             <h3 className="text-base font-semibold mb-3">
-              More to see in {finalDestinations[pick].location?.region}
+              More {answers.activity ? prettifyActivity(answers.activity) : "to see"} in {finalDestinations[pick].island.charAt(0).toUpperCase() + finalDestinations[pick].island.slice(1)}
             </h3>
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-row gap-3.5 overflow-x-auto pb-2 -mx-6 px-6">
               {relatedDestinations.map((relatedDest) => (
-                <MiniCard key={relatedDest.id} destination={relatedDest} />
+                <div
+                  key={relatedDest.id}
+                  className="flex-shrink-0 cursor-pointer"
+                  style={{ width: "18rem" }}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleMiniCardClick(relatedDest.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleMiniCardClick(relatedDest.id);
+                    }
+                  }}
+                >
+                  <MiniCard destination={relatedDest} />
+                </div>
               ))}
             </div>
           </div>

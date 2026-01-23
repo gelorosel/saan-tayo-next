@@ -14,8 +14,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const description = await geminiShortDescription(destination, activity || 'travel');
-    return NextResponse.json({ description });
+    const result = await geminiShortDescription(destination, activity || 'travel');
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching Gemini description:', error);
     return NextResponse.json(

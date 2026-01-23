@@ -15,6 +15,11 @@ export default function MiniCard({ destination }: Props) {
     return (
         <Card className="p-6 gap-2">
             <h4 className="text-styled">{destination.name}</h4>
+            {destination.location?.region && (
+                <p className="text-sm font-semibold mb-2">
+                    {destination.location.region}
+                </p>
+            )}
             <div className="flex flex-wrap gap-1">
                 {[...new Set(destination.activities)].sort().map((activity) => (
                     <Badge key={activity} variant="outline" className="text-xs px-1.5 py-0.5">

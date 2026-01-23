@@ -4,6 +4,7 @@ import { toQueryName } from "./destination";
 export interface DescriptionData {
     description: string;
     source: 'gemini' | 'wiki';
+    bestMonths?: string;
 }
 
 interface LoadDescriptionOptions {
@@ -62,7 +63,8 @@ export async function loadDescription(
                 if (geminiData.description) {
                     return {
                         description: geminiData.description,
-                        source: 'gemini'
+                        source: 'gemini',
+                        bestMonths: geminiData.bestMonths
                     };
                 }
             }
@@ -94,7 +96,11 @@ export async function loadDescription(
                 .catch(() => null),
             fetch(`/api/gemini?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`)
                 .then(res => res.ok ? res.json() : null)
-                .then(data => data?.description ? { description: data.description, source: 'gemini' as const } : null)
+                .then(data => data?.description ? {
+                    description: data.description,
+                    source: 'gemini' as const,
+                    bestMonths: data.bestMonths
+                } : null)
                 .catch(() => null)
         ]);
 

@@ -278,7 +278,7 @@ export default function DestinationResultCard({
     }
 
     return (
-        <Card className="overflow-hidden rounded-2xl shadow-sm pt-0">
+        <Card className="overflow-hidden rounded-2xl shadow-sm pt-0 w-full">
             {/* hero image - hidden in fast mode */}
             {!isFastMode && (
                 <div className="relative h-72 w-full">
@@ -352,9 +352,11 @@ export default function DestinationResultCard({
                         <div className="h-4 bg-muted animate-pulse rounded" />
                     </div>
                 ) : description?.description ? (
-                    <p className="text-sm text-muted-foreground">
-                        {description.description}
-                    </p>
+                    <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">
+                            {description.description}
+                        </p>
+                    </div>
                 ) : null}
 
                 {/* Best Time to Visit */}
@@ -370,6 +372,15 @@ export default function DestinationResultCard({
                         </div>
                     </div>
                 )}
+
+                <div className="space-y-2">
+                    {description?.bestMonths && (
+                        <p className="text-sm font-semibold">
+                            Best months to visit: {description.bestMonths}
+                        </p>
+                    )}
+                </div>
+
 
                 {/* Google Search Button */}
                 <Button

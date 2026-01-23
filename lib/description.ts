@@ -25,11 +25,21 @@ export async function loadDescription(
     let prioritizeGemini = false;
     let fastMode = false;
     try {
+        // Check localStorage first for fast mode
+        const saved = localStorage.getItem("fastMode");
+        if (saved !== null) {
+            fastMode = saved === "true";
+        }
+        
+        // Get prioritizeGemini from API
         const configResponse = await fetch('/api/config');
         if (configResponse.ok) {
             const config = await configResponse.json();
             prioritizeGemini = config.prioritizeGemini || false;
-            fastMode = config.fastMode || false;
+            // Only use API fastMode if localStorage doesn't have a value
+            if (saved === null) {
+                fastMode = config.fastMode || false;
+            }
         }
     } catch {
         // Silently fail

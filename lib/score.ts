@@ -10,14 +10,16 @@ export function scoreDestinations(
   const scoredDestinations = dests
     .filter((d) => pref.island == "surprise" || d.island === pref.island)
     .filter((d) => pref.environment == "surprise" || d.environments?.includes(pref.environment))
-    .filter((d) => pref.activity == "surprise" || d.activities.includes(pref.activity))
     // .map((d) => {
     //   return { ...d, score: 100, reasons: [] };
     // })
     .map((d) => {
       let score = 0;
-      const reasons: string[] = [d.island, "Fits your main activity"];
+      const reasons: string[] = [d.island];
 
+      if (pref.activity == "surprise" || d.activities.includes(pref.activity)) {
+        score += 5; reasons.push("Fits your main activity");
+      }
       if (pref.season == "surprise" || d.bestSeasons.includes(pref.season)) {
         score += 2; reasons.push("Good for your travel season");
       } else {

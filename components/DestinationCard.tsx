@@ -79,25 +79,41 @@ export default function DestinationResultCard({
     const [isFallbackImage, setIsFallbackImage] = useState(false);
     const [imageData, setImageData] = useState<UnsplashImageData | null>(null);
     const [description, setDescription] = useState<DescriptionData | null>(null);
+    const [fastModeVersion, setFastModeVersion] = useState(0);
     const activities = activitiesOverride ?? destination.activities;
 
     useEffect(() => {
         let isMounted = true;
 
+        const checkFastMode = (): boolean => {
+            try {
+                const saved = localStorage.getItem("fastMode");
+                if (saved !== null) {
+                    return saved === "true";
+                }
+            } catch {
+                // Silently fail
+            }
+            return false;
+        };
+
         async function loadImage() {
             setIsLoadingImage(true);
             setImageData(null);
 
-            // Check fast mode
-            let fastMode = false;
-            try {
-                const configResponse = await fetch('/api/config');
-                if (configResponse.ok) {
-                    const config = await configResponse.json();
-                    fastMode = config.fastMode || false;
+            // Check fast mode (localStorage first, then API/env)
+            let fastMode = checkFastMode();
+            if (!fastMode) {
+                try {
+                    // Fallback to API/env variable
+                    const configResponse = await fetch('/api/config');
+                    if (configResponse.ok) {
+                        const config = await configResponse.json();
+                        fastMode = config.fastMode || false;
+                    }
+                } catch {
+                    // Silently fail
                 }
-            } catch (error) {
-                // Silently fail
             }
 
             if (fastMode) {
@@ -139,7 +155,20 @@ export default function DestinationResultCard({
         return () => {
             isMounted = false;
         };
-    }, [destination]);
+    }, [destination, fastModeVersion]);
+
+    // Listen for fast mode changes
+    useEffect(() => {
+        const handleFastModeChange = () => {
+            // Trigger reload by incrementing fastModeVersion
+            setFastModeVersion((prev) => prev + 1);
+        };
+
+        window.addEventListener("fastModeChanged", handleFastModeChange);
+        return () => {
+            window.removeEventListener("fastModeChanged", handleFastModeChange);
+        };
+    }, []);
 
     useEffect(() => {
         let isMounted = true;
@@ -162,10 +191,12 @@ export default function DestinationResultCard({
 
         fetchDescription();
 
+        fetchDescription();
+
         return () => {
             isMounted = false;
         };
-    }, [destination, preferredActivity, activities]);
+    }, [destination, preferredActivity, activities, fastModeVersion]);
 
     // Notify parent of loading state changes
     useEffect(() => {

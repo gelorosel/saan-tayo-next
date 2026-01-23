@@ -1,7 +1,7 @@
 // src/app/page.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { QuestionCard } from "@/components/QuestionCard";
 import { questions } from "@/src/data/questions";
 import { activityOptionsByEnvironment, Environment, EnvironmentOrSurprise } from "@/src/data/activities";
@@ -13,6 +13,8 @@ import { destinations } from "@/src/data/destinations";
 
 import DestinationResultCard from "@/components/DestinationCard";
 import { de } from "zod/v4/locales";
+
+const FAST_MODE_KEY = "fastMode";
 
 const ENV_SURPRISE_FLAG = "__envSurprise";
 
@@ -57,8 +59,25 @@ export default function Home() {
   const [pick, setPick] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isDestinationLoading, setIsDestinationLoading] = useState(false);
+  const [fastMode, setFastMode] = useState(false);
   const canGoBack = useMemo(() => step > 0, [step])
   const finalDestinations = useMemo(() => scoreDestinations(toPreference(answers), destinations), [answers, destinations])
+
+  useEffect(() => {
+    // Load fast mode preference from localStorage
+    const saved = localStorage.getItem(FAST_MODE_KEY);
+    if (saved !== null) {
+      setFastMode(saved === "true");
+    }
+  }, []);
+
+  const toggleFastMode = () => {
+    const newValue = !fastMode;
+    setFastMode(newValue);
+    localStorage.setItem(FAST_MODE_KEY, String(newValue));
+    // Trigger a custom event to notify other components
+    window.dispatchEvent(new CustomEvent("fastModeChanged", { detail: newValue }));
+  };
 
   const baseCurrent = questions[step];
 
@@ -159,7 +178,16 @@ export default function Home() {
     <main className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-xl w-full">
         <h1 className="text-styled uppercase text-4xl mt-6">Saan Tayo Next?</h1>
-        <h2 className="text-xl font-semibold mb-6">Where to next?</h2>
+        <h2 className="text-xl font-semibold mb-2">Where to next?</h2>
+        <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={fastMode}
+            onChange={toggleFastMode}
+            className="cursor-pointer"
+          />
+          <span>Fast mode (skip loading images and description)</span>
+        </label>
         {current ?
           <QuestionCard
             question={current.question}

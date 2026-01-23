@@ -47,4 +47,7 @@ export interface Destination {
 
   /** Optional: override the name used for Unsplash image search */
   overrideUnsplashName?: string;
+
+  /** Optional: override the name used for Google search */
+  overrideGoogleSearchName?: string;
 }

@@ -80,6 +80,7 @@ export default function DestinationResultCard({
     const [imageData, setImageData] = useState<UnsplashImageData | null>(null);
     const [description, setDescription] = useState<DescriptionData | null>(null);
     const [fastModeVersion, setFastModeVersion] = useState(0);
+    const [isFastMode, setIsFastMode] = useState(false);
     const activities = activitiesOverride ?? destination.activities;
 
     useEffect(() => {
@@ -157,9 +158,29 @@ export default function DestinationResultCard({
         };
     }, [destination, fastModeVersion]);
 
-    // Listen for fast mode changes
+    // Check fast mode on mount and listen for changes
     useEffect(() => {
+        const checkFastMode = (): boolean => {
+            try {
+                const saved = localStorage.getItem("fastMode");
+                if (saved !== null) {
+                    return saved === "true";
+                }
+            } catch {
+                // Silently fail
+            }
+            return false;
+        };
+
+        const updateFastMode = () => {
+            setIsFastMode(checkFastMode());
+        };
+
+        // Check on mount
+        updateFastMode();
+
         const handleFastModeChange = () => {
+            updateFastMode();
             // Trigger reload by incrementing fastModeVersion
             setFastModeVersion((prev) => prev + 1);
         };
@@ -208,7 +229,7 @@ export default function DestinationResultCard({
         openGoogleSearch(destination);
     };
 
-    if (isLoadingImage || isLoadingDescription) {
+    if (!isFastMode && (isLoadingImage || isLoadingDescription)) {
         return (
             <Card className="overflow-hidden rounded-2xl shadow-sm pt-0">
                 {/* Skeleton Image */}
@@ -256,48 +277,50 @@ export default function DestinationResultCard({
 
     return (
         <Card className="overflow-hidden rounded-2xl shadow-sm pt-0">
-            {/* hero image */}
-            <div className="relative h-72 w-full">
-                {isLoadingImage ? (
-                    <div className="h-full w-full bg-muted relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-1/3 animate-shimmer" />
-                    </div>
-                ) : (
-                    <img
-                        src={heroImgSrc}
-                        alt={`${destination.name}`}
-                        className="h-full w-full object-cover"
-                    />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                {/* Unsplash Attribution */}
-                {imageData && (
-                    <>
-                        {isFallbackImage && <div className="absolute bottom-6 right-2 text-white text-xs opacity-50 hover:opacity-100 transition-opacity">
-                            (may not be the actual destination)
-                        </div>}
-                        <div className="absolute bottom-2 right-2 text-white text-xs opacity-80 hover:opacity-100 transition-opacity">
-                            <a
-                                href={imageData.photographerUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="hover:underline"
-                            >
-                                Photo by {imageData.photographerName}
-                            </a>
-                            {" on "}
-                            <a
-                                href="https://unsplash.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="hover:underline"
-                            >
-                                Unsplash
-                            </a>
+            {/* hero image - hidden in fast mode */}
+            {!isFastMode && (
+                <div className="relative h-72 w-full">
+                    {isLoadingImage ? (
+                        <div className="h-full w-full bg-muted relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent w-1/3 animate-shimmer" />
                         </div>
-                    </>
-                )}
-            </div>
+                    ) : (
+                        <img
+                            src={heroImgSrc}
+                            alt={`${destination.name}`}
+                            className="h-full w-full object-cover"
+                        />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    {/* Unsplash Attribution */}
+                    {imageData && (
+                        <>
+                            {isFallbackImage && <div className="absolute bottom-6 right-2 text-white text-xs opacity-50 hover:opacity-100 transition-opacity">
+                                (may not be the actual destination)
+                            </div>}
+                            <div className="absolute bottom-2 right-2 text-white text-xs opacity-80 hover:opacity-100 transition-opacity">
+                                <a
+                                    href={imageData.photographerUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:underline"
+                                >
+                                    Photo by {imageData.photographerName}
+                                </a>
+                                {" on "}
+                                <a
+                                    href="https://unsplash.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:underline"
+                                >
+                                    Unsplash
+                                </a>
+                            </div>
+                        </>
+                    )}
+                </div>
+            )}
 
             <CardContent className="p-6 space-y-4">
                 {/* Header */}
@@ -306,12 +329,12 @@ export default function DestinationResultCard({
                         <div className="flex-1 min-w-[25%]">
                             <h2 className="text-styled uppercase text-3xl mt-2">{destination.name}</h2>
                             {destination.location?.region && (
-                                <p className="text-muted-foreground">
+                                <p className="text-sm font-semibold mb-2">
                                     {destination.location.region}
                                 </p>
                             )}
                         </div>
-                        <div className="flex flex-wrap gap-2 sm:justify">
+                        <div className="flex flex-wrap gap-2 max-w-[50 %] sm:justify">
                             {[...new Set(activities)].sort().map((a) => (
                                 <Badge key={a} variant="outline" className="px-3 py-1">
                                     {pretty(a)}

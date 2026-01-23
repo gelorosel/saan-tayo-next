@@ -15,7 +15,7 @@ export function scoreDestinations(
     // })
     .map((d) => {
       let score = 0;
-      const reasons: string[] = [d.island];
+      const reasons: string[] = [`Found in ${d.island}`];
 
       if (pref.activity == "surprise" || d.activities.includes(pref.activity)) {
         score += 5; reasons.push("Fits your main activity");

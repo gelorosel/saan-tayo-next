@@ -197,7 +197,7 @@ export function ShareResultModal({
                                             <Badge
                                                 key={c.id}
                                                 variant="ideal"
-                                                className="flex items-center gap-1 text-sm px-3 py-1"
+                                                className="flex items-center gap-1 text-lg px-4 py-2"
                                             >
                                                 <span>{c.emoji}</span> {c.name}
                                             </Badge>
@@ -214,7 +214,7 @@ export function ShareResultModal({
                                             <Badge
                                                 key={c.id}
                                                 variant="struggle"
-                                                className="flex items-center gap-1 text-sm px-3 py-1"
+                                                className="flex items-center gap-1 text-lg px-4 py-2"
                                             >
                                                 <span>{c.emoji}</span> {c.name}
                                             </Badge>
@@ -225,7 +225,7 @@ export function ShareResultModal({
 
 
                             {/* Destination Image - 2:1 aspect ratio */}
-                            <h4 className="text-bold text-2xl mt-4 mb-0">Next stop:</h4>
+                            <h4 className="text-bold text-2xl mt-4 mb-2">Next stop:</h4>
                             <div className="relative w-full h-[25%]">
                                 <img
                                     src={heroImgSrc}
@@ -257,7 +257,7 @@ export function ShareResultModal({
                             {/* Branding */}
                             <div className="text-center pt-4 border-t mt-auto">
                                 <div className="flex justify-center">
-                                    <QRCodeCanvas value={"bit.ly/SaanTayoNext"} size={150} />
+                                    <QRCodeCanvas value={"https://saan-tayo-next.vercel.app/"} size={130} />
                                 </div>
                                 <p className="text-sm text-muted-foreground mt-4">Find your next destination with bit.ly/SaanTayoNext</p>
                             </div>

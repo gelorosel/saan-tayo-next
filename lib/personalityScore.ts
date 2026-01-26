@@ -86,10 +86,11 @@ export function personalityScore(
 }
 
 const personalityPreferredActivities: Record<PersonalityId, Activity[]> = {
-  relaxed_escapist: ["relax", "swim", "food_trip", "camp", "snorkel", "nightlife"],
+  relaxed_escapist: ["relax", "swim", "food_trip", "camp", "snorkel"],
   adventurer: ["hike", "trek", "dive", "surf", "waterfalls", "natural_wonders", "camp"],
   curious_wanderer: ["explore", "food_trip", "museums", "history", "nightlife", "island_hop"],
-  master_planner: ["museums", "history", "food_trip", "natural_wonders", "island_hop", "explore"],
+  // this mf wants to do everything
+  master_planner: ["museums", "history", "food_trip", "natural_wonders", "island_hop", "explore", "camp", "snorkel", "hike", "trek", "dive", "surf", "waterfalls"],
   chill_explorer: ["relax", "explore", "food_trip", "swim", "camp", "waterfalls", "snorkel"],
   purposeful_adventurer: ["hike", "trek", "waterfalls", "dive", "surf", "natural_wonders", "camp"],
   free_spirited_nomad: ["explore", "nightlife", "surf", "island_hop", "food_trip", "snorkel", "dive"],

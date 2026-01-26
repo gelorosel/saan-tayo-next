@@ -25,7 +25,7 @@ export default function Home() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [fastMode, setFastMode] = useState(false);
   const [hasShownDestination, setHasShownDestination] = useState(false);
-  
+
   const canGoBack = step > 0;
   const preferences = useMemo(() => toPreference(answers), [answers]);
   const personalityResult = useMemo(() => personalityScore(answers), [answers]);
@@ -45,8 +45,8 @@ export default function Home() {
 
   const scoredDestinations = useMemo(() => {
     return scoreDestinations(
-      preferences, 
-      destinations, 
+      preferences,
+      destinations,
       personalityResult?.preferredActivities ?? []
     );
   }, [preferences, personalityResult?.preferredActivities]);
@@ -159,6 +159,9 @@ export default function Home() {
     });
 
     setPick((prevPick) => Math.min(prevPick + 1, Math.max(0, finalDestinations.length - 1)));
+
+    // Scroll to top smoothly
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [pick, finalDestinations.length]);
 
   const goNext = useCallback((questionId: string, chosenValue: string) => {

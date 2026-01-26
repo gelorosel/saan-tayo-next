@@ -195,9 +195,9 @@ export function PersonalityResultCard({
             <div className="relative">
                 <Card className="overflow-hidden rounded-2xl shadow-sm w-full">
                     {/* Skeleton Image */}
-                    <div className="relative h-96 w-full bg-muted animate-pulse">
+                    <div className="relative w-full aspect-[16/9] bg-muted animate-pulse">
                         <p className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-muted-foreground z-10">
-                            Finding your perfect match...
+                            Finding your next destination...
                         </p>
                     </div>
 
@@ -275,11 +275,11 @@ export function PersonalityResultCard({
             <Card className="overflow-hidden rounded-2xl shadow-sm w-full">
                 {/* Destination Image */}
                 {!fastMode && (
-                    <div className="relative h-96 w-full">
+                    <div className="relative w-full aspect-[16/9] overflow-hidden">
                         <img
                             src={heroImgSrc}
                             alt={destination.name}
-                            className={`h-full w-full object-cover ${isLoadingImage ? "opacity-70" : ""}`}
+                            className={`absolute inset-0 h-full w-full object-cover ${isLoadingImage ? "opacity-70" : ""}`}
                         />
                         {/* Gradient overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />

@@ -13,6 +13,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { QRCodeCanvas } from "qrcode.react";
 
 interface UnsplashImageData {
     id?: string;
@@ -165,23 +166,11 @@ export function ShareResultModal({
                     }}
                 >
                     <Card className="overflow-hidden rounded-2xl shadow-sm w-full h-full">
-                        <CardContent className="p-12 space-y-8 h-full flex flex-col">
+                        <CardContent className="p-10 space-y-4 h-full flex flex-col">
                             {/* Header Statement */}
                             <h1 className="text-center text-styled text-5xl mt-6">Saan Tayo Next?</h1>
 
-                            {/* <h2 className="text-2xl font-bold">
-                                I'm {personality.name} {personality.emoji}
-                            </h2>
-
-                            <div>
-                                <Badge variant={personality.category} className="capitalize text-sm">
-                                    {personality.category} traveler
-                                </Badge>
-                                <p className="text-sm text-muted-foreground">
-                                    {personality.description}
-                                </p>
-                            </div> */}
-                            <div className="mt-8">
+                            <div className="mt-4">
                                 <div className="flex items-center gap-4">
                                     <div className="flex items-end gap-4">
                                         <div className="flex items-start gap-4">
@@ -195,8 +184,7 @@ export function ShareResultModal({
                                 </Badge>
                             </div>
 
-
-                            <p className="text-lg text-muted-foreground leading-relaxed">
+                            <p className="text-lg leading-relaxed">
                                 {personality.description}
                             </p>
 
@@ -237,7 +225,7 @@ export function ShareResultModal({
 
 
                             {/* Destination Image - 2:1 aspect ratio */}
-                            <h4 className="text-lg font-medium"> 🛫 Next stop:</h4>
+                            <h4 className="text-bold text-2xl mt-4 mb-0">Next stop:</h4>
                             <div className="relative w-full h-[25%]">
                                 <img
                                     src={heroImgSrc}
@@ -250,25 +238,28 @@ export function ShareResultModal({
 
                                 {/* Unsplash Attribution */}
                                 {imageData && (
-                                    <div className="absolute bottom-2 right-3 text-white text-sm opacity-80 z-20">
+                                    <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20">
                                         Photo by {imageData.photographerName} on Unsplash
                                     </div>
                                 )}
 
                                 {/* Destination Info */}
-                                <div className="absolute bottom-4 left-6 space-y-2 text-white z-10">
-                                    <h2 className="text-styled text-5xl drop-shadow-md mb-0">
+                                <div className="absolute bottom-1.5 left-6 space-y-2 text-white z-10">
+                                    <h2 className="text-styled text-4xl drop-shadow-md mb-0">
                                         {destination.name}
                                     </h2>
                                     {destination.location?.region && (
-                                        <p className="text-2xl text-white/90 drop-shadow-md">{destination.location.region}</p>
+                                        <p className="text-xl text-white/90 drop-shadow-md">{destination.location.region}</p>
                                     )}
                                 </div>
                             </div>
 
                             {/* Branding */}
-                            <div className="text-center pt-6 border-t mt-auto">
-                                <p className="text-sm text-muted-foreground">Find out your next destination with bit.ly/SaanTayoNext</p>
+                            <div className="text-center pt-4 border-t mt-auto">
+                                <div className="flex justify-center">
+                                    <QRCodeCanvas value={"bit.ly/SaanTayoNext"} size={150} />
+                                </div>
+                                <p className="text-sm text-muted-foreground mt-4">Find your next destination with bit.ly/SaanTayoNext</p>
                             </div>
                         </CardContent>
                     </Card>

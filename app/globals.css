@@ -118,6 +118,9 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* Disable tap highlight on mobile */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
   }
   html {
     background-color: #f4f0e7;
@@ -125,6 +128,14 @@
   body {
     @apply bg-background text-foreground font-sans;
     background-color: #f4f0e7;
+  }
+  /* Additional mobile touch fixes */
+  button,
+  a,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
   }
 }
 

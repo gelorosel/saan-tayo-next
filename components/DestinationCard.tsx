@@ -5,7 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Destination } from "@/src/types/destination";
-import { openGoogleSearch } from "@/lib/destination";
+import { toQueryName } from "@/lib/destination";
+import { openGoogleSearch } from "@/lib/googleSearch";
 import { loadDescription, DescriptionData } from "@/lib/description";
 
 type Props = {
@@ -226,7 +227,11 @@ export default function DestinationResultCard({
     }, [isLoadingImage, isLoadingDescription, onLoadingChange]);
 
     const handleGoogleSearch = () => {
-        openGoogleSearch(destination);
+        openGoogleSearch(toQueryName(destination));
+    };
+
+    const handleShare = async () => {
+        // TODO: implement share functionality
     };
 
     if (!isFastMode && (isLoadingImage || isLoadingDescription)) {
@@ -391,6 +396,14 @@ export default function DestinationResultCard({
                     className="w-full"
                 >
                     Know more about {destination.name}
+                </Button>
+
+                <Button
+                    onClick={handleShare}
+                    variant="outline"
+                    className="w-full"
+                >
+                    Share with your friends
                 </Button>
             </CardContent>
         </Card>

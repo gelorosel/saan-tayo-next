@@ -20,7 +20,7 @@ export function scoreDestinations(
     .sort(() => Math.random() - 0.5)
     .map((d) => {
       let score = 0;
-      const reasons: string[] = [`Found in ${d.island}`];
+      const reasons: string[] = [`It keeps you in ${d.island}`];
 
       if (pref.activity && pref.activity.length > 0) {
         const primaryActivity = pref.activity[0];

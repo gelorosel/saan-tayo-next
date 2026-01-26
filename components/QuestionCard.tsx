@@ -27,18 +27,35 @@ export function QuestionCard({
                 <CardContent className="space-y-4">
                     <h2 className="text-xl font-semibold">{current.question}</h2>
 
-                    <div className={`grid ${current.id === "island" ? "grid-cols-1" : "grid-cols-2"} gap-3`}>
-                        {options.map((opt) => (
-                            <Button
-                                key={opt.value}
-                                variant="outline"
-                                size="lg"
-                                onClick={() => onSelect(opt.value)}
-                            >
-                                {opt.label}
-                            </Button>
-                        ))}
-                    </div>
+                    {current.id === "island" ? (
+                        // specific styling for island question
+                        <div className={`grid grid-cols-1 gap-3`}>
+                            {options.map((opt) => (
+                                <Button
+                                    key={opt.value}
+                                    variant="outline"
+                                    size="lg"
+                                    onClick={() => onSelect(opt.value)}
+                                >
+                                    {opt.label}
+                                </Button>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className={`grid grid-cols-2 gap-3`}>
+                            {options.map((opt) => (
+                                <Button
+                                    key={opt.value}
+                                    variant="outline"
+                                    size="lg"
+                                    onClick={() => onSelect(opt.value)}
+                                    className="h-30 sm:h-20"
+                                >
+                                    {opt.label}
+                                </Button>
+                            ))}
+                        </div>
+                    )}
 
                     <div className="flex items-center justify-between pt-2">
                         {canGoBack && (<Button

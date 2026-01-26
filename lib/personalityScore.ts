@@ -18,22 +18,6 @@ const answerToPersonality: Record<AnswerKey, PersonalityId> = {
   d: "master_planner",
 };
 
-const answerKeys: AnswerKey[] = ["a", "b", "c", "d"];
-
-const allPersonalityIds: PersonalityId[] = [
-  "relaxed_escapist",
-  "adventurer",
-  "curious_wanderer",
-  "master_planner",
-  "chill_explorer",
-  "purposeful_adventurer",
-  "free_spirited_nomad",
-  "soft_life_traveler",
-  "cultural_strategist",
-  "chaos_romantic",
-  "mood_based_traveler",
-];
-
 const hybridByPair: Record<string, PersonalityId> = {
   "a+c": "chill_explorer",
   "b+d": "purposeful_adventurer",
@@ -41,8 +25,6 @@ const hybridByPair: Record<string, PersonalityId> = {
   "a+d": "soft_life_traveler",
   "c+d": "cultural_strategist",
 };
-
-const tieBreakOrder: AnswerKey[] = ["a", "b", "c", "d"];
 
 export type PersonalityScoreResult = {
   primary: PersonalityId;
@@ -53,68 +35,66 @@ export type PersonalityScoreResult = {
 export function personalityScore(
   answers: Record<string, string>
 ): PersonalityScoreResult | null {
-  const scores = allPersonalityIds.reduce<Record<PersonalityId, number>>((acc, id) => {
-    acc[id] = 0;
-    return acc;
-  }, {} as Record<PersonalityId, number>);
+  const answerCounts: Record<AnswerKey, number> = { a: 0, b: 0, c: 0, d: 0 };
 
-  let total = 0;
-  const answerCounts = answerKeys.reduce<Record<AnswerKey, number>>((acc, key) => {
-    acc[key] = 0;
-    return acc;
-  }, {} as Record<AnswerKey, number>);
-
+  // Count answers
   for (const id of QUESTION_IDS) {
     const answer = answers[id] as AnswerKey | undefined;
-    if (!answer || !(answer in answerToPersonality)) continue;
-    const personality = answerToPersonality[answer];
-    scores[personality] += 1;
-    answerCounts[answer] += 1;
-    total += 1;
+    if (answer && answer in answerToPersonality) {
+      answerCounts[answer] += 1;
+    }
   }
 
-  if (total === 0) return null;
+  // Check if any answers were given
+  const distinctAnswers = Object.values(answerCounts).filter((count) => count > 0).length;
+  if (distinctAnswers === 0) return null;
 
-  const sortedKeys = [...answerKeys].sort((a, b) => {
-    const diff = answerCounts[b] - answerCounts[a];
-    if (diff !== 0) return diff;
-    return tieBreakOrder.indexOf(a) - tieBreakOrder.indexOf(b);
-  });
+  // Sort answers by count
+  const sortedKeys = (["a", "b", "c", "d"] as AnswerKey[]).sort((a, b) =>
+    answerCounts[b] - answerCounts[a]
+  );
 
-  const distinctAnswers = answerKeys.filter((key) => answerCounts[key] > 0).length;
   const maxCount = answerCounts[sortedKeys[0]];
-  const minCount = answerCounts[sortedKeys[sortedKeys.length - 1]];
 
-  if (distinctAnswers === 4 && maxCount - minCount <= 1) {
+  // Check for rare types
+  if (distinctAnswers === 4 && maxCount - answerCounts[sortedKeys[3]] <= 1) {
     const primary = "chaos_romantic";
-    return { primary, scores, preferredActivities: personalityPreferredActivities[primary] };
+    return { primary, scores: answerCounts as any, preferredActivities: personalityPreferredActivities[primary] };
   }
 
   if (distinctAnswers >= 3 && maxCount <= 2) {
     const primary = "mood_based_traveler";
-    return { primary, scores, preferredActivities: personalityPreferredActivities[primary] };
+    return { primary, scores: answerCounts as any, preferredActivities: personalityPreferredActivities[primary] };
   }
 
+  // Check for hybrid type
   const topPair = [sortedKeys[0], sortedKeys[1]].sort().join("+");
-  const hybrid = hybridByPair[topPair];
-  if (hybrid) {
-    return { primary: hybrid, scores, preferredActivities: personalityPreferredActivities[hybrid] };
+  let primary = hybridByPair[topPair] || answerToPersonality[sortedKeys[0]];
+
+  // Final filter: adjust personality based on selected activity
+  const selectedActivity = answers.activity as Activity | undefined;
+  if (selectedActivity && !personalityPreferredActivities[primary].includes(selectedActivity)) {
+    // Find highest-scoring personality that includes this activity
+    const match = sortedKeys
+      .map(key => answerToPersonality[key])
+      .find(id => personalityPreferredActivities[id].includes(selectedActivity));
+
+    if (match) primary = match;
   }
 
-  const base = answerToPersonality[sortedKeys[0]];
-  return { primary: base, scores, preferredActivities: personalityPreferredActivities[base] };
+  return { primary, scores: answerCounts as any, preferredActivities: personalityPreferredActivities[primary] };
 }
 
 const personalityPreferredActivities: Record<PersonalityId, Activity[]> = {
-  relaxed_escapist: ["relax", "swim", "food_trip"],
-  adventurer: ["hike", "trek", "dive"],
-  curious_wanderer: ["explore", "food_trip", "museums"],
-  master_planner: ["museums", "history", "food_trip"],
-  chill_explorer: ["relax", "explore", "food_trip"],
-  purposeful_adventurer: ["hike", "trek", "waterfalls"],
-  free_spirited_nomad: ["explore", "nightlife", "surf"],
-  soft_life_traveler: ["relax", "swim", "food_trip"],
-  cultural_strategist: ["museums", "history", "food_trip"],
-  chaos_romantic: ["explore", "nightlife", "island_hop"],
-  mood_based_traveler: ["relax", "explore", "food_trip"],
+  relaxed_escapist: ["relax", "swim", "food_trip", "camp", "snorkel", "nightlife"],
+  adventurer: ["hike", "trek", "dive", "surf", "waterfalls", "natural_wonders", "camp"],
+  curious_wanderer: ["explore", "food_trip", "museums", "history", "nightlife", "island_hop"],
+  master_planner: ["museums", "history", "food_trip", "natural_wonders", "island_hop", "explore"],
+  chill_explorer: ["relax", "explore", "food_trip", "swim", "camp", "waterfalls", "snorkel"],
+  purposeful_adventurer: ["hike", "trek", "waterfalls", "dive", "surf", "natural_wonders", "camp"],
+  free_spirited_nomad: ["explore", "nightlife", "surf", "island_hop", "food_trip", "snorkel", "dive"],
+  soft_life_traveler: ["relax", "swim", "food_trip", "camp", "snorkel", "nightlife"],
+  cultural_strategist: ["museums", "history", "food_trip", "explore", "natural_wonders", "island_hop"],
+  chaos_romantic: ["explore", "nightlife", "island_hop", "food_trip", "surf", "dive", "snorkel"],
+  mood_based_traveler: ["relax", "explore", "food_trip", "swim", "hike", "nightlife", "camp"],
 };

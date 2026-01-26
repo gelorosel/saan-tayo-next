@@ -298,15 +298,6 @@ export const destinations: Destination[] = [
     location: { region: "Aklan" },
   },
   {
-    id: "visayas-beach-alona",
-    name: "Alona Beach, Panglao",
-    island: "visayas",
-    environments: ["beach"],
-    activities: ["swim", "snorkel", "relax", "island_hop", "nightlife"],
-    bestSeasons: ["cool_dry", "hot_dry"],
-    location: { region: "Bohol" },
-  },
-  {
     id: "visayas-beach-bantayan",
     name: "Bantayan Island",
     island: "visayas",
@@ -326,7 +317,7 @@ export const destinations: Destination[] = [
   },
   {
     id: "visayas-beach-siquijor-beaches",
-    name: "Siquijor Island",
+    name: "Siquijor",
     island: "visayas",
     environments: ["beach", "mountains"],
     activities: ["swim", "relax", "explore", "hike", "camp", "waterfalls", "island_hop"],
@@ -468,15 +459,6 @@ export const destinations: Destination[] = [
   // 😌 VISAYAS – TOP 10 DESTINATIONS TO RELAX
   // ─────────────────────────────────────────────────────────────
   {
-    id: "visayas-relax-panglao",
-    name: "Panglao Island, Bohol",
-    island: "visayas",
-    environments: ["beach"],
-    activities: ["relax", "swim", "snorkel", "island_hop"],
-    bestSeasons: ["cool_dry", "hot_dry"],
-    location: { region: "Bohol" },
-  },
-  {
     id: "visayas-relax-camotes",
     name: "Camotes Islands",
     island: "visayas",
@@ -496,7 +478,7 @@ export const destinations: Destination[] = [
   },
   {
     id: "visayas-relax-moalboal",
-    name: "Moalboal, Cebu",
+    name: "Moalboal",
     island: "visayas",
     environments: ["beach"],
     activities: ["snorkel", "swim", "relax", "dive"],
@@ -1214,7 +1196,7 @@ export const destinations: Destination[] = [
     name: "Panglao Island",
     island: "visayas",
     environments: ["beach"],
-    activities: ["explore", "island_hop", "snorkel", "swim"],
+    activities: ["swim", "snorkel", "relax", "island_hop", "nightlife"],
     bestSeasons: ["cool_dry", "hot_dry", "wet"],
     location: { region: "Bohol" },
   },

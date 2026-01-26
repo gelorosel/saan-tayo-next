@@ -106,51 +106,6 @@ export default function Home() {
     return baseCurrent;
   }, [baseCurrent, answers.environment]);
 
-  const resultStatement = useMemo(() => {
-    if (current || finalDestinations.length === 0) return "";
-
-    switch (preferences.environment) {
-      case "beach":
-        return "Right now, you belong by the sea.";
-      case "mountains":
-        return "Right now, you belong somewhere high and quiet.";
-      case "city":
-        return "Right now, you belong in the middle of the energy.";
-      case "any":
-        return "Right now, you belong just about anywhere.";
-      default:
-        return "Right now, you belong somewhere that fits.";
-    }
-  }, [current, finalDestinations.length, preferences.environment]);
-
-  const shareSentence = useMemo(() => {
-    if (current || finalDestinations.length === 0) return "";
-    const name = finalDestinations[pick].name;
-    return `Right now, I belong in ${name}.`;
-  }, [current, finalDestinations, pick]);
-
-
-  useEffect(() => {
-    if (!shareSentence) return;
-
-    document.title = `Saan Tayo Next? — ${shareSentence}`;
-
-    const descriptionTag = document.querySelector('meta[name="description"]');
-    if (descriptionTag) {
-      descriptionTag.setAttribute("content", shareSentence);
-    }
-
-    const ogDescriptionTag = document.querySelector('meta[property="og:description"]');
-    if (ogDescriptionTag) {
-      ogDescriptionTag.setAttribute("content", shareSentence);
-    }
-
-    const ogTitleTag = document.querySelector('meta[property="og:title"]');
-    if (ogTitleTag) {
-      ogTitleTag.setAttribute("content", shareSentence);
-    }
-  }, [shareSentence]);
-
   // Mark that we've shown a destination for the first time
   useEffect(() => {
     if (!baseCurrent && finalDestinations.length > 0 && !hasShownDestination) {
@@ -298,7 +253,6 @@ export default function Home() {
             )
           }
 
-
           {canGoBack &&
             <div className="my-3 flex flex-row justify-between gap-4">
               <button
@@ -330,7 +284,7 @@ export default function Home() {
         {!isDestinationLoading && relatedDestinations.length > 0 && (
           <div className="w-full mt-10">
             <h3 className="text-base font-semibold mb-3">
-              You might also like:
+              If you've already been to {finalDestinations[pick].name}, you might also like:
             </h3>
             <div className="relative -mx-6 px-6">
               {/* Scrollable container */}

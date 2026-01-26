@@ -252,7 +252,7 @@ export function PersonalityResultCard({
                     className={`h-full w-full object-cover brightness-90 ${isLoadingImage ? "opacity-70" : ""}`}
                 />
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
                 {/* Unsplash Attribution */}
                 {imageData && (
                     <>
@@ -310,7 +310,7 @@ export function PersonalityResultCard({
                                 </p>
                             )}
                         </div>
-                        <div className="flex flex-wrap gap-2 max-w-[50 %] sm:justify">
+                        <div className="flex sm:flex-wrap gap-2 justify-end sm:max-w-[50%] items-center w-full">
                             {[...new Set(activities)].sort().map((a) => (
                                 <Badge key={a} variant="outline">
                                     {pretty(a)}
@@ -408,9 +408,6 @@ export function PersonalityResultCard({
                     </div>
                 )}
 
-
-
-
                 <div className="space-y-2">
                     {description?.bestMonths && (
                         <p className="text-sm">
@@ -422,8 +419,16 @@ export function PersonalityResultCard({
                     onClick={handleGoogleSearch}
                     variant="outline"
                     className="w-full"
+                    size="md"
                 >
                     Know more about {destination.name}
+                </Button>
+                <Button
+                    variant="outline"
+                    className="w-full"
+                    size="md"
+                >
+                    Share my results
                 </Button>
             </CardContent>
         </Card>

@@ -4,9 +4,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { QuestionCard } from "@/components/QuestionCard";
 import { questions } from "@/src/data/questions";
-import { activityOptionsByEnvironment, Environment, EnvironmentOrSurprise } from "@/src/data/activities";
-import { pickUnique } from "@/lib/random";
-import { uniqueByValue } from "@/lib/utils";
+import { activityOptionsByEnvironment, Environment } from "@/src/data/activities";
 import { toPreference } from "@/lib/preference";
 import { scoreDestinations } from "@/lib/score";
 import { destinations } from "@/src/data/destinations";
@@ -14,47 +12,24 @@ import { prettifyActivity } from "@/lib/utils";
 
 import DestinationResultCard from "@/components/DestinationCard";
 import MiniCard from "@/components/MiniCard";
-import { de } from "zod/v4/locales";
 
 const FAST_MODE_KEY = "fastMode";
 
-const ENV_SURPRISE_FLAG = "__envSurprise";
-
 type Option = { label: string; value: string };
 
-const randomPick = <T,>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
+const seasonLabels: Record<string, string> = {
+  cool_dry: "cool dry season",
+  hot_dry: "hot dry season",
+  wet: "wet season",
+};
 
-const environments: Environment[] = ["beach", "mountains", "city"];
-
-const allActivityOptions = uniqueByValue(
-  Object.values(activityOptionsByEnvironment)
-    .flat()
-    .filter((o) => o.value !== "surprise")
-);
-
-// pick an option value for "surprise" based on the current step + answers
-function resolveSurprise(questionId: string, options: Option[], answers: Record<string, string>) {
-  if (questionId === "environment") {
-    return randomPick(environments);
-  }
-
-  if (questionId === "activity") {
-    const environment = (answers.environment as EnvironmentOrSurprise) || "beach";
-
-    if (environment === "surprise") {
-      // choose from the 4 currently shown (exclude surprise)
-      const shown = options.filter((o) => o.value !== "surprise");
-      return randomPick(shown).value;
-    }
-
-    const envOpts = activityOptionsByEnvironment[environment].filter((o) => o.value !== "surprise");
-    return randomPick(envOpts).value;
-  }
-
-  // default: pick from this question's options, excluding surprise itself
-  const pool = options.filter((o) => o.value !== "surprise");
-  return randomPick(pool).value;
-}
+const prettyEnvironment = (value?: string) => {
+  if (!value) return "somewhere that fits";
+  if (value === "beach") return "the beach";
+  if (value === "mountains") return "the mountains";
+  if (value === "city") return "the city";
+  return "somewhere that fits";
+};
 
 export default function Home() {
   const [step, setStep] = useState(0);
@@ -112,21 +87,7 @@ export default function Home() {
     if (!baseCurrent) return null;
 
     if (baseCurrent.id === "activity") {
-      const environment = (answers.environment as Environment);
-      const envWasSurprise = answers[ENV_SURPRISE_FLAG] === "true";
-
-      // If user picked Surprise me on environment, show 6 random unique activities
-      if (envWasSurprise) {
-        const sixRandom = pickUnique(allActivityOptions, 6);
-
-        return {
-          ...baseCurrent,
-          options: [
-            ...sixRandom,
-            { label: "Surprise me", value: "surprise" },
-          ],
-        };
-      }
+      const environment = (answers.environment as Environment) || "beach";
 
       return {
         ...baseCurrent,
@@ -137,6 +98,80 @@ export default function Home() {
 
     return baseCurrent;
   }, [baseCurrent, answers.environment]);
+
+  const resultStatement = useMemo(() => {
+    if (current || finalDestinations.length === 0) return "";
+
+    switch (preferences.environment) {
+      case "beach":
+        return "Right now, you belong by the sea.";
+      case "mountains":
+        return "Right now, you belong somewhere high and quiet.";
+      case "city":
+        return "Right now, you belong in the middle of the energy.";
+      default:
+        return "Right now, you belong somewhere that fits.";
+    }
+  }, [current, finalDestinations.length, preferences.environment]);
+
+  const resultReasons = useMemo(() => {
+    if (current || finalDestinations.length === 0) return [];
+
+    const items: string[] = [];
+    if (preferences.environment && preferences.activity) {
+      items.push(
+        `You wanted ${prettyEnvironment(preferences.environment)} + ${prettifyActivity(preferences.activity).toLowerCase()}.`
+      );
+    } else if (preferences.environment) {
+      items.push(`You wanted ${prettyEnvironment(preferences.environment)}.`);
+    } else if (preferences.activity) {
+      items.push(`You wanted to ${prettifyActivity(preferences.activity).toLowerCase()}.`);
+    }
+
+    if (answers.season) {
+      items.push(`Your timing fits the ${seasonLabels[answers.season] ?? "right season"}.`);
+    }
+
+    if (answers.island) {
+      items.push(`It keeps you in ${answers.island.charAt(0).toUpperCase() + answers.island.slice(1)}.`);
+    }
+
+    return items.slice(0, 3);
+  }, [
+    answers.island,
+    answers.season,
+    current,
+    finalDestinations.length,
+    preferences.activity,
+    preferences.environment,
+  ]);
+
+  const shareSentence = useMemo(() => {
+    if (current || finalDestinations.length === 0) return "";
+    const name = finalDestinations[pick].name;
+    return `Right now, I belong in ${name}.`;
+  }, [current, finalDestinations, pick]);
+
+  useEffect(() => {
+    if (!shareSentence) return;
+
+    document.title = `Saan Tayo Next? — ${shareSentence}`;
+
+    const descriptionTag = document.querySelector('meta[name="description"]');
+    if (descriptionTag) {
+      descriptionTag.setAttribute("content", shareSentence);
+    }
+
+    const ogDescriptionTag = document.querySelector('meta[property="og:description"]');
+    if (ogDescriptionTag) {
+      ogDescriptionTag.setAttribute("content", shareSentence);
+    }
+
+    const ogTitleTag = document.querySelector('meta[property="og:title"]');
+    if (ogTitleTag) {
+      ogTitleTag.setAttribute("content", shareSentence);
+    }
+  }, [shareSentence]);
 
   // Mark that we've shown a destination for the first time
   useEffect(() => {
@@ -202,15 +237,12 @@ export default function Home() {
     setPick((prevPick) => Math.min(prevPick + 1, Math.max(0, finalDestinations.length - 1)));
   };
 
-  const goNext = (questionId: string, chosenValue: string, meta?: { envWasSurprise?: boolean }) => {
+  const goNext = (questionId: string, chosenValue: string) => {
     setAnswers((prev) => {
       const next = { ...prev, [questionId]: chosenValue };
 
       if (questionId === "environment") {
         delete next.activity; // changing environment invalidates activity
-
-        if (meta?.envWasSurprise) next[ENV_SURPRISE_FLAG] = "true";
-        else delete next[ENV_SURPRISE_FLAG];
       }
 
       return next;
@@ -221,23 +253,6 @@ export default function Home() {
 
   const handleSelect = (value: string) => {
     if (!current) return;
-
-    // Surprise behavior
-    if (value === "surprise") {
-      // Special case: environment surprise should still pick an environment,
-      // but we keep a flag that it was chosen via surprise.
-      if (current.id === "environment") {
-        const resolvedEnv = randomPick(environments); // beach/mountains/city
-        goNext("environment", resolvedEnv, { envWasSurprise: true });
-        return;
-      }
-
-      const resolved = resolveSurprise(current.id, current.options as Option[], answers);
-      goNext(current.id, resolved);
-      return;
-    }
-
-    // Normal select
     goNext(current.id, value);
   };
 
@@ -254,11 +269,6 @@ export default function Home() {
         delete next.activity;
       }
 
-      // If we're backing out of the environment step, clear the surprise flag
-      if (currentQuestion.id === "environment") {
-        delete next.__envSurprise;
-      }
-
       return next;
     });
 
@@ -270,7 +280,6 @@ export default function Home() {
       <div className="max-w-xl w-full">
         <div className="max-w-xl w-full mx-auto">
           <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
-          <h2 className="text-xl font-semibold mb-2">Where to next?</h2>
           {hasShownDestination && (
             <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
               <input
@@ -289,7 +298,6 @@ export default function Home() {
               onSelect={handleSelect}
               onBack={handleBack}
               canGoBack={canGoBack}
-              showSurprise={true}
             /> :
             finalDestinations.length ? (
               <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -297,12 +305,15 @@ export default function Home() {
                   key={finalDestinations[pick].id}
                   destination={finalDestinations[pick]}
                   preferredActivity={preferences.activity}
-                  reasons={finalDestinations[pick].reasons}
+                  statement={resultStatement}
+                  reasons={resultReasons}
+                  shareText={shareSentence}
+                  onShowAnother={pick + 1 < finalDestinations.length ? () => setPick(pick + 1) : undefined}
                   onLoadingChange={setIsDestinationLoading}
                 />
               </div>
             ) : (
-              <p>no destinations matched your criteria</p>
+              <p>No places matched this moment.</p>
             )
           }
 
@@ -317,17 +328,8 @@ export default function Home() {
                 }}
                 disabled={isDestinationLoading}
               >
-                Start over
+                Start again
               </button>
-              {!current && pick + 1 < finalDestinations.length &&
-                <button
-                  className="underline text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={() => setPick(pick + 1)}
-                  disabled={isDestinationLoading}
-                >
-                  I've been here!
-                </button>
-              }
             </div>
           }
         </div>
@@ -336,7 +338,8 @@ export default function Home() {
         {!isDestinationLoading && relatedDestinations.length > 0 && (
           <div className="w-full mt-10">
             <h3 className="text-base font-semibold mb-3">
-              More {answers.activity ? prettifyActivity(answers.activity) : "to see"} in {finalDestinations[pick].island.charAt(0).toUpperCase() + finalDestinations[pick].island.slice(1)}
+              More {answers.activity ? prettifyActivity(answers.activity) : "to see"} around{" "}
+              {finalDestinations[pick].island.charAt(0).toUpperCase() + finalDestinations[pick].island.slice(1)}
             </h3>
             <div className="relative -mx-6 px-6">
               {/* Scrollable container */}

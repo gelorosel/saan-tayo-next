@@ -7,7 +7,6 @@ export const questions = [
       { label: "Luzon", value: "luzon" },
       { label: "Visayas", value: "visayas" },
       { label: "Mindanao", value: "mindanao" },
-      { label: "Surprise me", value: "surprise" },
     ],
   },
   {
@@ -17,7 +16,6 @@ export const questions = [
       { label: "Beach", value: "beach" },
       { label: "Mountains", value: "mountains" },
       { label: "City", value: "city" },
-      { label: "Surprise me", value: "surprise" },
     ],
   },
   {
@@ -32,7 +30,6 @@ export const questions = [
       { label: "Cool dry season (Dec - Feb)", value: "cool_dry" },
       { label: "Hot dry season (March - May)", value: "hot_dry" },
       { label: "Wet season (June - Nov)", value: "wet" },
-      { label: "Surprise me", value: "surprise" },
     ],
   },
 ];

@@ -11,10 +11,11 @@ const comfortaa = Comfortaa({
 
 export const metadata: Metadata = {
   title: "Saan Tayo Next?",
-  description: "Find your next Philippine destination!",
+  description: "This is where you belong right now.",
   openGraph: {
     title: "Saan Tayo Next?",
-    description: "Find your next Philippine destination! A travel recommendation app that helps you discover the perfect destination in the Philippines based on your preferences.",
+    description:
+      "This is where you belong right now. A gentle travel mirror for the Philippines.",
     type: "website",
     locale: "en_US",
     siteName: "Saan Tayo Next?",
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
         url: "/images/default-img.jpeg",
         width: 1200,
         height: 630,
-        alt: "Find your next Philippine destination!",
+        alt: "This is where you belong right now.",
       },
     ],
   },

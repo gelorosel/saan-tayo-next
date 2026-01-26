@@ -8,6 +8,7 @@ import { Destination } from "@/src/types/destination";
 import { toQueryName } from "@/lib/destination";
 import { openGoogleSearch } from "@/lib/googleSearch";
 import { loadDescription, DescriptionData } from "@/lib/description";
+import { RESULT_AFFIRMATION } from "@/src/data/copy";
 
 type Props = {
     destination: Destination;
@@ -17,6 +18,12 @@ type Props = {
     preferredActivity?: string;
     /** Reasons why this destination was recommended */
     reasons?: string[];
+    /** Statement to lead the result with */
+    statement?: string;
+    /** Shareable sentence */
+    shareText?: string;
+    /** Callback for "show another" */
+    onShowAnother?: () => void;
     /** Callback when loading state changes */
     onLoadingChange?: (isLoading: boolean) => void;
 };
@@ -72,6 +79,9 @@ export default function DestinationResultCard({
     activitiesOverride,
     preferredActivity,
     reasons,
+    statement,
+    shareText,
+    onShowAnother,
     onLoadingChange,
 }: Props) {
     const [heroImgSrc, setHeroImgSrc] = useState<string>(FALLBACK_IMAGE);
@@ -230,8 +240,30 @@ export default function DestinationResultCard({
         openGoogleSearch(toQueryName(destination));
     };
 
+    const shareSentence = shareText ?? `Right now, I belong in ${destination.name}.`;
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(shareSentence);
+        } catch {
+            // Silently fail
+        }
+    };
+
     const handleShare = async () => {
-        // TODO: implement share functionality
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: "Saan Tayo Next?",
+                    text: shareSentence,
+                    url: window.location.href,
+                });
+                return;
+            } catch {
+                // fall through to copy
+            }
+        }
+        await handleCopy();
     };
 
     if (!isFastMode && (isLoadingImage || isLoadingDescription)) {
@@ -240,7 +272,7 @@ export default function DestinationResultCard({
                 {/* Skeleton Image */}
                 <div className="relative h-72 w-full bg-muted animate-pulse">
                     <p className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-muted-foreground z-10">
-                        Looking for your next destination...
+                        Finding where you belong right now...
                     </p>
                 </div>
 
@@ -336,6 +368,11 @@ export default function DestinationResultCard({
                 <div>
                     <div className="flex flex-col gap-4 mb-2 sm:flex-row sm:items-start sm:justify-between">
                         <div className="flex-1 min-w-[33%]">
+                            {statement && (
+                                <p className="text-sm font-semibold text-muted-foreground">
+                                    {statement}
+                                </p>
+                            )}
                             <h2 className="text-styled text-3xl mt-2">{destination.name}</h2>
                             {destination.location?.region && (
                                 <p className="text-sm font-semibold mb-2">
@@ -369,14 +406,12 @@ export default function DestinationResultCard({
                 {/* Best Time to Visit */}
                 {reasons && reasons.length > 0 && (
                     <div>
-                        <h3 className="text-sm font-semibold mb-2">Why choose {destination.name}?</h3>
-                        <div className="flex flex-wrap gap-2">
+                        <h3 className="text-sm font-semibold mb-2">Why this fits</h3>
+                        <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
                             {reasons.map((reason, index) => (
-                                <Badge key={index} variant="secondary" className="px-3 py-1">
-                                    {pretty(reason)}
-                                </Badge>
+                                <li key={index}>{reason}</li>
                             ))}
-                        </div>
+                        </ul>
                     </div>
                 )}
 
@@ -390,20 +425,53 @@ export default function DestinationResultCard({
 
 
                 {/* Google Search Button */}
+                <div className="space-y-3">
+                    <div className="rounded-lg border p-3 text-sm text-muted-foreground">
+                        {shareSentence}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <Button
+                            onClick={handleCopy}
+                            variant="secondary"
+                            className="w-full"
+                        >
+                            Copy this line
+                        </Button>
+                        <Button
+                            onClick={handleShare}
+                            variant="outline"
+                            className="w-full"
+                        >
+                            Share this feeling
+                        </Button>
+                    </div>
+                </div>
+
+                <p className="text-sm text-muted-foreground">{RESULT_AFFIRMATION}</p>
+
+                <div className="rounded-lg border p-4 space-y-3">
+                    <p className="text-sm font-semibold">Does this feel right?</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <Button onClick={handleCopy} className="w-full">
+                            Yes, exactly.
+                        </Button>
+                        <Button
+                            onClick={onShowAnother}
+                            variant="outline"
+                            className="w-full"
+                            disabled={!onShowAnother}
+                        >
+                            Not quite — show me another.
+                        </Button>
+                    </div>
+                </div>
+
                 <Button
                     onClick={handleGoogleSearch}
                     variant="outline"
                     className="w-full"
                 >
-                    Know more about {destination.name}
-                </Button>
-
-                <Button
-                    onClick={handleShare}
-                    variant="outline"
-                    className="w-full"
-                >
-                    Share with your friends
+                    Take me there
                 </Button>
             </CardContent>
         </Card>

@@ -4,8 +4,6 @@ export type IslandGroup = "luzon" | "visayas" | "mindanao";
 
 export type Season = "cool_dry" | "hot_dry" | "wet";
 
-export type Budget = "low" | "mid" | "high";
-
 export type TravelGroup = "solo" | "couple" | "friends" | "family";
 
 export type Activity =
@@ -25,32 +23,17 @@ export type Activity =
   | "museums"
   | "nightlife"
   | "markets"
-  | "explore"
-  | "surprise"
+  | "explore";
 
 export interface Preference {
-  /** Always resolved to a concrete value (never "surprise") */
-  island: IslandGroup | "surprise";
+  island?: IslandGroup;
 
-  /** Resolved environment, even if chosen via Surprise */
-  environment: Environment | "surprise";
+  environment?: Environment;
 
-  /** Resolved activity (never "surprise") */
-  activity: Activity;
+  activity?: Activity;
 
-  /** Season user is traveling in */
-  season: Season | "surprise";
-
-  /** Budget preference */
-  budget: Budget;
+  season?: Season;
 
   /** Who the user is traveling with */
-  group: TravelGroup;
-
-  /**
-   * Meta flag:
-   * true if user tapped "Surprise me" on Environment
-   * used only for UI / activity randomization
-   */
-  environmentWasSurprise?: boolean;
+  group?: TravelGroup;
 }

@@ -1,10 +1,4 @@
-import type {
-  Activity,
-  Budget,
-  IslandGroup,
-  Season,
-  TravelGroup,
-} from "./preference";
+import type { Activity, IslandGroup, Season, TravelGroup } from "./preference";
 import { Environment } from "../data/activities";
 
 
@@ -24,8 +18,7 @@ export interface Destination {
   /** When it’s best to go */
   bestSeasons: Season[];
 
-  /** Cost + vibe helpers */
-  budget: Budget;
+  /** Vibe helpers */
   crowdLevel?: CrowdLevel;
 
   /** Trip suitability */

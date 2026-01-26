@@ -2,12 +2,10 @@ import { Preference } from "@/src/types/preference";
 
 export function toPreference(answers: Record<string, string>): Preference {
   return {
-    island: (answers.island ?? "surprise") as Preference["island"],
+    island: answers.island as Preference["island"],
     environment: answers.environment as Preference["environment"],
     activity: answers.activity as Preference["activity"],
-    season: (answers.season ?? "surprise") as Preference["season"],
-    budget: answers.budget as Preference["budget"],
+    season: answers.season as Preference["season"],
     group: answers.group as Preference["group"],
-    environmentWasSurprise: answers.__envSurprise === "true",
   };
 }

@@ -13,7 +13,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "snorkel", "island_hop", "relax", "natural_wonders", "nightlife"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Palawan" },
   },
   {
@@ -23,7 +22,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "dive", "island_hop", "natural_wonders", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Palawan" },
   },
   {
@@ -33,7 +31,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Ilocos Norte" },
   },
   {
@@ -43,7 +40,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Ilocos Norte" },
   },
   {
@@ -53,7 +49,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "camp", "relax", "island_hop"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Camarines Norte" },
   },
   {
@@ -63,7 +58,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["camp", "swim", "relax"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Zambales" },
   },
   {
@@ -73,7 +67,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Batangas" },
   },
   {
@@ -83,7 +76,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Pangasinan" },
   },
   {
@@ -93,7 +85,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["surf", "swim", "food_trip", "relax", "nightlife"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "La Union" },
   },
 
@@ -107,7 +98,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "trek", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Benguet" },
   },
   {
@@ -117,7 +107,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Zambales" },
   },
   {
@@ -127,7 +116,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "trek", "camp"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Zambales" },
   },
   {
@@ -137,7 +125,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "waterfalls", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Rizal" },
   },
   {
@@ -147,7 +134,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Batangas" },
   },
   {
@@ -157,7 +143,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Ifugao" },
   },
   {
@@ -167,7 +152,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Benguet" },
   },
   {
@@ -177,7 +161,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "waterfalls", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Laguna" },
   },
   {
@@ -187,7 +170,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "waterfalls", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Camarines Sur" },
   },
   {
@@ -197,7 +179,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Palawan" },
   },
 
@@ -211,7 +192,6 @@ export const destinations: Destination[] = [
     environments: ["city", "mountains"],
     activities: ["food_trip", "explore", "relax", "museums"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Benguet" },
   },
   {
@@ -221,7 +201,6 @@ export const destinations: Destination[] = [
     environments: ["city", "beach"],
     activities: ["relax", "explore", "food_trip"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Palawan" },
   },
   {
@@ -231,7 +210,6 @@ export const destinations: Destination[] = [
     environments: ["beach", "mountains"],
     activities: ["relax", "explore", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "high",
     location: { region: "Batanes" },
   },
   {
@@ -241,7 +219,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["relax", "explore", "hike", "natural_wonders", "waterfalls"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Mountain Province" },
   },
   {
@@ -251,7 +228,6 @@ export const destinations: Destination[] = [
     environments: ["city", "mountains"],
     activities: ["relax", "food_trip", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Cavite" },
   },
   {
@@ -261,7 +237,6 @@ export const destinations: Destination[] = [
     environments: ["beach", "reef"],
     activities: ["dive", "snorkel", "relax", "swim"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Batangas" },
   },
   {
@@ -271,7 +246,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "snorkel", "dive", "relax", "nightlife"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Oriental Mindoro" },
   },
   {
@@ -281,7 +255,6 @@ export const destinations: Destination[] = [
     environments: ["city", "beach"],
     activities: ["relax", "food_trip", "explore"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Zambales" },
   },
 
@@ -295,7 +268,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["relax", "swim", "food_trip", "nightlife", "island_hop"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Aklan" },
   },
   {
@@ -305,7 +277,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "snorkel", "relax", "island_hop", "nightlife"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Bohol" },
   },
   {
@@ -315,7 +286,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Cebu" },
   },
   {
@@ -325,7 +295,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["dive", "snorkel", "swim", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Cebu" },
   },
   {
@@ -335,7 +304,6 @@ export const destinations: Destination[] = [
     environments: ["beach", "mountains"],
     activities: ["swim", "relax", "explore", "hike", "camp", "waterfalls", "island_hop"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Siquijor" },
   },
   {
@@ -345,7 +313,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax", "camp"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Leyte" },
   },
   {
@@ -355,7 +322,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "snorkel", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "high",
     location: { region: "Cebu" },
   },
   {
@@ -365,7 +331,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Negros Occidental" },
   },
   {
@@ -375,7 +340,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["snorkel", "swim", "relax", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Negros Occidental" },
   },
 
@@ -389,7 +353,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Negros Island" },
   },
   {
@@ -399,7 +362,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Cebu" },
   },
   {
@@ -409,7 +371,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Negros Oriental" },
   },
   {
@@ -419,7 +380,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Panay Island" },
   },
   {
@@ -429,7 +389,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Iloilo" },
   },
   {
@@ -439,7 +398,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Panay Island" },
   },
   {
@@ -449,7 +407,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Negros Occidental" },
   },
   {
@@ -459,7 +416,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Panay Island" },
   },
   {
@@ -469,7 +425,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Cebu" },
   },
   {
@@ -479,7 +434,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Siquijor" },
   },
 
@@ -493,7 +447,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["relax", "swim", "snorkel", "island_hop"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Bohol" },
   },
   {
@@ -503,7 +456,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["relax", "swim", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Cebu" },
   },
   {
@@ -513,7 +465,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["relax", "swim", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Cebu" },
   },
   {
@@ -523,7 +474,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["snorkel", "swim", "relax", "dive"],
     bestSeasons: ["cool_dry", "hot_dry", "wet"],
-    budget: "low",
     location: { region: "Cebu" },
   },
   {
@@ -533,7 +483,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["relax", "explore", "swim"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Guimaras" },
   },
   {
@@ -543,7 +492,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["relax", "swim", "camp"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Leyte" },
   },
   {
@@ -553,7 +501,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["food_trip", "explore", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Negros Oriental" },
   },
   {
@@ -563,7 +510,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["snorkel", "dive", "relax", "swim"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Negros Oriental" },
   },
 
@@ -577,7 +523,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["surf", "swim", "relax", "island_hop", "nightlife"],
     bestSeasons: ["wet", "cool_dry"],
-    budget: "mid",
     location: { region: "Surigao del Norte" },
   },
   {
@@ -587,7 +532,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "snorkel", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Zamboanga" },
   },
   {
@@ -597,7 +541,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "surf", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Davao Oriental" },
   },
   {
@@ -607,7 +550,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["island_hop", "swim", "relax", "natural_wonders"],
     bestSeasons: ["wet", "hot_dry"],
-    budget: "low",
     location: { region: "Surigao del Sur" },
   },
   {
@@ -617,7 +559,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax", "snorkel"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Davao del Norte" },
   },
   {
@@ -627,7 +568,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax", "nightlife"],
     bestSeasons: ["cool_dry", "hot_dry",],
-    budget: "low",
     location: { region: "Sarangani" },
   },
   {
@@ -638,7 +578,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "snorkel", "relax", "natural_wonders"],
     bestSeasons: ["hot_dry", "wet"],
-    budget: "low",
     location: { region: "Dinagat Islands" },
   },
   {
@@ -648,7 +587,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["snorkel", "swim", "relax", "island_hop"],
     bestSeasons: ["wet", "hot_dry"],
-    budget: "low",
     location: { region: "Camiguin" },
   },
   {
@@ -658,7 +596,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax", "natural_wonders", "island_hop"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Tawi-Tawi" },
   },
   {
@@ -668,7 +605,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax", "natural_wonders", "island_hop"],
     bestSeasons: ["wet", "hot_dry"],
-    budget: "low",
     location: { region: "Camiguin" },
   },
 
@@ -682,7 +618,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Davao" },
   },
   {
@@ -692,7 +627,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Bukidnon" },
   },
   {
@@ -702,7 +636,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Bukidnon" },
   },
   {
@@ -712,7 +645,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Davao Oriental" },
   },
   {
@@ -722,7 +654,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "trek", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "South Cotabato" },
   },
   {
@@ -732,7 +663,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "South Cotabato" },
   },
   {
@@ -742,7 +672,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Camiguin" },
   },
   {
@@ -752,7 +681,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Misamis Occidental" },
   },
   {
@@ -762,7 +690,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["trek", "camp", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Misamis Oriental" },
   },
   {
@@ -772,7 +699,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Camiguin" },
   },
 
@@ -786,7 +712,6 @@ export const destinations: Destination[] = [
     environments: ["beach", "mountains"],
     activities: ["relax", "explore", "natural_wonders", "swim"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Camiguin" },
   },
   {
@@ -796,7 +721,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["relax", "explore", "camp", 'hike', 'swim'],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "South Cotabato" },
   },
   {
@@ -806,7 +730,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["relax", "swim", "snorkel"],
     bestSeasons: ["cool_dry", "hot_dry", "wet"],
-    budget: "mid",
     location: { region: "Davao del Norte" },
   },
   {
@@ -816,7 +739,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["relax", "swim", "surf"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Davao Oriental" },
   },
   {
@@ -826,7 +748,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["relax", "explore", "natural_wonders", "hike"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Bukidnon" },
   },
   {
@@ -836,7 +757,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["relax", "explore", "natural_wonders", "swim", "island_hop"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Dinagat Islands" },
   },
   {
@@ -846,7 +766,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["natural_wonders", "explore", "relax", "swim"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Surigao del Sur" },
   },
 
@@ -862,7 +781,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["snorkel", "swim", "natural_wonders", "explore", "relax", "island_hop"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Surigao del Norte" },
   },
   {
@@ -872,7 +790,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["explore", "history", "food_trip"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Ilocos Sur" },
   },
   {
@@ -882,7 +799,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["relax", "explore", "camp", "hike", "swim"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Laguna" },
   },
   {
@@ -893,7 +809,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["explore", "hike"],
     bestSeasons: ["cool_dry"],
-    budget: "mid",
     location: { region: "Rizal" },
   },
   {
@@ -903,7 +818,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["food_trip", "explore", "relax", "museums"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Pampanga" },
   },
   {
@@ -913,7 +827,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["food_trip", "explore", "history"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Cebu" },
   },
   {
@@ -923,7 +836,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["explore", "food_trip", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Misamis Oriental" },
   },
   {
@@ -933,7 +845,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["waterfalls", "natural_wonders", "explore", "relax", "hike", "camp"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Surigao del Sur" },
   },
   {
@@ -943,7 +854,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax", "explore"],
     bestSeasons: ["wet", "hot_dry"],
-    budget: "low",
     location: { region: "Surigao del Sur" },
   },
   {
@@ -954,7 +864,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["explore", "natural_wonders", "relax", "camp"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Agusan del Sur" },
   },
   {
@@ -964,7 +873,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["surf", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Eastern Samar" },
   },
   {
@@ -974,7 +882,6 @@ export const destinations: Destination[] = [
     environments: ["beach", "city"],
     activities: ["swim", "snorkel", "relax", "food_trip"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Cebu" },
   },
   {
@@ -984,7 +891,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["explore", "history", "food_trip", "museums"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Cebu" },
   },
   {
@@ -994,7 +900,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["explore", "food_trip", "relax", "nightlife", "museums"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Davao del Sur" },
   },
   {
@@ -1004,7 +909,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["explore", "history", "food_trip", "museums"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Leyte" },
   },
   {
@@ -1015,7 +919,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["surf", "swim", "camp", "relax"],
     bestSeasons: ["cool_dry", "wet"],
-    budget: "low",
     location: { region: "Zambales" },
   },
   {
@@ -1026,7 +929,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["waterfalls", "natural_wonders", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Cebu" },
   },
   {
@@ -1037,7 +939,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["explore", "history", "food_trip", "museums"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Agusan del Norte" },
   },
   {
@@ -1048,7 +949,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["explore", "history", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Mountain Province" },
   },
   {
@@ -1059,7 +959,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["explore", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Palawan" },
   },
   {
@@ -1069,7 +968,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["explore", "history", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Ifugao" },
   },
   {
@@ -1079,7 +977,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["explore", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry", "wet"],
-    budget: "low",
     location: { region: "Bohol" },
   },
   {
@@ -1089,7 +986,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["explore", "natural_wonders"],
     bestSeasons: ["cool_dry", "wet"],
-    budget: "low",
     location: { region: "Albay" },
   },
   {
@@ -1099,7 +995,6 @@ export const destinations: Destination[] = [
     environments: ["mountains"],
     activities: ["explore", "natural_wonders", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Batangas" },
   },
   {
@@ -1109,7 +1004,6 @@ export const destinations: Destination[] = [
     environments: ["mountains", "city"],
     activities: ["explore", "hike", "relax", "camp"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Bukidnon" },
   },
   {
@@ -1119,7 +1013,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["snorkel", "swim", "natural_wonders", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Cebu" },
   },
   {
@@ -1129,7 +1022,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["swim", "relax", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Batangas" },
   },
 
@@ -1144,7 +1036,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["food_trip", "nightlife", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Metro Manila" },
   },
   {
@@ -1154,7 +1045,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["food_trip", "explore", "relax", "nightlife", "museums"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "high",
     location: { region: "Metro Manila" },
   },
   {
@@ -1164,7 +1054,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["food_trip", "explore", "nightlife"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Metro Manila" },
   },
   {
@@ -1174,7 +1063,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["nightlife", "food_trip"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Cebu" },
   },
   {
@@ -1184,7 +1072,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["food_trip", "nightlife", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Pampanga" },
   },
   {
@@ -1194,7 +1081,6 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["food_trip", "history", "explore", "museums"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Iloilo" },
   },
 
@@ -1209,7 +1095,6 @@ export const destinations: Destination[] = [
     environments: ["reef", "beach"],
     activities: ["dive", "snorkel", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "high",
     location: { region: "Sulu Sea (Palawan)" },
     overrideGoogleSearchName: "Tubbataha Reefs",
   },
@@ -1220,7 +1105,6 @@ export const destinations: Destination[] = [
     environments: ["reef", "beach"],
     activities: ["dive", "snorkel", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "high",
     location: { region: "Sulu Sea (Visayas)" },
     overrideGoogleSearchName: "Tubbataha Reefs",
   },
@@ -1232,7 +1116,6 @@ export const destinations: Destination[] = [
     environments: ["reef", "beach"],
     activities: ["dive", "snorkel", "natural_wonders"],
     bestSeasons: ["cool_dry"],
-    budget: "high",
     location: { region: "Occidental Mindoro" },
     overrideGoogleSearchName: "Apo Reef Natural Park",
   },
@@ -1243,7 +1126,6 @@ export const destinations: Destination[] = [
     environments: ["reef", "beach"],
     activities: ["dive", "snorkel", "swim"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Cebu" },
   },
   {
@@ -1253,7 +1135,6 @@ export const destinations: Destination[] = [
     environments: ["reef", "beach"],
     activities: ["dive", "snorkel", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Negros Oriental" },
   },
   {
@@ -1263,7 +1144,6 @@ export const destinations: Destination[] = [
     environments: ["reef", "beach"],
     activities: ["dive", "snorkel", "swim", "island_hop"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Bohol" },
   },
   {
@@ -1273,7 +1153,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["explore", "island_hop", "swim", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Iloilo" },
   },
   {
@@ -1283,7 +1162,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["explore", "island_hop", "swim", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Davao del Norte" },
   },
   {
@@ -1293,7 +1171,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["explore", "island_hop", "snorkel", "swim"],
     bestSeasons: ["cool_dry", "hot_dry", "wet"],
-    budget: "mid",
     location: { region: "Bohol" },
   },
   {
@@ -1303,7 +1180,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["explore", "island_hop", "snorkel", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Negros Occidental" },
   },
   {
@@ -1313,7 +1189,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["explore", "island_hop", "swim", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Cebu" },
   },
   {
@@ -1323,7 +1198,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["explore", "island_hop", "swim", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Pangasinan" },
   },
   {
@@ -1333,7 +1207,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["explore", "island_hop", "camp", "swim"],
     bestSeasons: ["cool_dry"],
-    budget: "low",
     location: { region: "Zambales" },
   },
   {
@@ -1343,7 +1216,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["explore", "island_hop", "snorkel", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "mid",
     location: { region: "Romblon" },
   },
   {
@@ -1353,7 +1225,6 @@ export const destinations: Destination[] = [
     environments: ["beach"],
     activities: ["explore", "island_hop", "swim", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
-    budget: "low",
     location: { region: "Sarangani" },
   },
 ]

@@ -16,7 +16,6 @@ interface Props {
     onSelect: (value: string) => void;
     onBack?: () => void;
     canGoBack?: boolean;
-    showSurprise?: boolean;
 }
 
 export function QuestionCard({
@@ -25,13 +24,7 @@ export function QuestionCard({
     onSelect,
     onBack,
     canGoBack = false,
-    showSurprise = true,
 }: Props) {
-    const hasSurpriseInOptions = options.some((o) => o.value === "surprise");
-    const visibleOptions = hasSurpriseInOptions
-        ? options.filter((o) => o.value !== "surprise") // keep Surprise only in footer
-        : options;
-
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Card className="p-6 w-full max-w-xl">
@@ -39,7 +32,7 @@ export function QuestionCard({
                     <h2 className="text-xl font-semibold">{question}</h2>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        {visibleOptions.map((opt) => (
+                        {options.map((opt) => (
                             <Button
                                 key={opt.value}
                                 variant="outline"
@@ -58,20 +51,8 @@ export function QuestionCard({
                             onClick={onBack}
                             disabled={!canGoBack}
                         >
-                            Back
+                            Go back
                         </Button>)}
-
-                        {showSurprise && (
-                            <div className="ml-auto">
-                                <Button
-                                    type="button"
-                                    variant="secondary"
-                                    onClick={() => onSelect("surprise")}
-                                >
-                                    Surprise me
-                                </Button>
-                            </div>
-                        )}
                     </div>
                 </CardContent>
             </Card>

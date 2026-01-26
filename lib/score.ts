@@ -8,17 +8,17 @@ export function scoreDestinations(
   dests: Destination[]
 ): Scored[] {
   const scoredDestinations = dests
-    .filter((d) => pref.island == "surprise" || d.island === pref.island)
-    .filter((d) => pref.environment == "surprise" || d.environments?.includes(pref.environment))
+    .filter((d) => !pref.island || d.island === pref.island)
+    .filter((d) => !pref.environment || d.environments?.includes(pref.environment))
     .sort(() => Math.random() - 0.5)
     .map((d) => {
       let score = 0;
       const reasons: string[] = [`Found in ${d.island}`];
 
-      if (pref.activity == "surprise" || d.activities.includes(pref.activity)) {
+      if (pref.activity && d.activities.includes(pref.activity)) {
         score += 5; reasons.push("Fits your main activity");
       }
-      if (pref.season == "surprise" || d.bestSeasons.includes(pref.season)) {
+      if (!pref.season || d.bestSeasons.includes(pref.season)) {
         score += 2; reasons.push("Good for your travel season");
       } else {
         score += 1;

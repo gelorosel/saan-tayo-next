@@ -40,6 +40,7 @@ export const questions: Question[] = [
   {
     id: "traveler_morning",
     question: "Your ideal morning on a trip starts with...",
+    randomize: true,
     options: [
       { label: "Sleeping in, no alarms", value: "a" },
       { label: "A sunrise hike or workout", value: "b" },
@@ -50,6 +51,7 @@ export const questions: Question[] = [
   {
     id: "traveler_afternoon",
     question: "You have a free afternoon. What do you do?",
+    randomize: true,
     options: [
       { label: "Beach, pool, or nap - vibes only", value: "a" },
       { label: "Explore nature or do something active", value: "b" },
@@ -60,6 +62,7 @@ export const questions: Question[] = [
   {
     id: "traveler_spend",
     question: "Your travel budget is mostly spent on...",
+    randomize: true,
     options: [
       { label: "Comfort (hotels, food, upgrades)", value: "a" },
       { label: "Experiences (adventures, tours, activities)", value: "b" },
@@ -70,6 +73,7 @@ export const questions: Question[] = [
   {
     id: "traveler_suitcase",
     question: "Your suitcase is usually...",
+    randomize: true,
     options: [
       { label: "Light, comfy clothes only", value: "a" },
       { label: "Practical gear and sneakers", value: "b" },
@@ -80,6 +84,7 @@ export const questions: Question[] = [
   {
     id: "traveler_plans",
     question: "Travel plans make you feel...",
+    randomize: true,
     options: [
       { label: "Best when flexible and spontaneous", value: "a" },
       { label: "Excited if there's something challenging", value: "b" },

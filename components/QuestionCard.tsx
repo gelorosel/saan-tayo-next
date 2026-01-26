@@ -1,6 +1,7 @@
 // src/components/QuestionCard.tsx
 "use client";
 
+import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -14,6 +15,16 @@ interface Props {
     canGoBack?: boolean;
 }
 
+// Fisher-Yates shuffle algorithm
+function shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
 export function QuestionCard({
     current,
     options,
@@ -21,6 +32,13 @@ export function QuestionCard({
     onBack,
     canGoBack = false,
 }: Props) {
+    // Randomize options if current.randomize is true
+    const displayOptions = useMemo(() => {
+        if (current.randomize) {
+            return shuffleArray(options);
+        }
+        return options;
+    }, [current.id, options, current.randomize]);
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Card className="p-6 w-full max-w-xl my-6">
@@ -30,7 +48,7 @@ export function QuestionCard({
                     {current.id === "island" ? (
                         // specific styling for island question
                         <div className={`grid grid-cols-1 gap-3`}>
-                            {options.map((opt) => (
+                            {displayOptions.map((opt) => (
                                 <Button
                                     key={opt.value}
                                     variant="outline"
@@ -43,7 +61,7 @@ export function QuestionCard({
                         </div>
                     ) : (
                         <div className={`grid grid-cols-2 gap-3`}>
-                            {options.map((opt) => (
+                            {displayOptions.map((opt) => (
                                 <Button
                                     key={opt.value}
                                     variant="outline"

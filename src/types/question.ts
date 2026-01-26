@@ -6,5 +6,6 @@ export interface Option {
 export interface Question {
     id: string;
     question: string;
+    randomize?: boolean;
     options?: Option[];
 }

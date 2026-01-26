@@ -226,7 +226,7 @@ export function ShareResultModal({
 
                             {/* Destination Image - 2:1 aspect ratio */}
                             <h4 className="text-bold text-2xl mt-4 mb-2">Next stop:</h4>
-                            <div className="relative w-full h-[25%]">
+                            <div className="relative w-full max-h-[20%]">
                                 <img
                                     src={heroImgSrc}
                                     alt={destination.name}

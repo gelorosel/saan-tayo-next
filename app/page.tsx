@@ -4,32 +4,22 @@
 import { useMemo, useState, useEffect } from "react";
 import { QuestionCard } from "@/components/QuestionCard";
 import { questions } from "@/src/data/questions";
-import { activityOptionsByEnvironment, Environment } from "@/src/data/activities";
+import { getActivityOptions, Vibe, Environment } from "@/src/data/activities";
 import { toPreference } from "@/lib/preference";
 import { scoreDestinations } from "@/lib/score";
+import { personalityScore } from "@/lib/personalityScore";
 import { destinations } from "@/src/data/destinations";
 import { prettifyActivity } from "@/lib/utils";
+import { personalityById } from "@/src/data/personalities";
+import { Activity } from "@/src/types/preference";
+import { Option } from "@/src/types/question";
 
 import DestinationResultCard from "@/components/DestinationCard";
 import MiniCard from "@/components/MiniCard";
+import { PersonalityResultCard } from "@/components/PersonalityResultCard";
 
 const FAST_MODE_KEY = "fastMode";
 
-type Option = { label: string; value: string };
-
-const seasonLabels: Record<string, string> = {
-  cool_dry: "cool dry season",
-  hot_dry: "hot dry season",
-  wet: "wet season",
-};
-
-const prettyEnvironment = (value?: string) => {
-  if (!value) return "somewhere that fits";
-  if (value === "beach") return "the beach";
-  if (value === "mountains") return "the mountains";
-  if (value === "city") return "the city";
-  return "somewhere that fits";
-};
 
 export default function Home() {
   const [step, setStep] = useState(0);
@@ -40,9 +30,24 @@ export default function Home() {
   const [hasShownDestination, setHasShownDestination] = useState(false);
   const canGoBack = useMemo(() => step > 0, [step])
   const preferences = useMemo(() => toPreference(answers), [answers])
+  const personalityResult = useMemo(() => personalityScore(answers), [answers]);
+  const personalityProfile = useMemo(() => {
+    if (!personalityResult) return null;
+    return personalityById.get(personalityResult.primary) ?? null;
+  }, [personalityResult]);
+  const preferredActivities = useMemo(() => {
+    const items: Activity[] = [];
+    if (preferences.activity?.length) items.push(...preferences.activity);
+    if (personalityResult?.preferredActivities) {
+      items.push(...personalityResult.preferredActivities);
+    }
+    return Array.from(new Set(items));
+  }, [personalityResult, preferences.activity]);
+  const primaryActivity = preferredActivities[0];
+
   const scoredDestinations = useMemo(
-    () => scoreDestinations(preferences, destinations),
-    [preferences]
+    () => scoreDestinations(preferences, destinations, personalityResult?.preferredActivities ?? []),
+    [preferences, personalityResult?.preferredActivities]
   );
   const [finalDestinations, setFinalDestinations] = useState<typeof scoredDestinations>([]);
 
@@ -72,8 +77,9 @@ export default function Home() {
   useEffect(() => {
     if (!baseCurrent && finalDestinations.length > 0 && !hasShownDestination) {
       setHasShownDestination(true);
+      console.log("preferences", preferences);
     }
-  }, [baseCurrent, finalDestinations.length, hasShownDestination]);
+  }, [baseCurrent, finalDestinations.length, hasShownDestination, preferences]);
 
   const toggleFastMode = () => {
     const newValue = !fastMode;
@@ -87,12 +93,13 @@ export default function Home() {
     if (!baseCurrent) return null;
 
     if (baseCurrent.id === "activity") {
-      const environment = (answers.environment as Environment) || "beach";
+      if (baseCurrent.options && baseCurrent.options.length > 0) {
+        return baseCurrent;
+      }
 
-      return {
-        ...baseCurrent,
-        options: activityOptionsByEnvironment[environment],
-      };
+      const environment = (answers.environment as Environment) || "beach";
+      const vibe = answers.vibe as Vibe | undefined;
+      return { ...baseCurrent, options: getActivityOptions(environment, vibe) };
     }
 
 
@@ -109,48 +116,19 @@ export default function Home() {
         return "Right now, you belong somewhere high and quiet.";
       case "city":
         return "Right now, you belong in the middle of the energy.";
+      case "any":
+        return "Right now, you belong just about anywhere.";
       default:
         return "Right now, you belong somewhere that fits.";
     }
   }, [current, finalDestinations.length, preferences.environment]);
-
-  const resultReasons = useMemo(() => {
-    if (current || finalDestinations.length === 0) return [];
-
-    const items: string[] = [];
-    if (preferences.environment && preferences.activity) {
-      items.push(
-        `You wanted ${prettyEnvironment(preferences.environment)} + ${prettifyActivity(preferences.activity).toLowerCase()}.`
-      );
-    } else if (preferences.environment) {
-      items.push(`You wanted ${prettyEnvironment(preferences.environment)}.`);
-    } else if (preferences.activity) {
-      items.push(`You wanted to ${prettifyActivity(preferences.activity).toLowerCase()}.`);
-    }
-
-    if (answers.season) {
-      items.push(`Your timing fits the ${seasonLabels[answers.season] ?? "right season"}.`);
-    }
-
-    if (answers.island) {
-      items.push(`It keeps you in ${answers.island.charAt(0).toUpperCase() + answers.island.slice(1)}.`);
-    }
-
-    return items.slice(0, 3);
-  }, [
-    answers.island,
-    answers.season,
-    current,
-    finalDestinations.length,
-    preferences.activity,
-    preferences.environment,
-  ]);
 
   const shareSentence = useMemo(() => {
     if (current || finalDestinations.length === 0) return "";
     const name = finalDestinations[pick].name;
     return `Right now, I belong in ${name}.`;
   }, [current, finalDestinations, pick]);
+
 
   useEffect(() => {
     if (!shareSentence) return;
@@ -200,7 +178,11 @@ export default function Home() {
 
       if (regionDests.length > 0) {
         // Score the region destinations using user preferences
-        const scoredRegionDests = scoreDestinations(preferences, regionDests);
+        const scoredRegionDests = scoreDestinations(
+          preferences,
+          regionDests,
+          personalityResult?.preferredActivities ?? []
+        );
         // Get top 5 region destinations
         regionDestinations = scoredRegionDests.slice(0, 5);
       }
@@ -280,37 +262,36 @@ export default function Home() {
       <div className="max-w-xl w-full">
         <div className="max-w-xl w-full mx-auto">
           <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
-          {hasShownDestination && (
-            <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={fastMode}
-                onChange={toggleFastMode}
-                className="cursor-pointer"
-              />
-              <span>Fast mode (skip loading images and description)</span>
-            </label>
-          )}
+          <h2 className="text-xl font-semibold mb-4">Find your next destination</h2>
           {current ?
             <QuestionCard
-              question={current.question}
+              current={current}
               options={current.options as Option[]}
               onSelect={handleSelect}
               onBack={handleBack}
               canGoBack={canGoBack}
             /> :
             finalDestinations.length ? (
-              <div className="flex flex-col lg:flex-row gap-6 items-start">
-                <DestinationResultCard
+              <div className="flex flex-col lg:flex-row items-start">
+                {personalityProfile && (
+                  <PersonalityResultCard
+                    personality={personalityProfile}
+                    answers={answers}
+                    destination={finalDestinations[pick]}
+                    preferredActivity={primaryActivity}
+                  />
+                )}
+                {/* <DestinationResultCard
                   key={finalDestinations[pick].id}
                   destination={finalDestinations[pick]}
-                  preferredActivity={preferences.activity}
+                  preferredActivity={primaryActivity}
                   statement={resultStatement}
                   reasons={resultReasons}
+                  personality={personalityProfile}
                   shareText={shareSentence}
                   onShowAnother={pick + 1 < finalDestinations.length ? () => setPick(pick + 1) : undefined}
                   onLoadingChange={setIsDestinationLoading}
-                />
+                /> */}
               </div>
             ) : (
               <p>No places matched this moment.</p>
@@ -328,18 +309,28 @@ export default function Home() {
                 }}
                 disabled={isDestinationLoading}
               >
-                Start again
+                Start over
               </button>
             </div>
           }
+          {hasShownDestination && (
+            <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={fastMode}
+                onChange={toggleFastMode}
+                className="cursor-pointer"
+              />
+              <span>Fast mode (skip loading images and description)</span>
+            </label>
+          )}
         </div>
 
         {/* More destinations section */}
         {!isDestinationLoading && relatedDestinations.length > 0 && (
           <div className="w-full mt-10">
             <h3 className="text-base font-semibold mb-3">
-              More {answers.activity ? prettifyActivity(answers.activity) : "to see"} around{" "}
-              {finalDestinations[pick].island.charAt(0).toUpperCase() + finalDestinations[pick].island.slice(1)}
+              You might also like:
             </h3>
             <div className="relative -mx-6 px-6">
               {/* Scrollable container */}

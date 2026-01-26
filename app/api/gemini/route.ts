@@ -5,6 +5,8 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const destination = searchParams.get('destination');
   const activity = searchParams.get('activity');
+  const personalityId = searchParams.get('personalityId');
+  const preferredActivities = searchParams.get('preferredActivities');
 
   if (!destination) {
     return NextResponse.json(
@@ -14,7 +16,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const result = await geminiShortDescription(destination, activity || 'travel');
+    const preferredList = preferredActivities
+      ? preferredActivities.split(",").map((item) => item.trim()).filter(Boolean)
+      : undefined;
+    const result = await geminiShortDescription(
+      destination,
+      activity || 'travel',
+      personalityId || undefined,
+    );
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching Gemini description:', error);

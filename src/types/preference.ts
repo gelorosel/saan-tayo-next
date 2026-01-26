@@ -2,7 +2,7 @@ import { Environment } from "../data/activities";
 
 export type IslandGroup = "luzon" | "visayas" | "mindanao";
 
-export type Season = "cool_dry" | "hot_dry" | "wet";
+export type Season = "cool_dry" | "hot_dry" | "wet" | "any";
 
 export type TravelGroup = "solo" | "couple" | "friends" | "family";
 
@@ -22,7 +22,6 @@ export type Activity =
   | "food_trip"
   | "museums"
   | "nightlife"
-  | "markets"
   | "explore";
 
 export interface Preference {
@@ -30,7 +29,7 @@ export interface Preference {
 
   environment?: Environment;
 
-  activity?: Activity;
+  activity?: Activity[];
 
   season?: Season;
 

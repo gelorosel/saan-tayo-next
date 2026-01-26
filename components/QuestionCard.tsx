@@ -4,14 +4,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-
-interface Option {
-    label: string;
-    value: string;
-}
+import { Question, Option } from "@/src/types/question";
 
 interface Props {
-    question: string;
+    current: Question;
     options: Option[];
     onSelect: (value: string) => void;
     onBack?: () => void;
@@ -19,7 +15,7 @@ interface Props {
 }
 
 export function QuestionCard({
-    question,
+    current,
     options,
     onSelect,
     onBack,
@@ -27,11 +23,11 @@ export function QuestionCard({
 }: Props) {
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <Card className="p-6 w-full max-w-xl">
+            <Card className="p-6 w-full max-w-xl my-6">
                 <CardContent className="space-y-4">
-                    <h2 className="text-xl font-semibold">{question}</h2>
+                    <h2 className="text-xl font-semibold">{current.question}</h2>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div className={`grid ${current.id === "island" ? "grid-cols-1" : "grid-cols-2"} gap-3`}>
                         {options.map((opt) => (
                             <Button
                                 key={opt.value}

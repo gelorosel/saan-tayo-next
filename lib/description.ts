@@ -11,6 +11,7 @@ interface LoadDescriptionOptions {
     destination: Destination;
     preferredActivity?: string;
     activities: string[];
+    personalityId?: string;
 }
 
 /**
@@ -20,7 +21,7 @@ interface LoadDescriptionOptions {
 export async function loadDescription(
     options: LoadDescriptionOptions
 ): Promise<DescriptionData | null> {
-    const { destination, preferredActivity, activities } = options;
+    const { destination, preferredActivity, activities, personalityId } = options;
 
     // Get configuration
     let prioritizeGemini = false;
@@ -53,11 +54,16 @@ export async function loadDescription(
 
     const queryName = toQueryName(destination);
     const activityParam = preferredActivity || activities[0] || 'travel';
+    const personalityParam = personalityId
+        ? `&personalityId=${encodeURIComponent(personalityId)}`
+        : "";
 
     if (prioritizeGemini) {
         // Try Gemini first
         try {
-            const geminiResponse = await fetch(`/api/gemini?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`);
+            const geminiResponse = await fetch(
+                `/api/gemini?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}${personalityParam}`
+            );
             if (geminiResponse.ok) {
                 const geminiData = await geminiResponse.json();
                 if (geminiData.description) {
@@ -94,7 +100,7 @@ export async function loadDescription(
                 .then(res => res.ok ? res.json() : null)
                 .then(data => data?.description ? { description: data.description, source: 'wiki' as const } : null)
                 .catch(() => null),
-            fetch(`/api/gemini?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}`)
+            fetch(`/api/gemini?destination=${encodeURIComponent(queryName)}&activity=${encodeURIComponent(activityParam)}${personalityParam}`)
                 .then(res => res.ok ? res.json() : null)
                 .then(data => data?.description ? {
                     description: data.description,

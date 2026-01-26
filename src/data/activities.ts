@@ -2,9 +2,10 @@ import { Activity } from "../types/preference";
 
 // src/data/activities.ts
 export type ActivityOption = { label: string; value: Activity };
-export type Environment = "beach" | "mountains" | "city" | "reef";
+export type Environment = "beach" | "mountains" | "city" | "reef" | "any";
+export type Vibe = "slow" | "move" | "wander" | "learn";
 
-export const activityOptionsByEnvironment: Record<Environment, ActivityOption[]> =
+export const envActivityMap: Record<Environment, ActivityOption[]> =
 {
   beach: [
     { label: "Swim", value: "swim" },
@@ -15,6 +16,7 @@ export const activityOptionsByEnvironment: Record<Environment, ActivityOption[]>
     { label: "Relax", value: "relax" },
     { label: "Natural wonders", value: "natural_wonders" },
     { label: "Nightlife", value: "nightlife" },
+    { label: "Food trip", value: "food_trip" },
   ],
   mountains: [
     { label: "Hike", value: "hike" },
@@ -23,6 +25,7 @@ export const activityOptionsByEnvironment: Record<Environment, ActivityOption[]>
     { label: "Waterfalls", value: "waterfalls" },
     { label: "Natural wonders", value: "natural_wonders" },
     { label: "Explore", value: "explore" },
+    { label: "Historical sites", value: "history" },
   ],
   city: [
     { label: "Food trip", value: "food_trip" },
@@ -37,4 +40,45 @@ export const activityOptionsByEnvironment: Record<Environment, ActivityOption[]>
     { label: "Swim", value: "swim" },
     { label: "Natural wonders", value: "natural_wonders" },
   ],
+  any: []
 };
+
+const vibeActivityMap: Record<Vibe, Activity[]> = {
+  slow: ["relax", "swim", "camp", "food_trip", "nightlife", "hike", "history", "waterfalls"],
+  move: ["hike", "trek", "surf", "dive", "snorkel", "waterfalls", "natural_wonders", "camp", "island_hop"],
+  wander: ["food_trip", "explore", "nightlife", "waterfalls", "island_hop", "camp", "history", "hike"],
+  learn: ["museums", "history", "natural_wonders", "explore", "camp", "snorkel"],
+};
+
+const uniqueOptionsByValue = (options: ActivityOption[]): ActivityOption[] => {
+  const seen = new Set<Activity>();
+  return options.filter((option) => {
+    if (seen.has(option.value)) return false;
+    seen.add(option.value);
+    return true;
+  });
+};
+
+export const getActivityOptions = (
+  environment: Environment,
+  vibe?: Vibe
+): ActivityOption[] => {
+  const baseOptions =
+    environment === "any"
+      ? uniqueOptionsByValue(
+        [
+          ...envActivityMap.beach,
+          ...envActivityMap.mountains,
+          ...envActivityMap.city,
+          ...envActivityMap.reef,
+        ]
+      )
+      : envActivityMap[environment] ?? [];
+
+  if (!vibe) return baseOptions;
+
+  const allowed = new Set(vibeActivityMap[vibe] ?? []);
+  const filtered = baseOptions.filter((option) => allowed.has(option.value));
+  return filtered.length > 0 ? filtered : baseOptions;
+};
+

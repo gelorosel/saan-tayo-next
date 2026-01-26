@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, pretty } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Destination } from "@/src/types/destination";
+import { personalityById } from "@/src/data/personalities";
+import { PersonalityProfile } from "@/src/types/personality";
 import { toQueryName } from "@/lib/destination";
 import { openGoogleSearch } from "@/lib/googleSearch";
 import { loadDescription, DescriptionData } from "@/lib/description";
@@ -20,6 +22,8 @@ type Props = {
     reasons?: string[];
     /** Statement to lead the result with */
     statement?: string;
+    /** Personality result to show */
+    personality?: PersonalityProfile | null;
     /** Shareable sentence */
     shareText?: string;
     /** Callback for "show another" */
@@ -27,9 +31,6 @@ type Props = {
     /** Callback when loading state changes */
     onLoadingChange?: (isLoading: boolean) => void;
 };
-
-const pretty = (v: string) =>
-    v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
 const FALLBACK_IMAGE = "/images/default-img.jpeg";
 
@@ -80,6 +81,7 @@ export default function DestinationResultCard({
     preferredActivity,
     reasons,
     statement,
+    personality,
     shareText,
     onShowAnother,
     onLoadingChange,
@@ -215,6 +217,7 @@ export default function DestinationResultCard({
                 destination,
                 preferredActivity,
                 activities,
+                personalityId: personality?.id,
             });
 
             if (isMounted) {
@@ -242,14 +245,6 @@ export default function DestinationResultCard({
 
     const shareSentence = shareText ?? `Right now, I belong in ${destination.name}.`;
 
-    const handleCopy = async () => {
-        try {
-            await navigator.clipboard.writeText(shareSentence);
-        } catch {
-            // Silently fail
-        }
-    };
-
     const handleShare = async () => {
         if (navigator.share) {
             try {
@@ -263,7 +258,6 @@ export default function DestinationResultCard({
                 // fall through to copy
             }
         }
-        await handleCopy();
     };
 
     if (!isFastMode && (isLoadingImage || isLoadingDescription)) {
@@ -272,7 +266,7 @@ export default function DestinationResultCard({
                 {/* Skeleton Image */}
                 <div className="relative h-72 w-full bg-muted animate-pulse">
                     <p className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-muted-foreground z-10">
-                        Finding where you belong right now...
+                        Looking for your next destination...
                     </p>
                 </div>
 
@@ -315,6 +309,13 @@ export default function DestinationResultCard({
             </Card>
         );
     }
+
+    const companionNames = personality?.compatibleWith
+        .map((id) => personalityById.get(id)?.name)
+        .filter((name): name is string => Boolean(name)) ?? [];
+    const avoidNames = personality?.avoidWith
+        .map((id) => personalityById.get(id)?.name)
+        .filter((name): name is string => Boolean(name)) ?? [];
 
     return (
         <Card className="overflow-hidden rounded-2xl shadow-sm pt-0 w-full">
@@ -403,6 +404,27 @@ export default function DestinationResultCard({
                     </div>
                 ) : null}
 
+                {personality && (
+                    <div className="rounded-lg border p-3 space-y-2">
+                        <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                            You are:
+                        </p>
+                        <p className="text-sm font-semibold">
+                            {personality.emoji} {personality.name}
+                        </p>
+                        {companionNames.length > 0 && (
+                            <p className="text-xs text-muted-foreground">
+                                Ideal travel companions: {companionNames.join(", ")}
+                            </p>
+                        )}
+                        {avoidNames.length > 0 && (
+                            <p className="text-xs text-muted-foreground">
+                                You might: {avoidNames.join(", ")}
+                            </p>
+                        )}
+                    </div>
+                )}
+
                 {/* Best Time to Visit */}
                 {reasons && reasons.length > 0 && (
                     <div>
@@ -431,13 +453,6 @@ export default function DestinationResultCard({
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <Button
-                            onClick={handleCopy}
-                            variant="secondary"
-                            className="w-full"
-                        >
-                            Copy this line
-                        </Button>
-                        <Button
                             onClick={handleShare}
                             variant="outline"
                             className="w-full"
@@ -452,7 +467,7 @@ export default function DestinationResultCard({
                 <div className="rounded-lg border p-4 space-y-3">
                     <p className="text-sm font-semibold">Does this feel right?</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <Button onClick={handleCopy} className="w-full">
+                        <Button className="w-full">
                             Yes, exactly.
                         </Button>
                         <Button
@@ -471,7 +486,7 @@ export default function DestinationResultCard({
                     variant="outline"
                     className="w-full"
                 >
-                    Take me there
+                    Know more about {destination.name}
                 </Button>
             </CardContent>
         </Card>

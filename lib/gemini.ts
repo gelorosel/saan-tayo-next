@@ -1,3 +1,4 @@
+import { personalities } from "@/src/data/personalities";
 import { GoogleGenAI, Type } from "@google/genai";
 
 /**
@@ -13,13 +14,19 @@ export interface GeminiDescriptionResult {
 
 export async function geminiShortDescription(
     destinationName: string,
-    activity: string
+    activity: string,
+    personalityId?: string,
 ): Promise<GeminiDescriptionResult> {
     const ai = getAi();
+    const personality = personalities.find((p) => p.id === personalityId) || null;
+    const personalityLine = personality
+        ? ` The traveler's personality type: ${personality.description}.`
+        : "";
+    const prompt = `Provide details for the tourist destination: ${destinationName} and why it would fit for this tourist's preference: ${activity}.${personalityLine} Include the best months to visit. Do not use the phrase "perfect for" in your description.`;
 
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-lite',
-        contents: `Provide details for the tourist destination: ${destinationName} and why it would fit for this tourist's preference: ${activity}. Include the best months to visit.`,
+        contents: prompt,
         config: {
             responseMimeType: "application/json",
             responseSchema: {

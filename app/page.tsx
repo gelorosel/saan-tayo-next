@@ -15,6 +15,7 @@ import { Option } from "@/src/types/question";
 
 import MiniCard from "@/components/MiniCard";
 import { PersonalityResultCard } from "@/components/PersonalityResultCard";
+import { DevelopmentModal } from "@/components/DevelopmentModal";
 
 const FAST_MODE_KEY = "fastMode";
 
@@ -208,9 +209,11 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6">
-      <div className="max-w-xl w-full">
-        <div className="max-w-xl w-full mx-auto">
+    <>
+      <DevelopmentModal />
+      <main className="min-h-screen flex items-center justify-center p-6">
+        <div className="max-w-xl w-full">
+          <div className="max-w-xl w-full mx-auto">
           <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
           <h2 className="text-xl font-semibold mb-4">Find your next destination</h2>
           {current ?
@@ -296,7 +299,8 @@ export default function Home() {
             </div>
           </div>
         )}
-      </div>
-    </main>
+        </div>
+      </main>
+    </>
   );
 }

@@ -1116,24 +1116,24 @@ export const destinations: Destination[] = [
   // ─────────────────────────────────────────────────────────────
 
   {
-    id: "tubbataha-reefs-luzon",
-    name: "Tubbataha Reefs Natural Park",
+    id: "tubbataha-reef-luzon",
+    name: "Tubbataha Reef Natural Park",
     island: "luzon",
     environments: ["reef", "beach"],
     activities: ["dive", "snorkel", "natural_wonders"],
     bestSeasons: ["cool_dry"],
     location: { region: "Sulu Sea (Palawan)" },
-    overrideGoogleSearchName: "Tubbataha Reefs",
+    overrideGoogleSearchName: "Tubbataha Reef",
   },
   {
-    id: "tubbataha-reefs-visayas",
-    name: "Tubbataha Reefs Natural Park",
+    id: "tubbataha-reef-visayas",
+    name: "Tubbataha Reef Natural Park",
     island: "visayas",
     environments: ["reef", "beach"],
     activities: ["dive", "snorkel", "natural_wonders"],
     bestSeasons: ["cool_dry"],
     location: { region: "Sulu Sea (Visayas)" },
-    overrideGoogleSearchName: "Tubbataha Reefs",
+    overrideGoogleSearchName: "Tubbataha Reef",
   },
   // tubbataha so big
   {

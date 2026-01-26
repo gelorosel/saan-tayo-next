@@ -1,7 +1,7 @@
 // src/app/page.tsx
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { QuestionCard } from "@/components/QuestionCard";
 import { questions } from "@/src/data/questions";
 import { getActivityOptions, Vibe, Environment } from "@/src/data/activities";
@@ -9,12 +9,10 @@ import { toPreference } from "@/lib/preference";
 import { scoreDestinations } from "@/lib/score";
 import { personalityScore } from "@/lib/personalityScore";
 import { destinations } from "@/src/data/destinations";
-import { prettifyActivity } from "@/lib/utils";
 import { personalityById } from "@/src/data/personalities";
 import { Activity } from "@/src/types/preference";
 import { Option } from "@/src/types/question";
 
-import DestinationResultCard from "@/components/DestinationCard";
 import MiniCard from "@/components/MiniCard";
 import { PersonalityResultCard } from "@/components/PersonalityResultCard";
 
@@ -25,11 +23,11 @@ export default function Home() {
   const [step, setStep] = useState(0);
   const [pick, setPick] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [isDestinationLoading, setIsDestinationLoading] = useState(false);
   const [fastMode, setFastMode] = useState(false);
   const [hasShownDestination, setHasShownDestination] = useState(false);
-  const canGoBack = useMemo(() => step > 0, [step])
-  const preferences = useMemo(() => toPreference(answers), [answers])
+  
+  const canGoBack = step > 0;
+  const preferences = useMemo(() => toPreference(answers), [answers]);
   const personalityResult = useMemo(() => personalityScore(answers), [answers]);
   const personalityProfile = useMemo(() => {
     if (!personalityResult) return null;
@@ -42,13 +40,16 @@ export default function Home() {
       items.push(...personalityResult.preferredActivities);
     }
     return Array.from(new Set(items));
-  }, [personalityResult, preferences.activity]);
-  const primaryActivity = preferredActivities[0];
+  }, [preferences.activity, personalityResult?.preferredActivities]);
+  const primaryActivity = useMemo(() => preferredActivities[0], [preferredActivities]);
 
-  const scoredDestinations = useMemo(
-    () => scoreDestinations(preferences, destinations, personalityResult?.preferredActivities ?? []),
-    [preferences, personalityResult?.preferredActivities]
-  );
+  const scoredDestinations = useMemo(() => {
+    return scoreDestinations(
+      preferences, 
+      destinations, 
+      personalityResult?.preferredActivities ?? []
+    );
+  }, [preferences, personalityResult?.preferredActivities]);
   const [finalDestinations, setFinalDestinations] = useState<typeof scoredDestinations>([]);
 
   useEffect(() => {
@@ -73,21 +74,12 @@ export default function Home() {
 
   const baseCurrent = questions[step];
 
-  // Mark that we've shown a destination for the first time
-  useEffect(() => {
-    if (!baseCurrent && finalDestinations.length > 0 && !hasShownDestination) {
-      setHasShownDestination(true);
-      console.log("preferences", preferences);
-    }
-  }, [baseCurrent, finalDestinations.length, hasShownDestination, preferences]);
-
-  const toggleFastMode = () => {
+  const toggleFastMode = useCallback(() => {
     const newValue = !fastMode;
     setFastMode(newValue);
     localStorage.setItem(FAST_MODE_KEY, String(newValue));
-    // Trigger a custom event to notify other components
     window.dispatchEvent(new CustomEvent("fastModeChanged", { detail: newValue }));
-  };
+  }, [fastMode]);
 
   const current = useMemo(() => {
     if (!baseCurrent) return null;
@@ -102,16 +94,16 @@ export default function Home() {
       return { ...baseCurrent, options: getActivityOptions(environment, vibe) };
     }
 
-
     return baseCurrent;
-  }, [baseCurrent, answers.environment]);
+  }, [baseCurrent, answers.environment, answers.vibe]);
 
   // Mark that we've shown a destination for the first time
   useEffect(() => {
     if (!baseCurrent && finalDestinations.length > 0 && !hasShownDestination) {
       setHasShownDestination(true);
+      console.log("preferences", preferences);
     }
-  }, [baseCurrent, finalDestinations.length, hasShownDestination]);
+  }, [baseCurrent, finalDestinations.length, hasShownDestination, preferences]);
 
   // Get related destinations: region destinations first, then rest of finalDestinations
   const relatedDestinations = useMemo(() => {
@@ -121,41 +113,36 @@ export default function Home() {
 
     const currentDestination = finalDestinations[pick];
     const currentDestinationId = currentDestination.id;
+    const currentRegion = currentDestination.location?.region;
 
     // Get region destinations (from all destinations, filtered by region)
     let regionDestinations: typeof finalDestinations = [];
-    if (currentDestination.location?.region) {
-      const regionDests = destinations
-        .filter(d =>
-          d.location?.region === currentDestination.location?.region &&
-          d.id !== currentDestinationId
-        );
+    if (currentRegion) {
+      const regionDests = destinations.filter(
+        d => d.location?.region === currentRegion && d.id !== currentDestinationId
+      );
 
       if (regionDests.length > 0) {
-        // Score the region destinations using user preferences
         const scoredRegionDests = scoreDestinations(
           preferences,
           regionDests,
           personalityResult?.preferredActivities ?? []
         );
-        // Get top 5 region destinations
         regionDestinations = scoredRegionDests.slice(0, 5);
       }
     }
 
     // Get the rest of finalDestinations (excluding current and region destinations)
     const regionDestinationIds = new Set(regionDestinations.map(d => d.id));
-    const restOfFinalDestinations = finalDestinations
-      .filter(d => d.id !== currentDestinationId && !regionDestinationIds.has(d.id));
+    const restOfFinalDestinations = finalDestinations.filter(
+      d => d.id !== currentDestinationId && !regionDestinationIds.has(d.id)
+    );
 
-    // Combine: region destinations first, then rest of finalDestinations
-    // Limit total to a reasonable number (e.g., 10)
-    const combined = [...regionDestinations, ...restOfFinalDestinations].slice(0, 5);
+    // Combine: region destinations first, then rest of finalDestinations, limit to 5
+    return [...regionDestinations, ...restOfFinalDestinations].slice(0, 5);
+  }, [current, finalDestinations, pick, preferences, personalityResult?.preferredActivities]);
 
-    return combined;
-  }, [current, finalDestinations, pick, preferences]);
-
-  const handleMiniCardClick = (destinationId: string) => {
+  const handleMiniCardClick = useCallback((destinationId: string) => {
     setFinalDestinations((prev) => {
       if (prev.length === 0) return prev;
 
@@ -172,9 +159,9 @@ export default function Home() {
     });
 
     setPick((prevPick) => Math.min(prevPick + 1, Math.max(0, finalDestinations.length - 1)));
-  };
+  }, [pick, finalDestinations.length]);
 
-  const goNext = (questionId: string, chosenValue: string) => {
+  const goNext = useCallback((questionId: string, chosenValue: string) => {
     setAnswers((prev) => {
       const next = { ...prev, [questionId]: chosenValue };
 
@@ -186,14 +173,14 @@ export default function Home() {
     });
 
     setStep((prev) => prev + 1);
-  };
+  }, []);
 
-  const handleSelect = (value: string) => {
+  const handleSelect = useCallback((value: string) => {
     if (!current) return;
     goNext(current.id, value);
-  };
+  }, [current, goNext]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     setAnswers((prev) => {
       const next = { ...prev };
 
@@ -210,7 +197,12 @@ export default function Home() {
     });
 
     setStep((prev) => Math.max(0, prev - 1));
-  };
+  }, [step]);
+
+  const handleStartOver = useCallback(() => {
+    setStep(0);
+    setPick(0);
+  }, []);
 
   return (
     <main className="min-h-screen flex items-center justify-center p-6">
@@ -234,19 +226,9 @@ export default function Home() {
                     answers={answers}
                     destination={finalDestinations[pick]}
                     preferredActivity={primaryActivity}
+                    fastMode={fastMode}
                   />
                 )}
-                {/* <DestinationResultCard
-                  key={finalDestinations[pick].id}
-                  destination={finalDestinations[pick]}
-                  preferredActivity={primaryActivity}
-                  statement={resultStatement}
-                  reasons={resultReasons}
-                  personality={personalityProfile}
-                  shareText={shareSentence}
-                  onShowAnother={pick + 1 < finalDestinations.length ? () => setPick(pick + 1) : undefined}
-                  onLoadingChange={setIsDestinationLoading}
-                /> */}
               </div>
             ) : (
               <p>No places matched this moment.</p>
@@ -256,12 +238,8 @@ export default function Home() {
           {canGoBack &&
             <div className="my-3 flex flex-row justify-between gap-4">
               <button
-                className="underline text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={() => {
-                  setStep(0)
-                  setPick(0)
-                }}
-                disabled={isDestinationLoading}
+                className="underline text-sm cursor-pointer"
+                onClick={handleStartOver}
               >
                 Start over
               </button>
@@ -281,7 +259,7 @@ export default function Home() {
         </div>
 
         {/* More destinations section */}
-        {!isDestinationLoading && relatedDestinations.length > 0 && (
+        {relatedDestinations.length > 0 && (
           <div className="w-full mt-10">
             <h3 className="text-base font-semibold mb-3">
               If you've already been to {finalDestinations[pick].name}, you might also like:

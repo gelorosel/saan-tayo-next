@@ -18,6 +18,7 @@ interface PersonalityResultCardProps {
     answers: Record<string, string>;
     destination: Destination;
     preferredActivity?: string;
+    fastMode?: boolean;
 }
 
 const FALLBACK_IMAGE = "/images/default-img.jpeg";
@@ -69,21 +70,27 @@ export function PersonalityResultCard({
     answers,
     destination,
     preferredActivity,
+    fastMode = false,
 }: PersonalityResultCardProps) {
-    // Map companion IDs to actual names/emojis
-    const perfectCompanions = personality.compatibleWith
-        .map((id) => personalities.find((p) => p.id === id))
-        .filter(Boolean) as PersonalityProfile[];
+    // Memoized companion lists
+    const perfectCompanions = useMemo(
+        () => personality.compatibleWith
+            .map((id) => personalities.find((p) => p.id === id))
+            .filter(Boolean) as PersonalityProfile[],
+        [personality.compatibleWith]
+    );
 
-    const struggleCompanions = personality.avoidWith
-        .map((id) => personalities.find((p) => p.id === id))
-        .filter(Boolean) as PersonalityProfile[];
+    const struggleCompanions = useMemo(
+        () => personality.avoidWith
+            .map((id) => personalities.find((p) => p.id === id))
+            .filter(Boolean) as PersonalityProfile[],
+        [personality.avoidWith]
+    );
 
     const [heroImgSrc, setHeroImgSrc] = useState<string>(FALLBACK_IMAGE);
     const [isLoadingImage, setIsLoadingImage] = useState(true);
     const [imageData, setImageData] = useState<UnsplashImageData | null>(null);
     const [isFallbackImage, setIsFallbackImage] = useState(false);
-    const [fastModeVersion, setFastModeVersion] = useState(0);
     const [description, setDescription] = useState<DescriptionData | null>(null);
     const [isLoadingDescription, setIsLoadingDescription] = useState(false);
     const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
@@ -91,9 +98,8 @@ export function PersonalityResultCard({
     const activities = destination.activities;
 
     const reasons = useMemo(() => {
-        if (!destination) return [];
-
         const items: string[] = [];
+
         if (answers.environment && answers.environment !== "any") {
             items.push(`You wanted ${prettyEnvironment(answers.environment)}.`);
         }
@@ -107,59 +113,27 @@ export function PersonalityResultCard({
         }
 
         return items.slice(0, 3);
-    }, [
-        answers,
-        destination,
-    ]);
+    }, [answers.environment, answers.season, answers.island]);
 
-    const handleGoogleSearch = () => {
-        openGoogleSearch(toQueryName(destination));
-    };
-
+    // Load image (skip if fast mode is enabled)
     useEffect(() => {
-        let isMounted = true;
+        if (fastMode) {
+            setHeroImgSrc(FALLBACK_IMAGE);
+            setIsLoadingImage(false);
+            setIsFallbackImage(true);
+            return;
+        }
 
-        const checkFastMode = (): boolean => {
-            try {
-                const saved = localStorage.getItem("fastMode");
-                if (saved !== null) {
-                    return saved === "true";
-                }
-            } catch {
-                // Silently fail
-            }
-            return false;
-        };
+        let isMounted = true;
 
         async function loadImage() {
             setIsLoadingImage(true);
             setImageData(null);
-
-            let fastMode = checkFastMode();
-            if (!fastMode) {
-                try {
-                    const configResponse = await fetch("/api/config");
-                    if (configResponse.ok) {
-                        const config = await configResponse.json();
-                        fastMode = config.fastMode || false;
-                    }
-                } catch {
-                    // Silently fail
-                }
-            }
-
-            if (fastMode) {
-                if (isMounted) {
-                    setHeroImgSrc(FALLBACK_IMAGE);
-                    setIsLoadingImage(false);
-                    setIsFallbackImage(true);
-                }
-                return;
-            }
+            setIsFallbackImage(false);
 
             let imageDataResult = await fetchUnsplashImage(destination.overrideUnsplashName || destination.name);
 
-            if (!imageDataResult && destination.environments && destination.environments.length > 0) {
+            if (!imageDataResult && destination.environments?.length > 0) {
                 const fallbackQuery = destination.island.toLowerCase() === "luzon"
                     ? `${destination.environments[0]} philippines`
                     : `${destination.island} ${destination.environments[0]} philippines`;
@@ -185,38 +159,9 @@ export function PersonalityResultCard({
         return () => {
             isMounted = false;
         };
-    }, [destination, fastModeVersion]);
+    }, [destination, fastMode]);
 
-    useEffect(() => {
-        const checkFastMode = (): boolean => {
-            try {
-                const saved = localStorage.getItem("fastMode");
-                if (saved !== null) {
-                    return saved === "true";
-                }
-            } catch {
-                // Silently fail
-            }
-            return false;
-        };
-
-        const updateFastMode = () => {
-            checkFastMode();
-        };
-
-        updateFastMode();
-
-        const handleFastModeChange = () => {
-            updateFastMode();
-            setFastModeVersion((prev) => prev + 1);
-        };
-
-        window.addEventListener("fastModeChanged", handleFastModeChange);
-        return () => {
-            window.removeEventListener("fastModeChanged", handleFastModeChange);
-        };
-    }, []);
-
+    // Load description
     useEffect(() => {
         let isMounted = true;
 
@@ -242,60 +187,133 @@ export function PersonalityResultCard({
         return () => {
             isMounted = false;
         };
-    }, [destination, preferredActivity, activities, fastModeVersion, personality?.id]);
+    }, [destination.id, preferredActivity, personality?.id]);
+
+    // Skeleton loading state
+    if (!fastMode && (isLoadingImage || isLoadingDescription)) {
+        return (
+            <div className="relative">
+                <Card className="overflow-hidden rounded-2xl shadow-sm w-full">
+                    {/* Skeleton Image */}
+                    <div className="relative h-96 w-full bg-muted animate-pulse">
+                        <p className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-muted-foreground z-10">
+                            Finding your perfect match...
+                        </p>
+                    </div>
+
+                    <CardContent className="p-8 space-y-4">
+                        {/* Skeleton Header */}
+                        <div>
+                            <div className="flex flex-col sm:flex-row gap-4 mb-2 items-start sm:justify-between">
+                                <div className="flex-1 min-w-[33%]">
+                                    <div className="h-9 w-40 bg-muted animate-pulse rounded mb-2" />
+                                    <div className="h-4 w-28 bg-muted animate-pulse rounded" />
+                                </div>
+                                <div className="flex flex-wrap gap-2 justify-start sm:justify-end sm:max-w-[50%] items-center w-full mt-2 sm:mt-0">
+                                    {[1, 2, 3, 4].map((i) => (
+                                        <div key={i} className="h-6 w-20 bg-muted animate-pulse rounded-full" />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Skeleton Description */}
+                        <div className="space-y-2">
+                            <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                            <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                            <div className="h-4 w-3/4 bg-muted animate-pulse rounded" />
+                        </div>
+
+                        {/* Skeleton Personality Section */}
+                        <div className="h-4 w-24 bg-muted animate-pulse rounded" />
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 bg-muted animate-pulse rounded-full" />
+                                <div className="h-8 w-48 bg-muted animate-pulse rounded" />
+                            </div>
+                            <div className="h-6 w-32 bg-muted animate-pulse rounded-full" />
+                        </div>
+
+                        {/* Skeleton Personality Description */}
+                        <div className="space-y-2">
+                            <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                            <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
+                        </div>
+
+                        {/* Skeleton Companions */}
+                        <div className="flex flex-col gap-3">
+                            <div>
+                                <div className="h-4 w-48 bg-muted animate-pulse rounded mb-2" />
+                                <div className="flex flex-wrap gap-2">
+                                    {[1, 2].map((i) => (
+                                        <div key={i} className="h-6 w-32 bg-muted animate-pulse rounded-full" />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Skeleton Why This Fits */}
+                        <div>
+                            <div className="h-5 w-32 bg-muted animate-pulse rounded mb-2" />
+                            <div className="space-y-2">
+                                <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                                <div className="h-4 w-4/5 bg-muted animate-pulse rounded" />
+                            </div>
+                        </div>
+
+                        {/* Skeleton Buttons */}
+                        <div className="h-12 w-full bg-muted animate-pulse rounded-md" />
+                        <div className="h-12 w-full bg-muted animate-pulse rounded-md" />
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
 
     return (
         <div className="relative">
-            <Card className="overflow-hidden rounded-2xl shadow-sm pt-0 w-full">
+            <Card className="overflow-hidden rounded-2xl shadow-sm w-full">
                 {/* Destination Image */}
-                <div className="relative h-96 w-full">
-                    <img
-                        src={heroImgSrc}
-                        alt={destination.name}
-                        className={`h-full w-full object-cover brightness-90 ${isLoadingImage ? "opacity-70" : ""}`}
-                    />
-                    {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-                    {/* Unsplash Attribution */}
-                    {imageData && (
-                        <>
-                            {isFallbackImage && (
-                                <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
-                                    (may not be the actual destination)
+                {!fastMode && (
+                    <div className="relative h-96 w-full">
+                        <img
+                            src={heroImgSrc}
+                            alt={destination.name}
+                            className={`h-full w-full object-cover ${isLoadingImage ? "opacity-70" : ""}`}
+                        />
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+                        {/* Unsplash Attribution */}
+                        {imageData && (
+                            <>
+                                {isFallbackImage && (
+                                    <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
+                                        (may not be the actual destination)
+                                    </div>
+                                )}
+                                <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 hover:opacity-100 transition-opacity z-20">
+                                    <a
+                                        href={imageData.photographerUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:underline"
+                                    >
+                                        Photo by {imageData.photographerName}
+                                    </a>
+                                    {" on "}
+                                    <a
+                                        href="https://unsplash.com"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:underline"
+                                    >
+                                        Unsplash
+                                    </a>
                                 </div>
-                            )}
-                            <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 hover:opacity-100 transition-opacity z-20">
-                                <a
-                                    href={imageData.photographerUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:underline"
-                                >
-                                    Photo by {imageData.photographerName}
-                                </a>
-                                {" on "}
-                                <a
-                                    href="https://unsplash.com"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:underline"
-                                >
-                                    Unsplash
-                                </a>
-                            </div>
-                        </>
-                    )}
-
-                    {/* Destination Info */}
-                    {/* <div className="absolute bottom-1 left-4 space-y-2 text-white">
-                    <h2 className="text-styled text-4xl drop-shadow-md mb-0">
-                        {destination.name}
-                    </h2>
-                    {destination.location?.region && (
-                        <p className="text-lg text-white/90 drop-shadow-md">{destination.location.region}</p>
-                    )}
-                </div> */}
-                </div>
+                            </>
+                        )}
+                    </div>
+                )}
 
                 <CardContent className="p-8 space-y-4">
                     <div>
@@ -388,13 +406,6 @@ export function PersonalityResultCard({
                         )}
                     </div>
 
-                    {/* Optional Environments / Seasons */}
-                    {/* <div className="text-xs text-slate-500 space-y-1">
-                    <p>🌿 {destination.environments.join(", ")}</p>
-                    <p>☀️ Best Seasons: {destination.bestSeasons.join(", ")}</p>
-                </div> */}
-
-
                     {reasons && reasons.length > 0 && (
                         <div>
                             <h3 className="text-sm font-semibold mb-2">Why this fits</h3>
@@ -414,7 +425,7 @@ export function PersonalityResultCard({
                         )}
                     </div>
                     <Button
-                        onClick={handleGoogleSearch}
+                        onClick={() => openGoogleSearch(toQueryName(destination))}
                         variant="outline"
                         className="w-full"
                         size="md"

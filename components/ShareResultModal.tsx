@@ -164,9 +164,8 @@ export function ShareResultModal({
                         visibility: generatedImage ? 'hidden' : 'visible'
                     }}
                 >
-                    <Card className="overflow-hidden rounded-2xl shadow-sm pt-0 w-full h-full">
+                    <Card className="overflow-hidden rounded-2xl shadow-sm w-full h-full">
                         <CardContent className="p-12 space-y-8 h-full flex flex-col">
-
                             {/* Header Statement */}
                             <h1 className="text-center text-styled text-5xl mt-6">Saan Tayo Next?</h1>
 
@@ -237,11 +236,8 @@ export function ShareResultModal({
                             )}
 
 
-                            <div className="flex items-center gap-4 mt-6">
-                                <h2 className="text-4xl font-bold">Next stop:</h2>
-                            </div>
-
                             {/* Destination Image - 2:1 aspect ratio */}
+                            <h4 className="text-lg font-medium"> 🛫 Next stop:</h4>
                             <div className="relative w-full h-[25%]">
                                 <img
                                     src={heroImgSrc}

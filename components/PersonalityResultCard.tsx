@@ -126,7 +126,7 @@ export function PersonalityResultCard({
             return;
         }
 
-        let isMounted = true;
+        let isStale = false;
 
         async function loadImage() {
             setIsLoadingImage(true);
@@ -134,21 +134,24 @@ export function PersonalityResultCard({
             setIsFallbackImage(false);
 
             let imageDataResult = await fetchUnsplashImage(destination.overrideUnsplashName || destination.name);
+            let usedFallback = false;
 
             if (!imageDataResult && destination.environments?.length > 0) {
                 const fallbackQuery = destination.island.toLowerCase() === "luzon"
                     ? `${destination.environments[0]} philippines`
                     : `${destination.island} ${destination.environments[0]} philippines`;
-                setIsFallbackImage(true);
+                usedFallback = true;
                 imageDataResult = await fetchUnsplashImage(fallbackQuery, true);
             }
 
-            if (isMounted) {
+            // Only update if this request hasn't been superseded
+            if (!isStale) {
                 if (imageDataResult) {
                     // Proxy the image through our API for iOS compatibility
                     const proxiedUrl = `/api/unsplash/image?url=${encodeURIComponent(imageDataResult.url)}`;
                     setHeroImgSrc(proxiedUrl);
                     setImageData(imageDataResult);
+                    setIsFallbackImage(usedFallback);
                     triggerDownload(imageDataResult.downloadLocation);
                 } else {
                     setHeroImgSrc(FALLBACK_IMAGE);
@@ -161,13 +164,13 @@ export function PersonalityResultCard({
         loadImage();
 
         return () => {
-            isMounted = false;
+            isStale = true;
         };
-    }, [destination, fastMode]);
+    }, [destination.id, fastMode]);
 
     // Load description
     useEffect(() => {
-        let isMounted = true;
+        let isStale = false;
 
         async function fetchDescription() {
             setIsLoadingDescription(true);
@@ -180,7 +183,8 @@ export function PersonalityResultCard({
                 personalityId: personality?.id,
             });
 
-            if (isMounted) {
+            // Only update if this request hasn't been superseded
+            if (!isStale) {
                 setDescription(descriptionData);
                 setIsLoadingDescription(false);
             }
@@ -189,7 +193,7 @@ export function PersonalityResultCard({
         fetchDescription();
 
         return () => {
-            isMounted = false;
+            isStale = true;
         };
     }, [destination.id, preferredActivity, personality?.id]);
 
@@ -485,7 +489,7 @@ export function PersonalityResultCard({
                 destination={destination}
                 heroImgSrc={heroImgSrc}
                 imageData={imageData}
-                activities={activities}
+                isFallbackImage={isFallbackImage}
                 perfectCompanions={perfectCompanions}
                 struggleCompanions={struggleCompanions}
             />

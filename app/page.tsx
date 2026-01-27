@@ -102,7 +102,6 @@ export default function Home() {
   useEffect(() => {
     if (!baseCurrent && finalDestinations.length > 0 && !hasShownDestination) {
       setHasShownDestination(true);
-      console.log("preferences", preferences);
     }
   }, [baseCurrent, finalDestinations.length, hasShownDestination, preferences]);
 
@@ -145,7 +144,7 @@ export default function Home() {
 
   const handleMiniCardClick = useCallback((destinationId: string) => {
     const destinationIndex = finalDestinations.findIndex((d) => d.id === destinationId);
-    
+
     if (destinationIndex !== -1) {
       setPick(destinationIndex);
       // Scroll to top smoothly

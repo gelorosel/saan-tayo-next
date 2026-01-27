@@ -31,7 +31,7 @@ interface ShareResultModalProps {
     destination: Destination;
     heroImgSrc: string;
     imageData: UnsplashImageData | null;
-    activities: string[];
+    isFallbackImage: boolean;
     perfectCompanions: PersonalityProfile[];
     struggleCompanions: PersonalityProfile[];
 }
@@ -43,14 +43,40 @@ export function ShareResultModal({
     destination,
     heroImgSrc,
     imageData,
-    activities,
+    isFallbackImage,
     perfectCompanions,
     struggleCompanions,
 }: ShareResultModalProps) {
     const [isExporting, setIsExporting] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+    const [dataUrlImage, setDataUrlImage] = useState<string | null>(null);
     const exportRef = useRef<HTMLDivElement>(null);
+
+    const convertImageToDataUrl = async (imageUrl: string): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                try {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        ctx.drawImage(img, 0, 0);
+                        resolve(canvas.toDataURL('image/jpeg', 0.95));
+                    } else {
+                        reject(new Error('Failed to get canvas context'));
+                    }
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            img.onerror = () => reject(new Error('Failed to load image'));
+            img.src = imageUrl;
+        });
+    };
 
     const generateImage = async () => {
         if (!exportRef.current) {
@@ -60,7 +86,6 @@ export function ShareResultModal({
 
         try {
             setIsGenerating(true);
-            console.log('exportRef.current:', exportRef.current);
 
             // Wait for the element to be in the DOM
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -115,10 +140,31 @@ export function ShareResultModal({
         }
     };
 
-    // Generate image when modal opens
+    // Convert hero image to data URL when modal opens
     useEffect(() => {
-        if (isOpen) {
+        if (isOpen && heroImgSrc) {
+            setDataUrlImage(null);
             setGeneratedImage(null);
+
+            const loadImageAsDataUrl = async () => {
+                try {
+                    // Convert the image to data URL for better compatibility with html-to-image
+                    const dataUrl = await convertImageToDataUrl(heroImgSrc);
+                    setDataUrlImage(dataUrl);
+                } catch (error) {
+                    console.error('Failed to convert image to data URL:', error);
+                    // Fall back to using the original URL
+                    setDataUrlImage(heroImgSrc);
+                }
+            };
+
+            loadImageAsDataUrl();
+        }
+    }, [isOpen, heroImgSrc]);
+
+    // Generate image when data URL is ready
+    useEffect(() => {
+        if (isOpen && dataUrlImage) {
             // Delay to ensure the dialog and hidden element are fully rendered
             const timer = setTimeout(() => {
                 console.log('Starting image generation...');
@@ -126,7 +172,7 @@ export function ShareResultModal({
             }, 100);
             return () => clearTimeout(timer);
         }
-    }, [isOpen]);
+    }, [isOpen, dataUrlImage]);
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -136,9 +182,11 @@ export function ShareResultModal({
                 </DialogHeader>
 
                 {/* Display generated image or loading state */}
-                {isGenerating ? (
+                {!dataUrlImage || isGenerating ? (
                     <div className="w-full aspect-[1/2] flex items-center justify-center bg-muted rounded-lg">
-                        <p className="text-muted-foreground">Generating preview...</p>
+                        <p className="text-muted-foreground">
+                            {!dataUrlImage ? 'Loading image...' : 'Generating preview...'}
+                        </p>
                     </div>
                 ) : generatedImage ? (
                     <div className="w-full">
@@ -226,7 +274,7 @@ export function ShareResultModal({
                             <h4 className="text-bold text-2xl mt-4 mb-2">Next stop:</h4>
                             <div className="relative w-full max-h-[20%]">
                                 <img
-                                    src={heroImgSrc}
+                                    src={dataUrlImage || heroImgSrc}
                                     alt={destination.name}
                                     className="h-full w-full object-cover brightness-90"
                                     crossOrigin="anonymous"
@@ -236,9 +284,17 @@ export function ShareResultModal({
 
                                 {/* Unsplash Attribution */}
                                 {imageData && (
-                                    <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20">
-                                        Photo by {imageData.photographerName} on Unsplash
-                                    </div>
+                                    <>
+                                        {isFallbackImage && (
+                                            <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
+                                                (may not be the actual destination)
+                                            </div>
+                                        )}
+                                        <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20">
+                                            Photo by {imageData.photographerName} on Unsplash
+                                        </div>
+                                    </>
+
                                 )}
 
                                 {/* Destination Info */}
@@ -267,12 +323,12 @@ export function ShareResultModal({
                 <div className="flex gap-2 mt-4">
                     <Button
                         onClick={handleExportImage}
-                        disabled={isExporting || isGenerating || !generatedImage}
+                        disabled={isExporting || isGenerating || !generatedImage || !dataUrlImage}
                         variant="default"
                         className="w-full"
                         size="md"
                     >
-                        {isGenerating ? "Generating..." : isExporting ? "Downloading..." : "Download as image"}
+                        {!dataUrlImage ? "Loading..." : isGenerating ? "Generating..." : isExporting ? "Downloading..." : "Download as image"}
                     </Button>
                 </div>
             </DialogContent>

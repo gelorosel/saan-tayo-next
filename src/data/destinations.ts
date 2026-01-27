@@ -468,15 +468,6 @@ export const destinations: Destination[] = [
     location: { region: "Cebu" },
   },
   {
-    id: "visayas-relax-bantayan",
-    name: "Bantayan Island, Cebu",
-    island: "visayas",
-    environments: ["beach"],
-    activities: ["relax", "swim", "explore"],
-    bestSeasons: ["cool_dry", "hot_dry"],
-    location: { region: "Cebu" },
-  },
-  {
     id: "visayas-relax-moalboal",
     name: "Moalboal",
     island: "visayas",

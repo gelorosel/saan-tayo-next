@@ -32,13 +32,14 @@ export function QuestionCard({
     onBack,
     canGoBack = false,
 }: Props) {
-    // Randomize options if current.randomize is true
+    // shuffle options if current.shuffle is true
     const displayOptions = useMemo(() => {
-        if (current.randomize) {
+        if (current.shuffle) {
             return shuffleArray(options);
         }
         return options;
-    }, [current.id, options, current.randomize]);
+    }, [current.id, options, current.shuffle]);
+
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Card className="py-6 sm:p-6 w-full max-w-xl my-6">
@@ -67,7 +68,7 @@ export function QuestionCard({
                                     variant="outline"
                                     size="lg"
                                     onClick={() => onSelect(opt.value)}
-                                    className="h-40 sm:h-20"
+                                    className="h-30 p-1 sm:p-6 sm:h-20 "
                                 >
                                     {opt.label}
                                 </Button>

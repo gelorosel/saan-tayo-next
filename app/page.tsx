@@ -144,26 +144,14 @@ export default function Home() {
   }, [current, finalDestinations, pick, preferences, personalityResult?.preferredActivities]);
 
   const handleMiniCardClick = useCallback((destinationId: string) => {
-    setFinalDestinations((prev) => {
-      if (prev.length === 0) return prev;
-
-      const fromIndex = prev.findIndex((d) => d.id === destinationId);
-      if (fromIndex === -1) return prev;
-
-      // Move clicked destination to "next" position (right after current pick)
-      const nextIndexRaw = Math.min(pick + 1, prev.length - 1);
-      const arr = [...prev];
-      const [item] = arr.splice(fromIndex, 1);
-      const insertIndex = fromIndex < nextIndexRaw ? nextIndexRaw - 1 : nextIndexRaw;
-      arr.splice(insertIndex, 0, item);
-      return arr;
-    });
-
-    setPick((prevPick) => Math.min(prevPick + 1, Math.max(0, finalDestinations.length - 1)));
-
-    // Scroll to top smoothly
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [pick, finalDestinations.length]);
+    const destinationIndex = finalDestinations.findIndex((d) => d.id === destinationId);
+    
+    if (destinationIndex !== -1) {
+      setPick(destinationIndex);
+      // Scroll to top smoothly
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [finalDestinations]);
 
   const goNext = useCallback((questionId: string, chosenValue: string) => {
     setAnswers((prev) => {
@@ -208,97 +196,105 @@ export default function Home() {
     setPick(0);
   }, []);
 
+  const handleBeenHere = useCallback(() => {
+    setPick((prev) => Math.min(prev + 1, finalDestinations.length - 1));
+    // Scroll to top smoothly
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [finalDestinations.length]);
+
   return (
     <>
       <DevelopmentModal />
+
       <main className="min-h-screen flex items-center justify-center p-6">
         <div className="max-w-xl w-full">
           <div className="max-w-xl w-full mx-auto">
-          <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
-          <h2 className="text-xl font-semibold mb-4">Find your next destination</h2>
-          {current ?
-            <QuestionCard
-              current={current}
-              options={current.options as Option[]}
-              onSelect={handleSelect}
-              onBack={handleBack}
-              canGoBack={canGoBack}
-            /> :
-            finalDestinations.length ? (
-              <div className="flex flex-col lg:flex-row items-start">
-                {personalityProfile && (
-                  <PersonalityResultCard
-                    personality={personalityProfile}
-                    answers={answers}
-                    destination={finalDestinations[pick]}
-                    preferredActivity={primaryActivity}
-                    fastMode={fastMode}
-                  />
-                )}
-              </div>
-            ) : (
-              <p>No places matched this moment.</p>
-            )
-          }
+            <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
+            <h2 className="text-xl font-semibold mb-4">Find your next destination</h2>
+            {current ?
+              <QuestionCard
+                current={current}
+                options={current.options as Option[]}
+                onSelect={handleSelect}
+                onBack={handleBack}
+                canGoBack={canGoBack}
+              /> :
+              finalDestinations.length ? (
+                <div className="flex flex-col lg:flex-row items-start">
+                  {personalityProfile && (
+                    <PersonalityResultCard
+                      personality={personalityProfile}
+                      answers={answers}
+                      destination={finalDestinations[pick]}
+                      preferredActivity={primaryActivity}
+                      fastMode={fastMode}
+                      onBeenHere={handleBeenHere}
+                    />
+                  )}
+                </div>
+              ) : (
+                <p>No places matched this moment.</p>
+              )
+            }
 
-          {canGoBack &&
-            <div className="my-3 flex flex-row justify-between gap-4">
-              <button
-                className="underline text-sm cursor-pointer"
-                onClick={handleStartOver}
-              >
-                Start over
-              </button>
-            </div>
-          }
-          {hasShownDestination && (
-            <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={fastMode}
-                onChange={toggleFastMode}
-                className="cursor-pointer"
-              />
-              <span>Fast mode (skip loading images and description)</span>
-            </label>
-          )}
-        </div>
-
-        {/* More destinations section */}
-        {relatedDestinations.length > 0 && (
-          <div className="w-full mt-10">
-            <h3 className="text-base font-semibold mb-3">
-              If you've already been to {finalDestinations[pick].name}, you might also like:
-            </h3>
-            <div className="relative -mx-6 px-6">
-              {/* Scrollable container */}
-              <div className="flex flex-row gap-3.5 overflow-x-auto pb-2">
-                {relatedDestinations.map((relatedDest) => (
-                  <div
-                    key={relatedDest.id}
-                    className="flex-shrink-0 cursor-pointer"
-                    style={{ width: "18rem" }}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => handleMiniCardClick(relatedDest.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        handleMiniCardClick(relatedDest.id);
-                      }
-                    }}
-                  >
-                    <MiniCard destination={relatedDest} />
-                  </div>
-                ))}
+            {canGoBack &&
+              <div className="my-3 flex flex-row justify-between gap-4">
+                <button
+                  className="underline text-sm cursor-pointer"
+                  onClick={handleStartOver}
+                >
+                  Start over
+                </button>
               </div>
-              {/* Scroll hint text */}
-              <p className="text-xs text-muted-foreground mt-2 text-center hidden sm:block">
-                ← Scroll to see more →
-              </p>
-            </div>
+            }
+            {hasShownDestination && (
+              <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={fastMode}
+                  onChange={toggleFastMode}
+                  className="cursor-pointer"
+                />
+                <span>Fast mode (skip loading images and description)</span>
+              </label>
+            )}
           </div>
-        )}
+
+          {/* More destinations section */}
+          {relatedDestinations.length > 0 && (
+            <div className="w-full mt-10">
+              <h3 className="text-base font-semibold mb-3">
+                You might also like:
+              </h3>
+              <div className="relative -mx-6 px-6">
+                {/* Scrollable container */}
+                <div className="flex flex-row gap-3.5 overflow-x-auto pb-2">
+                  {relatedDestinations.map((relatedDest) => (
+                    <div
+                      key={relatedDest.id}
+                      className="flex-shrink-0 cursor-pointer"
+                      style={{ width: "18rem" }}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => handleMiniCardClick(relatedDest.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleMiniCardClick(relatedDest.id);
+                        }
+                      }}
+                    >
+                      <MiniCard destination={relatedDest} />
+                    </div>
+                  ))}
+                </div>
+                {/* Scroll hint text */}
+                <p className="text-xs text-muted-foreground mt-2 text-center hidden sm:block">
+                  ← Scroll to see more →
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </>

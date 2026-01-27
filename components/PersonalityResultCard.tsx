@@ -19,6 +19,7 @@ interface PersonalityResultCardProps {
     destination: Destination;
     preferredActivity?: string;
     fastMode?: boolean;
+    onBeenHere?: () => void;
 }
 
 const FALLBACK_IMAGE = "/images/default-img.jpeg";
@@ -71,6 +72,7 @@ export function PersonalityResultCard({
     destination,
     preferredActivity,
     fastMode = false,
+    onBeenHere,
 }: PersonalityResultCardProps) {
     // Memoized companion lists
     const perfectCompanions = useMemo(
@@ -192,81 +194,99 @@ export function PersonalityResultCard({
     // Skeleton loading state
     if (!fastMode && (isLoadingImage || isLoadingDescription)) {
         return (
-            <div className="relative">
-                <Card className="overflow-hidden rounded-2xl shadow-sm w-full">
-                    {/* Skeleton Image */}
-                    <div className="relative w-full aspect-[16/9] bg-muted animate-pulse">
-                        <p className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-muted-foreground z-10">
-                            Finding your next destination...
-                        </p>
+            <Card className="overflow-hidden rounded-2xl shadow-sm w-full">
+                {/* Skeleton Image */}
+                <div className="relative w-full aspect-[16/9] bg-muted animate-pulse">
+                    <p className="absolute inset-0 flex items-center justify-center text-lg font-semibold text-muted-foreground z-10">
+                        Taking you to your next destination...
+                    </p>
+                </div>
+
+                <CardContent className="p-8 space-y-4">
+                    {/* Skeleton Header */}
+                    <div>
+                        <div className="flex flex-col sm:flex-row gap-4 mb-2 items-start sm:justify-between">
+                            <div className="flex-1 min-w-[33%]">
+                                <div className="h-9 w-40 bg-muted animate-pulse rounded mb-2" />
+                                <div className="h-4 w-28 bg-muted animate-pulse rounded" />
+                            </div>
+                            <div className="flex flex-wrap gap-2 justify-start sm:justify-end sm:max-w-[50%] items-center w-full mt-2 sm:mt-0">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="h-6 w-20 bg-muted animate-pulse rounded-full" />
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
-                    <CardContent className="p-8 space-y-4">
-                        {/* Skeleton Header */}
-                        <div>
-                            <div className="flex flex-col sm:flex-row gap-4 mb-2 items-start sm:justify-between">
-                                <div className="flex-1 min-w-[33%]">
-                                    <div className="h-9 w-40 bg-muted animate-pulse rounded mb-2" />
-                                    <div className="h-4 w-28 bg-muted animate-pulse rounded" />
-                                </div>
-                                <div className="flex flex-wrap gap-2 justify-start sm:justify-end sm:max-w-[50%] items-center w-full mt-2 sm:mt-0">
-                                    {[1, 2, 3, 4].map((i) => (
-                                        <div key={i} className="h-6 w-20 bg-muted animate-pulse rounded-full" />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+                    {/* Skeleton Buttons Row */}
+                    <div className="flex flex-row gap-6">
+                        <div className="h-12 flex-1 bg-muted animate-pulse rounded-md" />
+                        <div className="h-12 flex-1 bg-muted animate-pulse rounded-md" />
+                    </div>
 
-                        {/* Skeleton Description */}
-                        <div className="space-y-2">
-                            <div className="h-4 w-full bg-muted animate-pulse rounded" />
-                            <div className="h-4 w-full bg-muted animate-pulse rounded" />
-                            <div className="h-4 w-3/4 bg-muted animate-pulse rounded" />
-                        </div>
+                    {/* Skeleton Description */}
+                    <div className="space-y-2">
+                        <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                        <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                        <div className="h-4 w-3/4 bg-muted animate-pulse rounded" />
+                    </div>
 
-                        {/* Skeleton Personality Section */}
-                        <div className="h-4 w-24 bg-muted animate-pulse rounded" />
-                        <div className="space-y-1">
-                            <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 bg-muted animate-pulse rounded-full" />
+                    {/* Skeleton "Perfect for" label */}
+                    <div className="h-4 w-24 bg-muted animate-pulse rounded" />
+
+                    {/* Skeleton Personality Section */}
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-start gap-4">
+                                <div className="h-12 w-12 bg-muted animate-pulse rounded" />
                                 <div className="h-8 w-48 bg-muted animate-pulse rounded" />
                             </div>
-                            <div className="h-6 w-32 bg-muted animate-pulse rounded-full" />
                         </div>
+                        <div className="h-6 w-32 bg-muted animate-pulse rounded-full" />
+                    </div>
 
-                        {/* Skeleton Personality Description */}
+                    {/* Skeleton Personality Description */}
+                    <div className="space-y-2">
+                        <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                        <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
+                    </div>
+
+                    {/* Skeleton Companions */}
+                    <div className="flex flex-col gap-3">
+                        <div>
+                            <div className="h-4 w-48 bg-muted animate-pulse rounded mb-2" />
+                            <div className="flex flex-wrap gap-2">
+                                {[1, 2].map((i) => (
+                                    <div key={i} className="h-7 w-32 bg-muted animate-pulse rounded-full" />
+                                ))}
+                            </div>
+                        </div>
+                        <div>
+                            <div className="h-4 w-40 bg-muted animate-pulse rounded mb-2" />
+                            <div className="flex flex-wrap gap-2">
+                                <div className="h-7 w-32 bg-muted animate-pulse rounded-full" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Skeleton Why This Fits */}
+                    <div>
+                        <div className="h-5 w-32 bg-muted animate-pulse rounded mb-2" />
                         <div className="space-y-2">
                             <div className="h-4 w-full bg-muted animate-pulse rounded" />
-                            <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
+                            <div className="h-4 w-4/5 bg-muted animate-pulse rounded" />
                         </div>
+                    </div>
 
-                        {/* Skeleton Companions */}
-                        <div className="flex flex-col gap-3">
-                            <div>
-                                <div className="h-4 w-48 bg-muted animate-pulse rounded mb-2" />
-                                <div className="flex flex-wrap gap-2">
-                                    {[1, 2].map((i) => (
-                                        <div key={i} className="h-6 w-32 bg-muted animate-pulse rounded-full" />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+                    {/* Skeleton Best months */}
+                    <div className="space-y-2">
+                        <div className="h-4 w-64 bg-muted animate-pulse rounded" />
+                    </div>
 
-                        {/* Skeleton Why This Fits */}
-                        <div>
-                            <div className="h-5 w-32 bg-muted animate-pulse rounded mb-2" />
-                            <div className="space-y-2">
-                                <div className="h-4 w-full bg-muted animate-pulse rounded" />
-                                <div className="h-4 w-4/5 bg-muted animate-pulse rounded" />
-                            </div>
-                        </div>
-
-                        {/* Skeleton Buttons */}
-                        <div className="h-12 w-full bg-muted animate-pulse rounded-md" />
-                        <div className="h-12 w-full bg-muted animate-pulse rounded-md" />
-                    </CardContent>
-                </Card>
-            </div>
+                    {/* Skeleton "Know more" Button */}
+                    <div className="h-12 w-full bg-muted animate-pulse rounded-md" />
+                </CardContent>
+            </Card>
         );
     }
 
@@ -334,6 +354,25 @@ export function PersonalityResultCard({
                                 ))}
                             </div>
                         </div>
+                    </div>
+
+                    <div className="flex flex-row gap-6">
+                        <Button
+                            onClick={() => setIsShareDialogOpen(true)}
+                            variant="default"
+                            size="md"
+                            className="flex-1"
+                        >
+                            Share my results
+                        </Button>
+                        <Button
+                            onClick={onBeenHere}
+                            variant="outline"
+                            size="md"
+                            className="flex-1"
+                        >
+                            I&apos;ve been here!
+                        </Button>
                     </div>
 
                     {/* Description */}
@@ -431,14 +470,6 @@ export function PersonalityResultCard({
                         size="md"
                     >
                         Know more about {destination.name}
-                    </Button>
-                    <Button
-                        onClick={() => setIsShareDialogOpen(true)}
-                        variant="outline"
-                        className="w-full"
-                        size="md"
-                    >
-                        Share my results
                     </Button>
                 </CardContent>
             </Card>

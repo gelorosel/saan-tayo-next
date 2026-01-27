@@ -145,7 +145,9 @@ export function PersonalityResultCard({
 
             if (isMounted) {
                 if (imageDataResult) {
-                    setHeroImgSrc(imageDataResult.url);
+                    // Proxy the image through our API for iOS compatibility
+                    const proxiedUrl = `/api/unsplash/image?url=${encodeURIComponent(imageDataResult.url)}`;
+                    setHeroImgSrc(proxiedUrl);
                     setImageData(imageDataResult);
                     triggerDownload(imageDataResult.downloadLocation);
                 } else {
@@ -300,6 +302,7 @@ export function PersonalityResultCard({
                             src={heroImgSrc}
                             alt={destination.name}
                             className={`absolute inset-0 h-full w-full object-cover ${isLoadingImage ? "opacity-70" : ""}`}
+                            crossOrigin="anonymous"
                         />
                         {/* Gradient overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />

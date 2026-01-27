@@ -3,7 +3,7 @@ import { Activity } from "../types/preference";
 // src/data/activities.ts
 export type ActivityOption = { label: string; value: Activity };
 export type Environment = "beach" | "mountains" | "city" | "reef" | "any";
-export type Vibe = "slow" | "move" | "wander" | "learn";
+export type Vibe = "rest" | "activities" | "sights" | "learn";
 
 export const envActivityMap: Record<Environment, ActivityOption[]> =
 {
@@ -44,10 +44,10 @@ export const envActivityMap: Record<Environment, ActivityOption[]> =
 };
 
 const vibeActivityMap: Record<Vibe, Activity[]> = {
-  slow: ["relax", "swim", "camp", "food_trip", "nightlife", "hike", "history", "waterfalls"],
-  move: ["hike", "trek", "surf", "dive", "snorkel", "waterfalls", "natural_wonders", "camp", "island_hop"],
-  wander: ["food_trip", "explore", "nightlife", "waterfalls", "island_hop", "camp", "history", "hike"],
-  learn: ["museums", "history", "natural_wonders", "explore", "camp", "snorkel"],
+  rest: ["relax", "swim", "camp", "food_trip", "nightlife", "hike", "history", "waterfalls"],
+  activities: ["hike", "trek", "camp", "dive", "snorkel", "surf", "island_hop", "waterfalls", "natural_wonders"],
+  sights: ["explore", "island_hop", "natural_wonders", "food_trip", "waterfalls", "history", "museums", "hike", "dive", "snorkel"],
+  learn: ["museums", "history", "explore", "food_trip", "natural_wonders", "snorkel", "hike"],
 };
 
 const uniqueOptionsByValue = (options: ActivityOption[]): ActivityOption[] => {

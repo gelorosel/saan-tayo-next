@@ -26,10 +26,10 @@ export const questions: Question[] = [
     id: "vibe",
     question: "What kind of day do you want?",
     options: [
-      { label: "Slow and easy", value: "slow" },
-      { label: "Move and challenge", value: "move" },
-      { label: "Wander and taste", value: "wander" },
-      { label: "See and learn", value: "learn" },
+      { label: "A slow and easy day for resting", value: "rest" },
+      { label: "An exciting day for an outdoor activities", value: "activities" },
+      { label: "A day fully booked with sights and scenes", value: "sights" },
+      { label: "An inspiring day for learning and culture", value: "learn" },
     ],
   },
   {
@@ -43,14 +43,14 @@ export const questions: Question[] = [
     shuffle: true,
     options: [
       { label: "Sleeping in, no alarms", value: "a" },
-      { label: "A sunrise hike or workout", value: "b" },
+      { label: "Catching the sunrise for a head start", value: "b" },
       { label: "Coffee + wandering with no plan", value: "c" },
       { label: "A packed itinerary and tickets booked", value: "d" },
     ],
   },
   {
     id: "traveler_afternoon",
-    question: "You have a free afternoon. What do you do?",
+    question: "After breakfast, It's time to...",
     shuffle: true,
     options: [
       { label: "Beach, pool, or nap - vibes only", value: "a" },
@@ -66,7 +66,7 @@ export const questions: Question[] = [
     options: [
       { label: "Comfort (hotels, food, upgrades)", value: "a" },
       { label: "Experiences (adventures, tours, activities)", value: "b" },
-      { label: "Local food, coffee, and small finds", value: "c" },
+      { label: "Local food, small bites, and unique finds", value: "c" },
       { label: "Must-see attractions and guided trips", value: "d" },
     ],
   },
@@ -83,13 +83,13 @@ export const questions: Question[] = [
   },
   {
     id: "traveler_plans",
-    question: "Travel plans make you feel...",
+    question: "Your trip is about to start! You can't wait to...",
     shuffle: true,
     options: [
-      { label: "Best when flexible and spontaneous", value: "a" },
-      { label: "Excited if there's something challenging", value: "b" },
-      { label: "Curious - anything new is fun", value: "c" },
-      { label: "Calm when everything is organized", value: "d" },
+      { label: "Escape the routine and wind down", value: "a" },
+      { label: "Experience something new", value: "b" },
+      { label: "Absorb the local culture", value: "c" },
+      { label: "Get the most out of your time and budget", value: "d" },
     ],
   },
   {

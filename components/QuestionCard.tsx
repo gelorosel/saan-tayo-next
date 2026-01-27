@@ -96,6 +96,7 @@ export function QuestionCard({
                                     disabled={isExiting}
                                     size="lg"
                                     onClick={() => setSelectedValue(opt.value)}
+                                    className="whitespace-normal text-center leading-tight"
                                 >
                                     {opt.label}
                                 </Button>
@@ -110,7 +111,7 @@ export function QuestionCard({
                                     disabled={isExiting}
                                     size="lg"
                                     onClick={() => setSelectedValue(opt.value)}
-                                    className="h-30 p-3 sm:p-6 sm:h-20 "
+                                    className="h-30 p-3 sm:p-6 sm:h-20 whitespace-normal text-center leading-tight break-words"
                                 >
                                     {opt.label}
                                 </Button>

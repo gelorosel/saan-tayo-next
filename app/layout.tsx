@@ -5,8 +5,9 @@ import "./custom.css";
 import Footer from "@/components/Footer";
 
 const comfortaa = Comfortaa({
-  variable: "--font-comfortaa",
   subsets: ["latin"],
+  variable: "--font-comfortaa",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -36,9 +37,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={comfortaa.variable}>
       <body
-        className={`${comfortaa.variable} antialiased flex flex-col min-h-screen`}
+        className="antialiased flex flex-col min-h-screen"
       >
         <div className="flex-1">
           {children}

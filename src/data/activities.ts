@@ -1,6 +1,5 @@
 import { Activity } from "../types/preference";
 
-// src/data/activities.ts
 export type ActivityOption = { label: string; value: Activity };
 export type Environment = "beach" | "mountains" | "city" | "reef" | "any";
 export type Vibe = "rest" | "activities" | "sights" | "learn";

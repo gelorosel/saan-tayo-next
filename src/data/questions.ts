@@ -1,4 +1,3 @@
-// src/data/questions.ts
 import { Question } from "@/src/types/question";
 
 export const questions: Question[] = [

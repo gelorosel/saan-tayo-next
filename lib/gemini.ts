@@ -22,7 +22,10 @@ export async function geminiShortDescription(
     const personalityLine = personality
         ? ` The traveler's personality type: ${personality.description}.`
         : "";
-    const prompt = `Provide details for the tourist destination: ${destinationName} and why it would fit for this tourist's preference: ${activity}.${personalityLine} Include the best months to visit. Do not use the phrase "perfect for" in your description.`;
+    let prompt = `Provide details for the tourist destination: ${destinationName}`
+    prompt += ` and why it would fit for this tourist's preference: ${activity}.${personalityLine}`;
+    prompt += ` Include the best months to visit.`;
+    prompt += ` Do not use the phrase "perfect for" in your description.`;
 
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash-lite',
@@ -32,7 +35,7 @@ export async function geminiShortDescription(
             responseSchema: {
                 type: Type.OBJECT,
                 properties: {
-                    description: { type: Type.STRING, description: "A concise 1-2 sentence description." },
+                    description: { type: Type.STRING, description: "A concise 1-2 sentence description. Make sure it is factual and not too long." },
                     bestMonths: { type: Type.STRING, description: "Best months to visit (e.g., 'December to February' or 'March to May')." },
                 },
                 required: ["description", "bestMonths"]

@@ -64,9 +64,9 @@ export const questions: Question[] = [
     shuffle: true,
     options: [
       { label: "Comfort (hotels, food, upgrades)", value: "a" },
-      { label: "Experiences (adventures, tours, activities)", value: "b" },
+      { label: "Transportation (fuel, boat rides, rented vehicles)", value: "b" },
       { label: "Local food, small bites, and unique finds", value: "c" },
-      { label: "Must-see attractions and guided trips", value: "d" },
+      { label: "Experiences (attractions, tours, activities)", value: "d" },
     ],
   },
   {

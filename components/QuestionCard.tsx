@@ -41,7 +41,7 @@ export function QuestionCard({
     }, [current.id, options, current.randomize]);
     return (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <Card className="p-6 w-full max-w-xl my-6">
+            <Card className="py-6 sm:p-6 w-full max-w-xl my-6">
                 <CardContent className="space-y-4">
                     <h2 className="text-xl font-semibold">{current.question}</h2>
 
@@ -67,7 +67,7 @@ export function QuestionCard({
                                     variant="outline"
                                     size="lg"
                                     onClick={() => onSelect(opt.value)}
-                                    className="h-30 sm:h-20"
+                                    className="h-40 sm:h-20"
                                 >
                                     {opt.label}
                                 </Button>

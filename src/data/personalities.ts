@@ -65,7 +65,7 @@ export const personalities: PersonalityProfile[] = [
     id: "master_planner",
     emoji: "🗂️",
     name: "The Master Planner",
-    category: "core",
+    category: "rare",
     description:
       "You believe a great trip starts with great planning. Schedules, bookings, and logistics give you peace of mind—and free you to actually enjoy the experience. You love knowing what’s next and making every day run smoothly.",
     strengths: [
@@ -125,7 +125,7 @@ export const personalities: PersonalityProfile[] = [
     id: "free_spirited_nomad",
     emoji: "🎒",
     name: "The Free-Spirited Nomad",
-    category: "hybrid",
+    category: "rare",
     description:
       "You value freedom above all else. Fixed plans feel restrictive, and you’d rather see where the road leads than lock yourself into an itinerary. You adapt quickly, move often, and trust that things will work out.",
     strengths: [
@@ -185,7 +185,7 @@ export const personalities: PersonalityProfile[] = [
     id: "chaos_romantic",
     emoji: "🎭",
     name: "The Chaos Romantic",
-    category: "rare",
+    category: "hybrid",
     description:
       "You thrive in spontaneity and surprise. Plans are loose suggestions at best, and you love the energy of not knowing what’s next. Your trips are unpredictable, story-filled, and never boring.",
     strengths: [
@@ -205,7 +205,7 @@ export const personalities: PersonalityProfile[] = [
     id: "mood_based_traveler",
     emoji: "🧳",
     name: "The Mood-Based Traveler",
-    category: "rare",
+    category: "core",
     description:
       "Your travel style changes with how you feel. Some days you’re out exploring, other days you’re resting—and both are valid. You value flexibility and prefer trips that allow you to listen to your energy in the moment.",
     strengths: [

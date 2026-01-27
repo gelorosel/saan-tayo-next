@@ -80,7 +80,6 @@ export function ShareResultModal({
             // Extra wait to ensure everything is painted
             await new Promise(resolve => setTimeout(resolve, 300));
 
-            console.log('Attempting to generate image...');
             const dataUrl = await toPng(exportRef.current, {
                 quality: 0.95,
                 pixelRatio: 2,
@@ -89,7 +88,6 @@ export function ShareResultModal({
                 width: 600,
                 height: 1200,
             });
-            console.log('Image generated successfully!');
 
             setGeneratedImage(dataUrl);
         } catch (error) {

@@ -117,7 +117,8 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--color-border);
+    outline-color: color-mix(in oklch, var(--color-ring), transparent 50%);
     /* Disable tap highlight on mobile */
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
@@ -126,8 +127,8 @@
     background-color: #f4f0e7;
   }
   body {
-    @apply bg-background text-foreground font-sans;
-    background-color: #f4f0e7;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
   }
   /* Additional mobile touch fixes */
   button,

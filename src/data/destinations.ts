@@ -806,7 +806,7 @@ export const destinations: Destination[] = [
     island: "luzon",
     environments: ["city"],
     activities: ["explore", "history", "food_trip"],
-    bestSeasons: ["cool_dry", "hot_dry"],
+    bestSeasons: ["cool_dry", "wet"],
     location: { region: "Ilocos Sur" },
   },
   {
@@ -1123,7 +1123,7 @@ export const destinations: Destination[] = [
     island: "luzon",
     environments: ["city"],
     activities: ["food_trip", "explore", "history"],
-    bestSeasons: ["cool_dry", "hot_dry"],
+    bestSeasons: ["cool_dry", "hot_dry", "wet"],
     location: { region: "Metro Manila" },
   },
   {
@@ -1144,7 +1144,7 @@ export const destinations: Destination[] = [
     island: "luzon",
     environments: ["city"],
     activities: ["relax", "explore", "food_trip", "history", "museums"],
-    bestSeasons: ["cool_dry", "hot_dry"],
+    bestSeasons: ["cool_dry", "hot_dry", "wet"],
     location: { region: "Metro Manila" },
   },
   {

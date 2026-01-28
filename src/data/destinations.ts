@@ -322,7 +322,7 @@ export const destinations: Destination[] = [
     name: "Siquijor",
     island: "visayas",
     environments: ["beach", "mountains"],
-    activities: ["swim", "relax", "explore", "hike", "camp", "waterfalls", "island_hop"],
+    activities: ["swim", "relax", "explore", "hike", "camp", "waterfalls", "island_hop", "surf"],
     bestSeasons: ["cool_dry", "hot_dry"],
     location: { region: "Siquijor" },
   },
@@ -540,19 +540,29 @@ export const destinations: Destination[] = [
   // ─────────────────────────────────────────────────────────────
   {
     id: "mindanao-beach-siargao",
-    name: "Siargao Island",
+    name: "Siargao",
     island: "mindanao",
     environments: ["beach"],
-    activities: ["surf", "swim", "relax", "island_hop", "nightlife"],
+    activities: ["surf", "swim", "relax", "island_hop", "nightlife", "explore", "food_trip", "natural_wonders"],
     bestSeasons: ["wet", "cool_dry"],
     location: { region: "Surigao del Norte" },
   },
   {
+    id: "mindanao-beach-lanuza",
+    name: "Lanuza",
+    island: "mindanao",
+    overrideUnsplashName: "surfing philippines", // Sometimes fetches a name of a person
+    environments: ["beach"],
+    activities: ["surf", "swim", "relax", "food_trip"],
+    bestSeasons: ["wet", "cool_dry"],
+    location: { region: "Surigao del Sur" },
+  },
+  {
     id: "mindanao-beach-pink-beach-santa-cruz",
-    name: "Pink Beach, Great Santa Cruz Island",
+    name: "Pink Beach, Santa Cruz Island",
     island: "mindanao",
     environments: ["beach"],
-    activities: ["swim", "snorkel", "relax"],
+    activities: ["swim", "snorkel", "relax", "natural_wonders", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
     location: { region: "Zamboanga" },
   },
@@ -747,15 +757,6 @@ export const destinations: Destination[] = [
     location: { region: "South Cotabato" },
   },
   {
-    id: "mindanao-relax-dahican",
-    name: "Dahican Beach, Mati",
-    island: "mindanao",
-    environments: ["beach"],
-    activities: ["relax", "swim", "surf"],
-    bestSeasons: ["cool_dry", "hot_dry"],
-    location: { region: "Davao Oriental" },
-  },
-  {
     id: "mindanao-relax-bukidnon-highlands",
     name: "Bukidnon Highlands",
     overrideUnsplashName: "Bukidnon",
@@ -840,6 +841,7 @@ export const destinations: Destination[] = [
   {
     id: "clark",
     name: "Clark",
+    overrideUnsplashName: "pampanga", // Sometimes fetches a name of a person
     island: "luzon",
     environments: ["city"],
     activities: ["food_trip", "explore", "relax"],
@@ -898,7 +900,7 @@ export const destinations: Destination[] = [
     name: "Calicoan Island, Guiuan",
     island: "visayas",
     environments: ["beach"],
-    activities: ["surf", "natural_wonders"],
+    activities: ["surf", "natural_wonders", "relax", "swim"],
     bestSeasons: ["cool_dry"],
     location: { region: "Eastern Samar" },
   },
@@ -914,6 +916,7 @@ export const destinations: Destination[] = [
   {
     id: "laoang",
     name: "Laoang",
+    overrideUnsplashName: "samar beach", // Sometimes fetches a name of a person
     island: "visayas",
     environments: ["beach"],
     activities: ["surf", "swim", "relax", "natural_wonders"],
@@ -1167,7 +1170,7 @@ export const destinations: Destination[] = [
     name: "Legazpi City",
     island: "luzon",
     environments: ["city"],
-    activities: ["food_trip", "explore", "natural_wonders", "history",],
+    activities: ["natural_wonders", "history", "food_trip", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
     location: { region: "Albay" },
   },

@@ -10,19 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 
 export function DevelopmentModal() {
-    const [isOpen, setIsOpen] = useState(false);
-
-    useEffect(() => {
-        // Check if user has already seen the modal
-        const hasSeenModal = localStorage.getItem("hasSeenDevModal");
-
-        if (!hasSeenModal) {
-            setIsOpen(true);
-        }
-    }, []);
+    const [isOpen, setIsOpen] = useState(true);
 
     const handleClose = () => {
-        localStorage.setItem("hasSeenDevModal", "true");
         setIsOpen(false);
     };
 

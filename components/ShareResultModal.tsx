@@ -230,14 +230,14 @@ export function ShareResultModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-[500px] h-full sm:h-[95vh] overflow-y-auto p-4">
+            <DialogContent className={`max-w-[500px] h-full sm:h-[95vh] overflow-y-auto ${!generatedImage || isGenerating ? 'p-0 m-0' : 'p-4'}`}>
                 <DialogHeader>
                     <DialogTitle></DialogTitle>
                 </DialogHeader>
 
                 {/* Display generated image or loading state */}
                 {!dataUrlImage || isGenerating ? (
-                    <div className="w-full aspect-[1/2] flex items-center justify-center bg-muted rounded-lg">
+                    <div className="w-full aspect-[1/2] flex items-center justify-center bg-muted rounded-lg p-0 m-0">
                         <p className="text-muted-foreground">
                             {!dataUrlImage ? 'Loading image...' : 'Generating preview...'}
                         </p>
@@ -254,7 +254,10 @@ export function ShareResultModal({
                             className="w-full h-auto rounded-lg"
                         />
                     </div>
-                ) : null}
+                ) : <div className="w-full aspect-[1/2] flex items-center justify-center bg-muted rounded-lg p-0 m-0"><p className="text-muted-foreground">
+                    {'Generating preview...'}
+                </p>
+                </div>}
 
                 {/* Hidden export version for generation - 9:16 aspect ratio - always rendered */}
                 <div
@@ -386,7 +389,7 @@ export function ShareResultModal({
                 </div>
 
                 {/* Download button */}
-                <div className="flex gap-2 mt-auto">
+                {!generatedImage || isGenerating ? null : <div className="flex gap-2 mt-auto">
                     <Button
                         onClick={handleExportImage}
                         disabled={isExporting || isGenerating || !generatedImage || !dataUrlImage}
@@ -396,7 +399,7 @@ export function ShareResultModal({
                     >
                         {!dataUrlImage ? "Loading..." : isGenerating ? "Generating..." : isExporting ? "Downloading..." : "Download"}
                     </Button>
-                </div>
+                </div>}
             </DialogContent>
         </Dialog>
     );

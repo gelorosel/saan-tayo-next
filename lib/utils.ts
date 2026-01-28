@@ -63,3 +63,70 @@ export function prettifyActivity(activity: string): string {
     .replace(/_/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+/**
+ * This was TOO FRUSTRATING to figure out!!!
+ * Converts an image URL to a data URL using canvas for better iOS compatibility
+ * @param imageUrl - The URL of the image to convert
+ * @returns Promise that resolves to a data URL string
+ */
+export const convertImageToDataUrl = async (imageUrl: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      try {
+        // Constrain dimensions for iOS compatibility
+        // Max dimension 2048px to stay well under iOS canvas limits
+        const maxDimension = 2048;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDimension || height > maxDimension) {
+          const scale = Math.min(maxDimension / width, maxDimension / height);
+          width = Math.floor(width * scale);
+          height = Math.floor(height * scale);
+        }
+
+        // Create canvas with constrained dimensions
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d', {
+          alpha: false, // Better performance for JPEG
+          willReadFrequently: false
+        });
+
+        if (ctx) {
+          // Fill with white background (for transparency)
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, width, height);
+
+          // Draw the image
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert to data URL with optimized quality for iOS
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+          // Verify data URL is valid and not too large (iOS has ~10MB limit for data URLs)
+          if (dataUrl.length > 10 * 1024 * 1024) {
+            reject(new Error('Image too large after conversion'));
+          } else {
+            resolve(dataUrl);
+          }
+        } else {
+          reject(new Error('Failed to get canvas context'));
+        }
+      } catch (error) {
+        reject(error);
+      }
+    };
+
+    img.onerror = () => reject(new Error('Failed to load image'));
+
+    // Set src to trigger loading
+    img.src = imageUrl;
+  });
+};

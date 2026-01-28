@@ -14,6 +14,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { QRCodeSVG } from "qrcode.react";
+import { convertImageToDataUrl } from "@/lib/utils";
 
 interface UnsplashImageData {
     id?: string;
@@ -53,6 +54,7 @@ export function ShareResultModal({
     const [isGenerating, setIsGenerating] = useState(false);
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
     const [isImageReady, setIsImageReady] = useState(false);
+    const [dataUrlImage, setDataUrlImage] = useState<string | null>(null);
     const exportRef = useRef<HTMLDivElement>(null);
 
     const generateImage = async () => {
@@ -82,13 +84,17 @@ export function ShareResultModal({
             // Extra wait to ensure everything is painted
             await new Promise(resolve => setTimeout(resolve, 300));
 
+            // Detect if on iOS for optimized settings
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
             const dataUrl = await toPng(exportRef.current, {
                 quality: 0.95,
-                pixelRatio: 2,
+                pixelRatio: isIOS ? 1.5 : 2, // Lower pixel ratio for iOS to prevent memory issues
                 cacheBust: true,
                 backgroundColor: '#ffffff',
                 width: 600,
                 height: 1113,
+                skipFonts: false,
             });
 
             setGeneratedImage(dataUrl);
@@ -117,21 +123,60 @@ export function ShareResultModal({
         }
     };
 
-    // Generate image when modal opens
+    // In order forhtml-to-image to capture the entire DOM element
+    // It needs to serialize all content (HTML, CSS, images) into an image
+    // Problem: External image URLs can fail during this process, especially on iOS
+    // Solution: Convert image to data URL first so it's embedded directly in the DOM
     useEffect(() => {
         if (isOpen && heroImgSrc) {
+            setDataUrlImage(null);
             setGeneratedImage(null);
             setIsImageReady(false);
 
-            // Delay to ensure the dialog and hidden element are fully rendered
-            const timer = setTimeout(() => {
+            const loadImageAsDataUrl = async () => {
+                let attempts = 0;
+                const maxAttempts = 3;
+
+                while (attempts < maxAttempts) {
+                    try {
+                        // Convert the image to data URL for better compatibility with html-to-image
+                        const dataUrl = await convertImageToDataUrl(heroImgSrc);
+                        setDataUrlImage(dataUrl);
+                        setIsImageReady(true);
+                        console.log('Successfully converted image to data URL');
+                        return;
+                    } catch (error) {
+                        attempts++;
+                        console.error(`Failed to convert image to data URL (attempt ${attempts}/${maxAttempts}):`, error);
+
+                        if (attempts < maxAttempts) {
+                            // Wait before retrying (exponential backoff)
+                            await new Promise(resolve => setTimeout(resolve, 500 * attempts));
+                        }
+                    }
+                }
+
+                // After all retries failed, fall back to using the original URL
+                console.warn('All conversion attempts failed, using original URL');
+                setDataUrlImage(heroImgSrc);
                 setIsImageReady(true);
-                console.log('Starting image generation...');
-                generateImage();
-            }, 200);
-            return () => clearTimeout(timer);
+            };
+
+            loadImageAsDataUrl();
         }
     }, [isOpen, heroImgSrc]);
+
+    // Generate image when data URL is ready
+    useEffect(() => {
+        if (isOpen && dataUrlImage) {
+            // Delay to ensure the dialog and hidden element are fully rendered
+            const timer = setTimeout(() => {
+                console.log('Starting image generation...');
+                generateImage();
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen, dataUrlImage]);
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -186,8 +231,8 @@ export function ShareResultModal({
                             <div className="p-0" style={{ height: '270px', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ flex: '0 0 270px', display: 'flex', flexDirection: 'column' }}>
                                     <div className="relative" style={{ width: '600px', height: '270px' }}>
-                                        <img
-                                            src={heroImgSrc}
+                                        {dataUrlImage && <img
+                                            src={dataUrlImage}
                                             alt={destination.name}
                                             width={800}
                                             height={270}
@@ -195,7 +240,7 @@ export function ShareResultModal({
                                             decoding="async"
                                             className="h-full w-full object-cover brightness-90"
                                             crossOrigin="anonymous"
-                                        />
+                                        />}
                                         {/* Gradient overlay */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
 

@@ -273,10 +273,52 @@ export function ShareResultModal({
                 >
                     <Card className="overflow-hidden rounded-2xl shadow-sm w-full h-full">
                         <CardContent className="p-0 h-full flex flex-col">
-                            <div className="px-10 pt-10 space-y-4 h-full flex flex-col mb-0 pb-0">
-                                {/* Header Statement */}
-                                <h1 className="text-center text-styled text-5xl mt-2 flex-shrink-0">Saan Tayo Next?</h1>
+                            {/* Header Statement */}
+                            <h1 className="mt-12 mb-4 text-center text-styled text-5xl flex-shrink-0">Saan Tayo Next?</h1>
+                            <div className="p-0 h-full flex flex-col min-h-0">
+                                <div className="flex-1 flex flex-col min-h-0">
+                                    <div className="relative w-full flex-1 min-h-0 max-h-[33vh]">
+                                        <img
+                                            src={dataUrlImage || heroImgSrc}
+                                            alt={destination.name}
+                                            width={800}
+                                            height={450}
+                                            loading="eager"
+                                            decoding="async"
+                                            className="h-full w-full object-cover brightness-90"
+                                            crossOrigin="anonymous"
+                                        />
+                                        {/* Gradient overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
 
+                                        {/* Unsplash Attribution */}
+                                        {imageData && (
+                                            <>
+                                                {isFallbackImage && (
+                                                    <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
+                                                        (may not be the actual destination)
+                                                    </div>
+                                                )}
+                                                <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20">
+                                                    Photo by {imageData.photographerName} on Unsplash
+                                                </div>
+                                            </>
+
+                                        )}
+
+                                        {/* Destination Info */}
+                                        <div className="absolute bottom-1.5 left-6 space-y-2 text-white z-10">
+                                            <h2 className="text-styled text-4xl drop-shadow-md mb-0">
+                                                {destination.name}
+                                            </h2>
+                                            {destination.location?.region && (
+                                                <p className="text-xl text-white/90 drop-shadow-md">{destination.location.region}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="px-10 pt-10 space-y-4 h-full flex flex-col mb-0 pb-0">
                                 <div className="mt-2 flex-shrink-0">
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-end gap-4">
@@ -329,59 +371,8 @@ export function ShareResultModal({
                                         </div>
                                     </div>
                                 )}
-
-
-                                {/* Destination Image - takes remaining space */}
-                                <div className="flex-1 flex flex-col min-h-0 mb-0 pb-0">
-                                    <h4 className="text-bold text-2xl mb-1.5 flex-shrink-0">Next stop:</h4>
-                                </div>
-                            </div>
-
-                            <div className="p-0 space-y-4 h-full flex flex-col min-h-0">
-                                <div className="flex-1 flex flex-col min-h-0">
-                                    <div className="relative w-full flex-1 min-h-0">
-                                        <img
-                                            src={dataUrlImage || heroImgSrc}
-                                            alt={destination.name}
-                                            width={800}
-                                            height={450}
-                                            loading="eager"
-                                            decoding="async"
-                                            className="h-full w-full object-cover brightness-90"
-                                            crossOrigin="anonymous"
-                                        />
-                                        {/* Gradient overlay */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-
-                                        {/* Unsplash Attribution */}
-                                        {imageData && (
-                                            <>
-                                                {isFallbackImage && (
-                                                    <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
-                                                        (may not be the actual destination)
-                                                    </div>
-                                                )}
-                                                <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20">
-                                                    Photo by {imageData.photographerName} on Unsplash
-                                                </div>
-                                            </>
-
-                                        )}
-
-                                        {/* Destination Info */}
-                                        <div className="absolute bottom-1.5 left-6 space-y-2 text-white z-10">
-                                            <h2 className="text-styled text-4xl drop-shadow-md mb-0">
-                                                {destination.name}
-                                            </h2>
-                                            {destination.location?.region && (
-                                                <p className="text-xl text-white/90 drop-shadow-md">{destination.location.region}</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
                                 {/* Branding */}
-                                <div className="text-center pt-2 border-t flex-shrink-0 mb-8">
+                                <div className="text-center pt-6 border-t flex-shrink-0 mb-8">
                                     <div className="flex justify-center">
                                         {/* QR code */}
                                         <QRCodeCanvas value={"https://saan-tayo-next.vercel.app/"} size={100} />
@@ -389,6 +380,7 @@ export function ShareResultModal({
                                     <p className="text-sm text-muted-foreground mt-2">Find your next destination with bit.ly/SaanTayoNext</p>
                                 </div>
                             </div>
+
                         </CardContent>
                     </Card>
                 </div>

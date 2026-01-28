@@ -52,7 +52,7 @@ export function PersonalitiesSidebar() {
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Personality Types</h2>
+            <h2 className="text-2xl font-bold">Traveler Types</h2>
             <Button
               variant="ghost"
               size="icon"

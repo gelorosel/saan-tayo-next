@@ -1,4 +1,5 @@
 .text-styled {
   font-family: var(--font-barabara), sans-serif !important;
+  color: #333333;
   text-transform: uppercase;
 }

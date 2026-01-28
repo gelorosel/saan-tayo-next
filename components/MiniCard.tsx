@@ -11,7 +11,7 @@ type Props = {
 export default function MiniCard({ destination }: Props) {
     return (
         <Card className="p-6 gap-2">
-            <h4 className="text-styled">{destination.name}</h4>
+            <h3 className="text-styled text-xl">{destination.name}</h3>
             {destination.location?.region && (
                 <p className="text-sm font-semibold mb-2">
                     {destination.location.region}

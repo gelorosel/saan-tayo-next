@@ -52,59 +52,8 @@ export function ShareResultModal({
     const [isExporting, setIsExporting] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-    const [dataUrlImage, setDataUrlImage] = useState<string | null>(null);
+    const [isImageReady, setIsImageReady] = useState(false);
     const exportRef = useRef<HTMLDivElement>(null);
-
-    const convertImageToDataUrl = async (imageUrl: string, retries = 3): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const attemptLoad = (attemptsLeft: number) => {
-                const img = new Image();
-                img.crossOrigin = 'anonymous';
-
-                // Add timeout for iOS Safari
-                const timeout = setTimeout(() => {
-                    if (attemptsLeft > 0) {
-                        console.log(`Image load timeout, retrying... (${attemptsLeft} attempts left)`);
-                        attemptLoad(attemptsLeft - 1);
-                    } else {
-                        reject(new Error('Image load timeout'));
-                    }
-                }, 10000); // 10 second timeout
-
-                img.onload = () => {
-                    clearTimeout(timeout);
-                    try {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        const ctx = canvas.getContext('2d');
-                        if (ctx) {
-                            ctx.drawImage(img, 0, 0);
-                            resolve(canvas.toDataURL('image/jpeg', 0.95));
-                        } else {
-                            reject(new Error('Failed to get canvas context'));
-                        }
-                    } catch (error) {
-                        reject(error);
-                    }
-                };
-
-                img.onerror = () => {
-                    clearTimeout(timeout);
-                    if (attemptsLeft > 0) {
-                        console.log(`Image load failed, retrying... (${attemptsLeft} attempts left)`);
-                        setTimeout(() => attemptLoad(attemptsLeft - 1), 500);
-                    } else {
-                        reject(new Error('Failed to load image after multiple attempts'));
-                    }
-                };
-
-                img.src = imageUrl;
-            };
-
-            attemptLoad(retries);
-        });
-    };
 
     const generateImage = async () => {
         if (!exportRef.current) {
@@ -116,9 +65,9 @@ export function ShareResultModal({
             setIsGenerating(true);
 
             // Wait for the element to be in the DOM
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 100));
 
-            // Wait for all images to load with longer timeout for iOS
+            // Wait for all images to load
             const images = exportRef.current.querySelectorAll('img');
             await Promise.all(
                 Array.from(images).map((img) => {
@@ -126,18 +75,9 @@ export function ShareResultModal({
                         return Promise.resolve();
                     }
                     return new Promise((resolve) => {
-                        const timeout = setTimeout(() => {
-                            console.warn('Image load timeout, continuing anyway');
-                            resolve(null);
-                        }, 15000); // 15 second timeout for iOS
-
-                        img.onload = () => {
-                            clearTimeout(timeout);
-                            resolve(null);
-                        };
+                        img.onload = () => resolve(null);
                         img.onerror = () => {
-                            clearTimeout(timeout);
-                            console.warn('Image failed to load, continuing anyway');
+                            console.warn('Image failed to load');
                             resolve(null);
                         };
                     });
@@ -145,15 +85,8 @@ export function ShareResultModal({
             );
 
             // Wait for QR code canvas to render
-            const qrCanvas = exportRef.current.querySelector('canvas');
-            if (qrCanvas) {
-                await new Promise(resolve => setTimeout(resolve, 200));
-            }
+            await new Promise(resolve => setTimeout(resolve, 300));
 
-            // Extra wait to ensure everything is painted (longer for iOS)
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            console.log('Attempting to generate image...');
             const dataUrl = await toPng(exportRef.current, {
                 quality: 0.95,
                 pixelRatio: 2,
@@ -165,10 +98,9 @@ export function ShareResultModal({
             });
 
             setGeneratedImage(dataUrl);
-            console.log('Image generated successfully!');
         } catch (error) {
             console.error("Error generating image:", error);
-            alert('Failed to generate image. Please try again. Check console for details.');
+            alert('Failed to generate image. Check console for details.');
         } finally {
             setIsGenerating(false);
         }
@@ -191,55 +123,67 @@ export function ShareResultModal({
         }
     };
 
-    // Convert hero image to data URL when modal opens
+    // Load image when modal opens (same approach as PersonalityResultCard)
     useEffect(() => {
-        if (isOpen && heroImgSrc) {
-            setDataUrlImage(null);
+        if (!isOpen) {
+            setIsImageReady(false);
             setGeneratedImage(null);
+            return;
+        }
 
-            const loadImageAsDataUrl = async () => {
-                try {
-                    console.log('Converting image to data URL for iOS compatibility...');
-                    // Convert the image to data URL for better compatibility with html-to-image
-                    const dataUrl = await convertImageToDataUrl(heroImgSrc, 3);
-                    setDataUrlImage(dataUrl);
-                    console.log('Image converted successfully');
-                } catch (error) {
-                    console.error('Failed to convert image to data URL:', error);
-                    // Fall back to using the original URL
-                    console.log('Falling back to original URL');
-                    setDataUrlImage(heroImgSrc);
+        let isStale = false;
+
+        async function loadImage() {
+            // The heroImgSrc is already proxied through /api/unsplash/image
+            // Just need to wait for it to load
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+
+            img.onload = () => {
+                if (!isStale) {
+                    setIsImageReady(true);
                 }
             };
 
-            loadImageAsDataUrl();
+            img.onerror = () => {
+                if (!isStale) {
+                    console.error('Failed to load image');
+                    setIsImageReady(true); // Continue anyway
+                }
+            };
+
+            img.src = heroImgSrc;
         }
+
+        loadImage();
+
+        return () => {
+            isStale = true;
+        };
     }, [isOpen, heroImgSrc]);
 
-    // Generate image when data URL is ready
+    // Generate image when ready
     useEffect(() => {
-        if (isOpen && dataUrlImage) {
-            // Longer delay for iOS to ensure the dialog and hidden element are fully rendered
+        if (isOpen && isImageReady) {
             const timer = setTimeout(() => {
-                console.log('Starting image generation process...');
                 generateImage();
-            }, 300);
+            }, 100);
             return () => clearTimeout(timer);
         }
-    }, [isOpen, dataUrlImage]);
+    }, [isOpen, isImageReady]);
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className={`max-w-[500px] h-full sm:h-[95vh] overflow-y-auto ${!generatedImage || isGenerating ? 'p-0 m-0' : 'p-4'}`}>
+            <DialogContent className={`max-w-[500px] h-full sm:h-[95vh] overflow-y-auto bg-background ${!generatedImage || isGenerating ? 'p-0 m-0' : 'p-4'}`}>
                 <DialogHeader>
                     <DialogTitle></DialogTitle>
                 </DialogHeader>
 
                 {/* Display generated image or loading state */}
-                {!dataUrlImage || isGenerating ? (
+                {!isImageReady || isGenerating ? (
                     <div className="w-full aspect-[1/2] flex items-center justify-center bg-muted rounded-lg p-0 m-0">
                         <p className="text-muted-foreground">
-                            {!dataUrlImage ? 'Loading image...' : 'Generating preview...'}
+                            {!isImageReady ? 'Loading image...' : 'Generating preview...'}
                         </p>
                     </div>
                 ) : generatedImage ? (
@@ -282,7 +226,7 @@ export function ShareResultModal({
                                 <div className="flex-1 flex flex-col min-h-0">
                                     <div className="relative w-full flex-1 min-h-0 max-h-[33vh]">
                                         <img
-                                            src={dataUrlImage || heroImgSrc}
+                                            src={heroImgSrc}
                                             alt={destination.name}
                                             width={800}
                                             height={450}
@@ -311,7 +255,7 @@ export function ShareResultModal({
 
                                         {/* Destination Info */}
                                         <div className="absolute bottom-1.5 left-6 space-y-2 text-white z-10">
-                                            <h2 className="text-styled text-4xl drop-shadow-md mb-0">
+                                            <h2 className="text-styled text-4xl drop-shadow-md mb-0 !text-white">
                                                 {destination.name}
                                             </h2>
                                             {destination.location?.region && (
@@ -392,12 +336,12 @@ export function ShareResultModal({
                 {!generatedImage || isGenerating ? null : <div className="flex gap-2 mt-auto">
                     <Button
                         onClick={handleExportImage}
-                        disabled={isExporting || isGenerating || !generatedImage || !dataUrlImage}
+                        disabled={isExporting || isGenerating || !generatedImage}
                         variant="outline"
                         className="w-full"
                         size="md"
                     >
-                        {!dataUrlImage ? "Loading..." : isGenerating ? "Generating..." : isExporting ? "Downloading..." : "Download"}
+                        {!isImageReady ? "Loading..." : isGenerating ? "Generating..." : isExporting ? "Downloading..." : "Download"}
                     </Button>
                 </div>}
             </DialogContent>

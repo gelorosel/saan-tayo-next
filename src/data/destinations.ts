@@ -762,7 +762,8 @@ export const destinations: Destination[] = [
   },
   {
     id: "mindanao-relax-enchanted-river",
-    name: "Enchanted River, Surigao del Sur",
+    name: "Enchanted River, Hinatuan",
+    overrideUnsplashName: "Hinatuan Enchanted River",
     island: "mindanao",
     environments: ["mountains"],
     activities: ["natural_wonders", "explore", "relax", "swim"],
@@ -841,7 +842,8 @@ export const destinations: Destination[] = [
   },
   {
     id: "tinuyan-falls",
-    name: "Tinuy-an Falls",
+    name: "Tinuy-an Falls, Bislig",
+    overrideUnsplashName: "Bislig",
     island: "mindanao",
     environments: ["mountains"],
     activities: ["waterfalls", "natural_wonders", "explore", "relax", "hike", "camp"],

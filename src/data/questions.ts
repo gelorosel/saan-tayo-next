@@ -2,6 +2,12 @@ import { Question } from "@/src/types/question";
 
 export const questions: Question[] = [
   {
+    id: "name",
+    question: "What's your name?",
+    type: "text",
+    placeholder: "Enter your name",
+  },
+  {
     id: "season",
     question: "When are you traveling?",
     options: [

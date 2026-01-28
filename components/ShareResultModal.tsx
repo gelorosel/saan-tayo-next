@@ -32,6 +32,7 @@ interface ShareResultModalProps {
     heroImgSrc: string;
     imageData: UnsplashImageData | null;
     isFallbackImage: boolean;
+    headerName?: string;
     perfectCompanions: PersonalityProfile[];
     struggleCompanions: PersonalityProfile[];
 }
@@ -44,6 +45,7 @@ export function ShareResultModal({
     heroImgSrc,
     imageData,
     isFallbackImage,
+    headerName,
     perfectCompanions,
     struggleCompanions,
 }: ShareResultModalProps) {
@@ -221,7 +223,7 @@ export function ShareResultModal({
                                     <div className="flex items-end gap-4">
                                         <div className="flex items-start gap-4">
                                             <p className="text-6xl">{personality.emoji}</p>
-                                            <h2 className="text-4xl font-bold">I'm {personality.name}</h2>
+                                            <h2 className="text-4xl font-bold">{headerName ? `${headerName} is ` : "I'm "}{personality.name}</h2>
                                         </div>
                                     </div>
                                 </div>

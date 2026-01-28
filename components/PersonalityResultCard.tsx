@@ -98,6 +98,7 @@ export function PersonalityResultCard({
     const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 
     const activities = destination.activities;
+    const headerName = answers.name?.charAt(0).toUpperCase() + answers.name?.slice(1);
 
     const reasons = useMemo(() => {
         const items: string[] = [];
@@ -213,12 +214,15 @@ export function PersonalityResultCard({
                     <div>
                         <div className="flex flex-col sm:flex-row gap-4 mb-2 items-start sm:justify-between">
                             <div className="flex-1 min-w-[33%]">
-                                <div className="h-9 w-40 bg-muted animate-pulse rounded mb-2" />
+                                {headerName && (
+                                    <div className="h-4 w-48 bg-muted animate-pulse rounded mb-4" />
+                                )}
+                                <div className="h-9 w-40 bg-muted animate-pulse rounded mb-2 mt-2" />
                                 <div className="h-4 w-28 bg-muted animate-pulse rounded" />
                             </div>
                             <div className="flex flex-wrap gap-2 justify-start sm:justify-end sm:max-w-[50%] items-center w-full mt-2 sm:mt-0">
-                                {[1, 2, 3, 4].map((i) => (
-                                    <div key={i} className="h-6 w-20 bg-muted animate-pulse rounded-full" />
+                                {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                                    <div key={i} className="h-7 w-16 bg-muted animate-pulse rounded-full" />
                                 ))}
                             </div>
                         </div>
@@ -243,12 +247,14 @@ export function PersonalityResultCard({
                     {/* Skeleton Personality Section */}
                     <div className="space-y-1">
                         <div className="flex items-center gap-4">
-                            <div className="flex items-start gap-4">
-                                <div className="h-12 w-12 bg-muted animate-pulse rounded" />
-                                <div className="h-8 w-48 bg-muted animate-pulse rounded" />
+                            <div className="flex items-end gap-4">
+                                <div className="flex items-start gap-4">
+                                    <div className="h-10 w-10 bg-muted animate-pulse rounded" />
+                                    <div className="h-8 w-48 bg-muted animate-pulse rounded self-end" />
+                                </div>
                             </div>
                         </div>
-                        <div className="h-6 w-32 bg-muted animate-pulse rounded-full" />
+                        <div className="h-7 w-32 bg-muted animate-pulse rounded-full" />
                     </div>
 
                     {/* Skeleton Personality Description */}
@@ -260,26 +266,27 @@ export function PersonalityResultCard({
                     {/* Skeleton Companions */}
                     <div className="flex flex-col gap-3">
                         <div>
-                            <div className="h-4 w-48 bg-muted animate-pulse rounded mb-2" />
-                            <div className="flex flex-wrap gap-2">
+                            <div className="h-4 w-48 bg-muted animate-pulse rounded mb-1" />
+                            <div className="flex flex-wrap gap-2 mt-1">
                                 {[1, 2].map((i) => (
-                                    <div key={i} className="h-7 w-32 bg-muted animate-pulse rounded-full" />
+                                    <div key={i} className="h-8 w-40 bg-muted animate-pulse rounded-full" />
                                 ))}
                             </div>
                         </div>
                         <div>
-                            <div className="h-4 w-40 bg-muted animate-pulse rounded mb-2" />
-                            <div className="flex flex-wrap gap-2">
-                                <div className="h-7 w-32 bg-muted animate-pulse rounded-full" />
+                            <div className="h-4 w-44 bg-muted animate-pulse rounded mb-1" />
+                            <div className="flex flex-wrap gap-2 mt-1">
+                                <div className="h-8 w-40 bg-muted animate-pulse rounded-full" />
                             </div>
                         </div>
                     </div>
 
                     {/* Skeleton Why This Fits */}
                     <div>
-                        <div className="h-5 w-32 bg-muted animate-pulse rounded mb-2" />
-                        <div className="space-y-2">
+                        <div className="h-4 w-28 bg-muted animate-pulse rounded mb-2" />
+                        <div className="space-y-1">
                             <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                            <div className="h-4 w-5/6 bg-muted animate-pulse rounded" />
                             <div className="h-4 w-4/5 bg-muted animate-pulse rounded" />
                         </div>
                     </div>
@@ -346,9 +353,14 @@ export function PersonalityResultCard({
                     <div>
                         <div className="flex flex-col sm:flex-row gap-4 mb-2 items-start sm:justify-between">
                             <div className="flex-1 min-w-[33%]">
+                                {headerName && (
+                                    <p className="text-sm font-semibold mb-4">
+                                        {headerName}, your next destination is
+                                    </p>
+                                )}
                                 <h2 className="text-styled text-3xl mt-2">{destination.name}</h2>
                                 {destination.location?.region && (
-                                    <p className="text-sm font-semibold mb-2">
+                                    <p className="text-sm text-muted-foreground">
                                         {destination.location.region}
                                     </p>
                                 )}
@@ -490,6 +502,7 @@ export function PersonalityResultCard({
                 heroImgSrc={heroImgSrc}
                 imageData={imageData}
                 isFallbackImage={isFallbackImage}
+                headerName={headerName}
                 perfectCompanions={perfectCompanions}
                 struggleCompanions={struggleCompanions}
             />

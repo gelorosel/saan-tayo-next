@@ -8,4 +8,6 @@ export interface Question {
     question: string;
     shuffle?: boolean;
     options?: Option[];
+    type?: "text" | "select";
+    placeholder?: string;
 }

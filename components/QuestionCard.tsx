@@ -32,12 +32,14 @@ export function QuestionCard({
     canGoBack = false,
 }: Props) {
     const [selectedValue, setSelectedValue] = useState<string | null>(null);
+    const [textValue, setTextValue] = useState<string>("");
     const [isExiting, setIsExiting] = useState(false);
     const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
 
     // Reset selection when question changes
     useEffect(() => {
         setSelectedValue(null);
+        setTextValue("");
         setIsExiting(false);
     }, [current.id]);
 
@@ -50,12 +52,13 @@ export function QuestionCard({
     }, [current.id, options, current.shuffle]);
 
     const handleNext = () => {
-        if (selectedValue && !isExiting) {
+        const value = current.type === "text" ? textValue : selectedValue;
+        if (value && !isExiting) {
             setDirection('forward');
             setIsExiting(true);
             // Wait for animation to complete before moving to next question
             setTimeout(() => {
-                onSelect(selectedValue);
+                onSelect(value);
             }, 300); // Match animation duration
         }
     };
@@ -86,7 +89,22 @@ export function QuestionCard({
                 <CardContent className="space-y-4">
                     <h2 className="text-xl font-semibold">{current.question}</h2>
 
-                    {current.id === "island" ? (
+                    {current.type === "text" ? (
+                        <input
+                            type="text"
+                            value={textValue}
+                            onChange={(e) => setTextValue(e.target.value)}
+                            placeholder={current.placeholder || "Enter your answer"}
+                            disabled={isExiting}
+                            className="w-full px-4 py-3 rounded-md border border-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            autoFocus
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && textValue.trim()) {
+                                    handleNext();
+                                }
+                            }}
+                        />
+                    ) : current.id === "island" ? (
                         // specific styling for island question
                         <div className={`grid grid-cols-1 gap-3`}>
                             {displayOptions.map((opt) => (
@@ -137,7 +155,7 @@ export function QuestionCard({
                             variant="default"
                             size="md"
                             onClick={handleNext}
-                            disabled={!selectedValue || isExiting}
+                            disabled={(current.type === "text" ? !textValue.trim() : !selectedValue) || isExiting}
                         >
                             Next
                         </Button>

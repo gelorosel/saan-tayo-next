@@ -39,13 +39,19 @@ export async function geminiShortDescription(
     const personalityLine = personality
         ? ` The traveler's personality type: ${personality.description}.`
         : "";
-    let prompt = `Provide details for the tourist destination: ${destinationName}`
-    prompt += ` and why it would fit for this tourist's preference: ${activity}.${personalityLine}`;
+
+    let prompt = `Provide details for this travel destination in the Philippines: ${destinationName}`
+    prompt += ` and why it would fit for this travelers's preference: ${activity}.${personalityLine}`;
     prompt += ` Include the best months to visit.`;
-    prompt += ` Do not use the phrase "perfect for" in your description.`;
+    prompt += ` DO NOT use the phrase "perfect for" in your description.`;
+    prompt += ` If the destination is a mountain, MAKE SURE to mention if the hike is difficult, moderate, or beginner friendly, if you dont know, just say "difficult".`;
+    prompt += ` If the destination is a city, MAKE SURE to mention nearby destinations in the same region.`;
+
+    // some weird specific mistakes
+    if (destinationName.toLowerCase().includes('carcar')) prompt += ` Carcar city is the shoe capital of Cebu, NOT the Philippines`;
 
     const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash-lite',
+        model: 'gemini-2.5-flash-lite',
         contents: prompt,
         config: {
             responseMimeType: "application/json",

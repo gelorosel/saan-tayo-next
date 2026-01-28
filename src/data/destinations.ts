@@ -481,10 +481,21 @@ export const destinations: Destination[] = [
   {
     id: "visayas-relax-moalboal",
     name: "Moalboal",
+    overrideUnsplashName: "Moalboal Reef",
     island: "visayas",
     environments: ["beach"],
-    activities: ["snorkel", "swim", "relax", "dive"],
+    activities: ["snorkel", "swim", "relax", "dive", "natural_wonders", "waterfalls"],
     bestSeasons: ["cool_dry", "hot_dry", "wet"],
+    location: { region: "Cebu" },
+  },
+  {
+    id: "visayas-relax-pescador",
+    name: "Pescador Island",
+    overrideUnsplashName: "Moalboal",
+    island: "visayas",
+    environments: ["beach"],
+    activities: ["snorkel", "swim", "explore", "dive"],
+    bestSeasons: ["cool_dry", "hot_dry"],
     location: { region: "Cebu" },
   },
   {
@@ -516,7 +527,7 @@ export const destinations: Destination[] = [
   },
   {
     id: "visayas-relax-apo-island",
-    name: "Apo Island, Negros Oriental",
+    name: "Apo Island",
     island: "visayas",
     environments: ["beach"],
     activities: ["snorkel", "dive", "relax", "swim"],

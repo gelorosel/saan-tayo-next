@@ -216,7 +216,7 @@ export function PersonalityResultCard({
                     </div>
 
                     {/* Skeleton Buttons Row */}
-                    <div className="flex flex-row gap-6">
+                    <div className="flex flex-row gap-4">
                         <div className="h-12 flex-1 bg-muted animate-pulse rounded-md" />
                         <div className="h-12 flex-1 bg-muted animate-pulse rounded-md" />
                     </div>
@@ -366,7 +366,7 @@ export function PersonalityResultCard({
                         </div>
                     </div>
 
-                    <div className="flex flex-row gap-6">
+                    <div className="flex flex-row gap-4">
                         <Button
                             onClick={() => setIsShareDialogOpen(true)}
                             variant="default"

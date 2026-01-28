@@ -267,7 +267,7 @@ export function ShareResultModal({
                                     </div>
                                 </div>
                             </div>
-                            <div className="px-10 pt-10 space-y-4 mb-0 pb-0" style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div className="px-10 py-6 space-y-4" style={{ display: 'flex', flexDirection: 'column' }}>
                                 <div className="mt-2" style={{ flexShrink: 0 }}>
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-end gap-4">
@@ -322,13 +322,13 @@ export function ShareResultModal({
                                 )}
                                 {/* Branding */}
                                 <div className="text-center pt-4 border-t" style={{ flexShrink: 0 }}>
-                                    <div className="flex flex-row gap-4">
-                                        <div className="text-right ml-auto mb-auto">
+                                    <div className="flex flex-row gap-4 justify-center">
+                                        {/* QR code */}
+                                        <QRCodeSVG value={"saan-tayo-next.gelorosel.com"} size={125} />
+                                        <div className="text-left my-auto">
                                             <p className="text-sm mt-2">Find your next destination at</p>
                                             <p className="text-md mt-2"><b className="text-primary">bit.ly/SaanTayoNext</b></p>
                                         </div>
-                                        {/* QR code */}
-                                        <QRCodeSVG value={"saan-tayo-next.gelorosel.com"} size={125} />
                                     </div>
                                 </div>
                             </div>

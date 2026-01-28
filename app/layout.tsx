@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Comfortaa } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import "./custom.css";
 import Footer from "@/components/Footer";
@@ -7,6 +8,12 @@ import Footer from "@/components/Footer";
 const comfortaa = Comfortaa({
   subsets: ["latin"],
   variable: "--font-comfortaa",
+  display: "swap",
+});
+
+const barabara = localFont({
+  src: "../public/fonts/BARABARA-final.otf",
+  variable: "--font-barabara",
   display: "swap",
 });
 
@@ -37,9 +44,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={comfortaa.variable}>
+    <html lang="en" className={`${comfortaa.variable} ${barabara.variable}`}>
       <body
-        className="antialiased flex flex-col min-h-screen"
+        className={`antialiased flex flex-col min-h-screen ${comfortaa.variable} ${barabara.variable}`}
       >
         <div className="flex-1">
           {children}

@@ -195,6 +195,10 @@ export function ShareResultModal({
                         <img
                             src={generatedImage}
                             alt="Share preview"
+                            width={600}
+                            height={1200}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-auto rounded-lg"
                         />
                     </div>
@@ -278,6 +282,10 @@ export function ShareResultModal({
                                 <img
                                     src={dataUrlImage || heroImgSrc}
                                     alt={destination.name}
+                                    width={800}
+                                    height={450}
+                                    loading="eager"
+                                    decoding="async"
                                     className="h-full w-full object-cover brightness-90"
                                     crossOrigin="anonymous"
                                 />

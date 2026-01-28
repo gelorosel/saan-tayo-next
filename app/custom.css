@@ -1,12 +1,4 @@
-@font-face {
-  font-family: 'BARABARA';
-  src: url('/fonts/BARABARA-final.otf') format('opentype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 .text-styled {
-  font-family: 'BARABARA', sans-serif !important;
+  font-family: var(--font-barabara), sans-serif !important;
   text-transform: uppercase;
 }

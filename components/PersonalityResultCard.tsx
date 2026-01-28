@@ -298,6 +298,10 @@ export function PersonalityResultCard({
                         <img
                             src={heroImgSrc}
                             alt={destination.name}
+                            width={800}
+                            height={450}
+                            loading="lazy"
+                            decoding="async"
                             className={`absolute inset-0 h-full w-full object-cover ${isLoadingImage ? "opacity-70" : ""}`}
                             crossOrigin="anonymous"
                         />

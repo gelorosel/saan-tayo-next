@@ -107,10 +107,10 @@ export function QuestionCard({
     return (
         <motion.div
             key={current.id}
-            initial={{ opacity: 0, x: direction === 'forward' ? 50 : -50 }}
+            initial={{ opacity: 0, x: direction === 'forward' ? 20 : -20 }}
             animate={{
                 opacity: isExiting ? 0 : 1,
-                x: isExiting ? (direction === 'forward' ? -50 : 50) : 0,
+                x: isExiting ? (direction === 'forward' ? -20 : 20) : 0,
                 transition: { duration: 0.2, ease: "easeInOut" }
             }}
         >

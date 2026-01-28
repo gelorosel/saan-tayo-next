@@ -55,28 +55,54 @@ export function ShareResultModal({
     const [dataUrlImage, setDataUrlImage] = useState<string | null>(null);
     const exportRef = useRef<HTMLDivElement>(null);
 
-    const convertImageToDataUrl = async (imageUrl: string): Promise<string> => {
+    const convertImageToDataUrl = async (imageUrl: string, retries = 3): Promise<string> => {
         return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = () => {
-                try {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    if (ctx) {
-                        ctx.drawImage(img, 0, 0);
-                        resolve(canvas.toDataURL('image/jpeg', 0.95));
+            const attemptLoad = (attemptsLeft: number) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+
+                // Add timeout for iOS Safari
+                const timeout = setTimeout(() => {
+                    if (attemptsLeft > 0) {
+                        console.log(`Image load timeout, retrying... (${attemptsLeft} attempts left)`);
+                        attemptLoad(attemptsLeft - 1);
                     } else {
-                        reject(new Error('Failed to get canvas context'));
+                        reject(new Error('Image load timeout'));
                     }
-                } catch (error) {
-                    reject(error);
-                }
+                }, 10000); // 10 second timeout
+
+                img.onload = () => {
+                    clearTimeout(timeout);
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        if (ctx) {
+                            ctx.drawImage(img, 0, 0);
+                            resolve(canvas.toDataURL('image/jpeg', 0.95));
+                        } else {
+                            reject(new Error('Failed to get canvas context'));
+                        }
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+
+                img.onerror = () => {
+                    clearTimeout(timeout);
+                    if (attemptsLeft > 0) {
+                        console.log(`Image load failed, retrying... (${attemptsLeft} attempts left)`);
+                        setTimeout(() => attemptLoad(attemptsLeft - 1), 500);
+                    } else {
+                        reject(new Error('Failed to load image after multiple attempts'));
+                    }
+                };
+
+                img.src = imageUrl;
             };
-            img.onerror = () => reject(new Error('Failed to load image'));
-            img.src = imageUrl;
+
+            attemptLoad(retries);
         });
     };
 
@@ -90,23 +116,44 @@ export function ShareResultModal({
             setIsGenerating(true);
 
             // Wait for the element to be in the DOM
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 200));
 
-            // Wait for all images to load
+            // Wait for all images to load with longer timeout for iOS
             const images = exportRef.current.querySelectorAll('img');
             await Promise.all(
                 Array.from(images).map((img) => {
-                    if (img.complete) return Promise.resolve();
+                    if (img.complete && img.naturalHeight !== 0) {
+                        return Promise.resolve();
+                    }
                     return new Promise((resolve) => {
-                        img.onload = resolve;
-                        img.onerror = resolve; // Continue even if image fails
+                        const timeout = setTimeout(() => {
+                            console.warn('Image load timeout, continuing anyway');
+                            resolve(null);
+                        }, 15000); // 15 second timeout for iOS
+
+                        img.onload = () => {
+                            clearTimeout(timeout);
+                            resolve(null);
+                        };
+                        img.onerror = () => {
+                            clearTimeout(timeout);
+                            console.warn('Image failed to load, continuing anyway');
+                            resolve(null);
+                        };
                     });
                 })
             );
 
-            // Extra wait to ensure everything is painted
-            await new Promise(resolve => setTimeout(resolve, 300));
+            // Wait for QR code canvas to render
+            const qrCanvas = exportRef.current.querySelector('canvas');
+            if (qrCanvas) {
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
 
+            // Extra wait to ensure everything is painted (longer for iOS)
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            console.log('Attempting to generate image...');
             const dataUrl = await toPng(exportRef.current, {
                 quality: 0.95,
                 pixelRatio: 2,
@@ -114,12 +161,14 @@ export function ShareResultModal({
                 backgroundColor: '#ffffff',
                 width: 600,
                 height: 1113,
+                skipFonts: false,
             });
 
             setGeneratedImage(dataUrl);
+            console.log('Image generated successfully!');
         } catch (error) {
             console.error("Error generating image:", error);
-            alert('Failed to generate image. Check console for details.');
+            alert('Failed to generate image. Please try again. Check console for details.');
         } finally {
             setIsGenerating(false);
         }
@@ -150,12 +199,15 @@ export function ShareResultModal({
 
             const loadImageAsDataUrl = async () => {
                 try {
+                    console.log('Converting image to data URL for iOS compatibility...');
                     // Convert the image to data URL for better compatibility with html-to-image
-                    const dataUrl = await convertImageToDataUrl(heroImgSrc);
+                    const dataUrl = await convertImageToDataUrl(heroImgSrc, 3);
                     setDataUrlImage(dataUrl);
+                    console.log('Image converted successfully');
                 } catch (error) {
                     console.error('Failed to convert image to data URL:', error);
                     // Fall back to using the original URL
+                    console.log('Falling back to original URL');
                     setDataUrlImage(heroImgSrc);
                 }
             };
@@ -167,11 +219,11 @@ export function ShareResultModal({
     // Generate image when data URL is ready
     useEffect(() => {
         if (isOpen && dataUrlImage) {
-            // Delay to ensure the dialog and hidden element are fully rendered
+            // Longer delay for iOS to ensure the dialog and hidden element are fully rendered
             const timer = setTimeout(() => {
-                console.log('Starting image generation...');
+                console.log('Starting image generation process...');
                 generateImage();
-            }, 100);
+            }, 300);
             return () => clearTimeout(timer);
         }
     }, [isOpen, dataUrlImage]);
@@ -331,6 +383,7 @@ export function ShareResultModal({
                                 {/* Branding */}
                                 <div className="text-center pt-2 border-t flex-shrink-0 mb-8">
                                     <div className="flex justify-center">
+                                        {/* QR code */}
                                         <QRCodeCanvas value={"https://saan-tayo-next.vercel.app/"} size={100} />
                                     </div>
                                     <p className="text-sm text-muted-foreground mt-2">Find your next destination with bit.ly/SaanTayoNext</p>

@@ -19,6 +19,8 @@ import { PersonalitiesSidebar } from "@/components/PersonalitiesSidebar";
 import { PersonalitiesSidebarProvider } from "@/contexts/PersonalitiesSidebarContext";
 
 const FAST_MODE_KEY = "fastMode";
+const ANSWERS_KEY = "quizAnswers";
+const PICK_KEY = "destinationPick";
 
 
 export default function Home() {
@@ -68,11 +70,31 @@ export default function Home() {
     }
   }, [pick, finalDestinations.length]);
 
+  // Load saved state on mount
   useEffect(() => {
-    // Load fast mode preference from localStorage
-    const saved = localStorage.getItem(FAST_MODE_KEY);
-    if (saved !== null) {
-      setFastMode(saved === "true");
+    const savedFastMode = localStorage.getItem(FAST_MODE_KEY);
+    if (savedFastMode !== null) {
+      setFastMode(savedFastMode === "true");
+    }
+
+    const savedAnswers = localStorage.getItem(ANSWERS_KEY);
+    if (savedAnswers) {
+      try {
+        const parsedAnswers = JSON.parse(savedAnswers);
+        setAnswers(parsedAnswers);
+        // Set step to show results if quiz was completed
+        setStep(questions.length);
+      } catch (e) {
+        // Invalid JSON, ignore
+      }
+    }
+
+    const savedPick = localStorage.getItem(PICK_KEY);
+    if (savedPick !== null) {
+      const pickNum = parseInt(savedPick, 10);
+      if (!isNaN(pickNum)) {
+        setPick(pickNum);
+      }
     }
   }, []);
 
@@ -109,6 +131,20 @@ export default function Home() {
 
     return baseCurrent;
   }, [baseCurrent, answers.environment, answers.vibe]);
+
+  // Save answers to localStorage whenever they change (and quiz is complete)
+  useEffect(() => {
+    if (Object.keys(answers).length > 0 && !current) {
+      localStorage.setItem(ANSWERS_KEY, JSON.stringify(answers));
+    }
+  }, [answers, current]);
+
+  // Save pick to localStorage whenever it changes (and results are showing)
+  useEffect(() => {
+    if (!current && finalDestinations.length > 0) {
+      localStorage.setItem(PICK_KEY, String(pick));
+    }
+  }, [pick, current, finalDestinations.length]);
 
   // Mark that we've shown a destination for the first time
   useEffect(() => {
@@ -205,6 +241,11 @@ export default function Home() {
   const handleStartOver = useCallback(() => {
     setStep(0);
     setPick(0);
+    setAnswers({});
+    setHasShownDestination(false);
+    // Clear localStorage
+    localStorage.removeItem(ANSWERS_KEY);
+    localStorage.removeItem(PICK_KEY);
   }, []);
 
   const handleBeenHere = useCallback(() => {

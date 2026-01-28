@@ -300,7 +300,7 @@ export function PersonalityResultCard({
                             alt={destination.name}
                             width={800}
                             height={450}
-                            loading="lazy"
+                            loading="eager"
                             decoding="async"
                             className={`absolute inset-0 h-full w-full object-cover ${isLoadingImage ? "opacity-70" : ""}`}
                             crossOrigin="anonymous"
@@ -408,7 +408,7 @@ export function PersonalityResultCard({
                                 </div>
                             </div>
                         </div>
-                        <Badge variant={personality.category} className="capitalize text-sm cursor-pointer  hover:opacity-80 transition-opacity" onClick={() => openSidebar(personality)}>
+                        <Badge variant={personality.category} className="capitalize text-sm cursor-pointer hover:opacity-80 transition-opacity" onClick={() => openSidebar(personality)}>
                             {personality.category} traveler
                         </Badge>
                     </div>

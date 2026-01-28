@@ -113,7 +113,7 @@ export function ShareResultModal({
                 cacheBust: true,
                 backgroundColor: '#ffffff',
                 width: 600,
-                height: 1200,
+                height: 1113,
             });
 
             setGeneratedImage(dataUrl);
@@ -178,9 +178,9 @@ export function ShareResultModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-[650px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-[500px] h-full sm:h-[95vh] overflow-y-auto p-4">
                 <DialogHeader>
-                    <DialogTitle>Share Your Next Destination</DialogTitle>
+                    <DialogTitle></DialogTitle>
                 </DialogHeader>
 
                 {/* Display generated image or loading state */}
@@ -196,7 +196,7 @@ export function ShareResultModal({
                             src={generatedImage}
                             alt="Share preview"
                             width={600}
-                            height={1200}
+                            height={1113}
                             loading="lazy"
                             decoding="async"
                             className="w-full h-auto rounded-lg"
@@ -204,141 +204,152 @@ export function ShareResultModal({
                     </div>
                 ) : null}
 
-                {/* Hidden export version for generation - 1:2 aspect ratio - always rendered */}
+                {/* Hidden export version for generation - 9:16 aspect ratio - always rendered */}
                 <div
                     ref={exportRef}
-                    className="fixed w-[600px] h-[1200px] pointer-events-none bg-white"
+                    className="pointer-events-none bg-white overflow-hidden"
                     style={{
-                        position: 'fixed',
+                        position: 'absolute',
                         top: 0,
                         left: 0,
                         zIndex: -999,
                         opacity: isGenerating ? 1 : 0.01,
-                        visibility: generatedImage ? 'hidden' : 'visible'
+                        visibility: generatedImage ? 'hidden' : 'visible',
+                        height: generatedImage ? '0px' : '1113px',
+                        width: generatedImage ? '0px' : '600px',
                     }}
                 >
                     <Card className="overflow-hidden rounded-2xl shadow-sm w-full h-full">
-                        <CardContent className="p-10 space-y-4 h-full flex flex-col">
-                            {/* Header Statement */}
-                            <h1 className="text-center text-styled text-5xl mt-6">Saan Tayo Next?</h1>
+                        <CardContent className="p-0 h-full flex flex-col">
+                            <div className="px-10 pt-10 space-y-4 h-full flex flex-col mb-0 pb-0">
+                                {/* Header Statement */}
+                                <h1 className="text-center text-styled text-5xl mt-2 flex-shrink-0">Saan Tayo Next?</h1>
 
-                            <div className="mt-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="flex items-end gap-4">
-                                        <div className="flex items-start gap-4">
-                                            <p className="text-6xl">{personality.emoji}</p>
-                                            <h2 className="text-4xl font-bold">{headerName ? `${headerName} is ` : "I'm "}{personality.name}</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                                <Badge variant={personality.category} className="capitalize text-lg px-4 py-2 mt-3">
-                                    {personality.category} traveler
-                                </Badge>
-                            </div>
-
-                            <p className="text-lg leading-relaxed">
-                                {personality.description}
-                            </p>
-
-                            {/* Companions */}
-                            {perfectCompanions.length > 0 && (
-                                <div>
-                                    <h4 className="text-lg font-medium">🤝 Ideal travel companions</h4>
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {perfectCompanions.map((c) => (
-                                            <Badge
-                                                key={c.id}
-                                                variant="ideal"
-                                                className="flex items-center gap-1 text-lg px-4 py-2"
-                                            >
-                                                <span>{c.emoji}</span> {c.name}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {struggleCompanions.length > 0 && (
-                                <div>
-                                    <h4 className="text-lg font-medium">⚡ You might struggle with</h4>
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {struggleCompanions.map((c) => (
-                                            <Badge
-                                                key={c.id}
-                                                variant="struggle"
-                                                className="flex items-center gap-1 text-lg px-4 py-2"
-                                            >
-                                                <span>{c.emoji}</span> {c.name}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-
-                            {/* Destination Image - 2:1 aspect ratio */}
-                            <h4 className="text-bold text-2xl mt-4 mb-2">Next stop:</h4>
-                            <div className="relative w-full max-h-[20%]">
-                                <img
-                                    src={dataUrlImage || heroImgSrc}
-                                    alt={destination.name}
-                                    width={800}
-                                    height={450}
-                                    loading="eager"
-                                    decoding="async"
-                                    className="h-full w-full object-cover brightness-90"
-                                    crossOrigin="anonymous"
-                                />
-                                {/* Gradient overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-
-                                {/* Unsplash Attribution */}
-                                {imageData && (
-                                    <>
-                                        {isFallbackImage && (
-                                            <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
-                                                (may not be the actual destination)
+                                <div className="mt-2 flex-shrink-0">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-end gap-4">
+                                            <div className="flex items-start gap-4">
+                                                <p className="text-6xl">{personality.emoji}</p>
+                                                <h2 className="text-4xl font-bold">{headerName ? `${headerName} is ` : "I'm "}{personality.name}</h2>
                                             </div>
-                                        )}
-                                        <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20">
-                                            Photo by {imageData.photographerName} on Unsplash
                                         </div>
-                                    </>
+                                    </div>
+                                    <Badge variant={personality.category} className="capitalize text-xl px-4 py-2 mt-2">
+                                        {personality.category} traveler
+                                    </Badge>
+                                </div>
 
+                                <p className="text-lg leading-relaxed flex-shrink-0">
+                                    {personality.description}
+                                </p>
+
+                                {/* Companions */}
+                                {perfectCompanions.length > 0 && (
+                                    <div className="flex-shrink-0">
+                                        <h4 className="text-lg font-medium">🤝 Ideal travel companions</h4>
+                                        <div className="flex flex-wrap gap-2 mt-1">
+                                            {perfectCompanions.map((c) => (
+                                                <Badge
+                                                    key={c.id}
+                                                    variant="ideal"
+                                                    className="flex items-center gap-1 text-lg px-2 py-2"
+                                                >
+                                                    <span>{c.emoji}</span> {c.name}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    </div>
                                 )}
 
-                                {/* Destination Info */}
-                                <div className="absolute bottom-1.5 left-6 space-y-2 text-white z-10">
-                                    <h2 className="text-styled text-4xl drop-shadow-md mb-0">
-                                        {destination.name}
-                                    </h2>
-                                    {destination.location?.region && (
-                                        <p className="text-xl text-white/90 drop-shadow-md">{destination.location.region}</p>
-                                    )}
+                                {struggleCompanions.length > 0 && (
+                                    <div className="flex-shrink-0">
+                                        <h4 className="text-lg font-medium">⚡ You might struggle with</h4>
+                                        <div className="flex flex-wrap gap-2 mt-1">
+                                            {struggleCompanions.map((c) => (
+                                                <Badge
+                                                    key={c.id}
+                                                    variant="struggle"
+                                                    className="flex items-center gap-1 text-lg px-2 py-2"
+                                                >
+                                                    <span>{c.emoji}</span> {c.name}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+
+                                {/* Destination Image - takes remaining space */}
+                                <div className="flex-1 flex flex-col min-h-0 mb-0 pb-0">
+                                    <h4 className="text-bold text-2xl mb-1.5 flex-shrink-0">Next stop:</h4>
                                 </div>
                             </div>
 
-                            {/* Branding */}
-                            <div className="text-center pt-4 border-t mt-auto">
-                                <div className="flex justify-center">
-                                    <QRCodeCanvas value={"https://saan-tayo-next.vercel.app/"} size={130} />
+                            <div className="p-0 space-y-4 h-full flex flex-col min-h-0">
+                                <div className="flex-1 flex flex-col min-h-0">
+                                    <div className="relative w-full flex-1 min-h-0">
+                                        <img
+                                            src={dataUrlImage || heroImgSrc}
+                                            alt={destination.name}
+                                            width={800}
+                                            height={450}
+                                            loading="eager"
+                                            decoding="async"
+                                            className="h-full w-full object-cover brightness-90"
+                                            crossOrigin="anonymous"
+                                        />
+                                        {/* Gradient overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+
+                                        {/* Unsplash Attribution */}
+                                        {imageData && (
+                                            <>
+                                                {isFallbackImage && (
+                                                    <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
+                                                        (may not be the actual destination)
+                                                    </div>
+                                                )}
+                                                <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20">
+                                                    Photo by {imageData.photographerName} on Unsplash
+                                                </div>
+                                            </>
+
+                                        )}
+
+                                        {/* Destination Info */}
+                                        <div className="absolute bottom-1.5 left-6 space-y-2 text-white z-10">
+                                            <h2 className="text-styled text-4xl drop-shadow-md mb-0">
+                                                {destination.name}
+                                            </h2>
+                                            {destination.location?.region && (
+                                                <p className="text-xl text-white/90 drop-shadow-md">{destination.location.region}</p>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                                <p className="text-sm text-muted-foreground mt-4">Find your next destination with bit.ly/SaanTayoNext</p>
+
+                                {/* Branding */}
+                                <div className="text-center pt-2 border-t flex-shrink-0 mb-8">
+                                    <div className="flex justify-center">
+                                        <QRCodeCanvas value={"https://saan-tayo-next.vercel.app/"} size={100} />
+                                    </div>
+                                    <p className="text-sm text-muted-foreground mt-2">Find your next destination with bit.ly/SaanTayoNext</p>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Download button */}
-                <div className="flex gap-2 mt-4">
+                <div className="flex gap-2 mt-auto">
                     <Button
                         onClick={handleExportImage}
                         disabled={isExporting || isGenerating || !generatedImage || !dataUrlImage}
-                        variant="default"
+                        variant="outline"
                         className="w-full"
                         size="md"
                     >
-                        {!dataUrlImage ? "Loading..." : isGenerating ? "Generating..." : isExporting ? "Downloading..." : "Download as image"}
+                        {!dataUrlImage ? "Loading..." : isGenerating ? "Generating..." : isExporting ? "Downloading..." : "Download"}
                     </Button>
                 </div>
             </DialogContent>

@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Simple in-memory cache to reduce API calls
+const unsplashCache = new Map<string, any>();
+
+function getCacheKey(query: string, perPage: number): string {
+  return `${query}|${perPage}`;
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const query = searchParams.get('query');
@@ -21,6 +28,16 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Check cache first
+  const cacheKey = getCacheKey(query, perPage);
+  const cached = unsplashCache.get(cacheKey);
+  if (cached) {
+    console.log(`[Unsplash Cache HIT] ${cacheKey}`);
+    return NextResponse.json(cached);
+  }
+
+  console.log(`[Unsplash Cache MISS] ${cacheKey} - Making API call...`);
+
   try {
     const response = await fetch(
       `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=${Math.min(perPage, 10)}&orientation=landscape`,
@@ -39,8 +56,9 @@ export async function GET(request: NextRequest) {
 
     if (data.results && data.results.length > 0) {
       // If per_page > 1, return all results, otherwise return single image
+      let result;
       if (perPage > 1) {
-        return NextResponse.json({
+        result = {
           results: data.results.map((image: any) => {
             const baseUrl = image.urls?.regular || image.urls?.full || image.urls?.raw;
             const urlWithParams = `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}w=800&auto=format`;
@@ -54,12 +72,12 @@ export async function GET(request: NextRequest) {
               downloadLocation: image.links?.download_location,
             };
           }),
-        });
+        };
       } else {
         const image = data.results[0];
         const baseUrl = image.urls?.regular || image.urls?.full || image.urls?.raw;
         const urlWithParams = `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}w=800&auto=format`;
-        return NextResponse.json({
+        result = {
           id: image.id,
           url: urlWithParams,
           alt: image.alt_description || query,
@@ -67,8 +85,14 @@ export async function GET(request: NextRequest) {
           photographerUsername: image.user?.username || 'unknown',
           photographerUrl: image.user?.links?.html || `https://unsplash.com/@${image.user?.username || 'unknown'}`,
           downloadLocation: image.links?.download_location,
-        });
+        };
       }
+      
+      // Store in cache
+      unsplashCache.set(cacheKey, result);
+      console.log(`[Unsplash Cached] ${cacheKey} - Cache size: ${unsplashCache.size}`);
+      
+      return NextResponse.json(result);
     }
 
     return NextResponse.json(

@@ -791,7 +791,7 @@ export const destinations: Destination[] = [
   {
     id: "bucas-grande",
     name: "Bucas Grande (Sohoton Cove)",
-    overrideUnsplashName: "Siargao",
+    overrideUnsplashName: "Coron", // Looks like Coron
     island: "mindanao",
     environments: ["beach"],
     activities: ["snorkel", "swim", "natural_wonders", "explore", "relax", "island_hop"],

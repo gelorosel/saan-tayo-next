@@ -125,9 +125,10 @@ export function PersonalityResultCard({
             let usedFallback = false;
 
             if (!imageDataResult && destination.environments?.length > 0) {
+                const environment = destination.environments[0] === "mountains" ? "peak" : destination.environments[0];
                 const fallbackQuery = destination.island.toLowerCase() === "luzon"
-                    ? `${destination.environments[0]} philippines`
-                    : `${destination.island} ${destination.environments[0]} philippines`;
+                    ? `${environment} philippines`
+                    : `${environment} ${destination.location?.region || "philippines"}`;
                 usedFallback = true;
                 imageDataResult = await fetchUnsplashImage(fallbackQuery, true);
             }

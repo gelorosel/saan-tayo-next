@@ -94,7 +94,6 @@ export function ShareResultModal({
                 backgroundColor: '#ffffff',
                 width: 600,
                 height: 1113,
-                skipFonts: false,
             });
 
             setGeneratedImage(dataUrl);
@@ -192,7 +191,7 @@ export function ShareResultModal({
                             src={generatedImage}
                             alt="Share preview"
                             width={600}
-                            height={1113}
+                            height={1113} // 2:3.71 aspect ratio
                             loading="lazy"
                             decoding="async"
                             className="w-full h-auto rounded-lg"
@@ -218,18 +217,18 @@ export function ShareResultModal({
                         width: generatedImage ? '0px' : '600px',
                     }}
                 >
-                    <Card className="overflow-hidden rounded-2xl shadow-sm w-full h-full">
-                        <CardContent className="p-0 h-full flex flex-col">
+                    <Card className="overflow-hidden rounded-2xl shadow-sm" style={{ width: '600px', height: '1113px' }}>
+                        <CardContent className="p-0" style={{ height: '1113px', display: 'flex', flexDirection: 'column' }}>
                             {/* Header Statement */}
-                            <h1 className="mt-12 mb-4 text-center text-styled text-5xl flex-shrink-0">Saan Tayo Next?</h1>
-                            <div className="p-0 h-full flex flex-col min-h-0">
-                                <div className="flex-1 flex flex-col min-h-0">
-                                    <div className="relative w-full flex-1 min-h-0 max-h-[33vh]">
+                            <h1 className="mt-12 mb-4 text-center text-styled text-5xl" style={{ flexShrink: 0 }}>Saan Tayo Next?</h1>
+                            <div className="p-0" style={{ height: '270px', display: 'flex', flexDirection: 'column' }}>
+                                <div style={{ flex: '0 0 270px', display: 'flex', flexDirection: 'column' }}>
+                                    <div className="relative" style={{ width: '600px', height: '270px' }}>
                                         <img
                                             src={heroImgSrc}
                                             alt={destination.name}
                                             width={800}
-                                            height={450}
+                                            height={270}
                                             loading="eager"
                                             decoding="async"
                                             className="h-full w-full object-cover brightness-90"
@@ -265,8 +264,8 @@ export function ShareResultModal({
                                     </div>
                                 </div>
                             </div>
-                            <div className="px-10 pt-10 space-y-4 h-full flex flex-col mb-0 pb-0">
-                                <div className="mt-2 flex-shrink-0">
+                            <div className="px-10 pt-10 space-y-4 mb-0 pb-0" style={{ display: 'flex', flexDirection: 'column' }}>
+                                <div className="mt-2" style={{ flexShrink: 0 }}>
                                     <div className="flex items-center gap-4">
                                         <div className="flex items-end gap-4">
                                             <div className="flex items-start gap-4">
@@ -280,13 +279,13 @@ export function ShareResultModal({
                                     </Badge>
                                 </div>
 
-                                <p className="text-lg leading-relaxed flex-shrink-0">
+                                <p className="text-lg leading-relaxed" style={{ flexShrink: 0 }}>
                                     {personality.description}
                                 </p>
 
                                 {/* Companions */}
                                 {perfectCompanions.length > 0 && (
-                                    <div className="flex-shrink-0">
+                                    <div style={{ flexShrink: 0 }}>
                                         <h4 className="text-lg font-medium">🤝 Ideal travel companions</h4>
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {perfectCompanions.map((c) => (
@@ -303,7 +302,7 @@ export function ShareResultModal({
                                 )}
 
                                 {struggleCompanions.length > 0 && (
-                                    <div className="flex-shrink-0">
+                                    <div style={{ flexShrink: 0 }}>
                                         <h4 className="text-lg font-medium">⚡ You might struggle with</h4>
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {struggleCompanions.map((c) => (
@@ -319,12 +318,12 @@ export function ShareResultModal({
                                     </div>
                                 )}
                                 {/* Branding */}
-                                <div className="text-center pt-6 border-t flex-shrink-0 mb-8">
+                                <div className="text-center pt-4 border-t mb-8" style={{ flexShrink: 0 }}>
                                     <div className="flex justify-center">
                                         {/* QR code */}
                                         <QRCodeCanvas value={"https://saan-tayo-next.vercel.app/"} size={100} />
                                     </div>
-                                    <p className="text-sm text-muted-foreground mt-2">Find your next destination with bit.ly/SaanTayoNext</p>
+                                    <p className="text-sm mt-2">Find your next destination with <b className="text-primary">bit.ly/SaanTayoNext</b></p>
                                 </div>
                             </div>
 

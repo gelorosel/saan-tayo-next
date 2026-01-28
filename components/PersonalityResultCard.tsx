@@ -492,6 +492,7 @@ export function PersonalityResultCard({
                 onOpenChange={setIsShareDialogOpen}
                 personality={personality}
                 destination={destination}
+                heroImgSrc={heroImgSrc}
                 imageData={imageData}
                 isFallbackImage={isFallbackImage}
                 headerName={headerName}

@@ -29,6 +29,7 @@ interface ShareResultModalProps {
     onOpenChange: (open: boolean) => void;
     personality: PersonalityProfile;
     destination: Destination;
+    heroImgSrc: string;
     imageData: UnsplashImageData | null;
     isFallbackImage: boolean;
     headerName?: string;
@@ -36,13 +37,12 @@ interface ShareResultModalProps {
     struggleCompanions: PersonalityProfile[];
 }
 
-const FALLBACK_IMAGE = "/images/default-img.jpeg";
-
 export function ShareResultModal({
     isOpen,
     onOpenChange,
     personality,
     destination,
+    heroImgSrc,
     imageData,
     isFallbackImage,
     headerName,
@@ -54,9 +54,6 @@ export function ShareResultModal({
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
     const [isImageReady, setIsImageReady] = useState(false);
     const exportRef = useRef<HTMLDivElement>(null);
-
-    // Generate proxied URL from imageData to ensure all images go through our API
-    const proxiedImageUrl = imageData ? `/api/unsplash/image?url=${encodeURIComponent(imageData.url)}` : FALLBACK_IMAGE;
 
     const generateImage = async () => {
         if (!exportRef.current) {
@@ -74,20 +71,15 @@ export function ShareResultModal({
             const images = exportRef.current.querySelectorAll('img');
             await Promise.all(
                 Array.from(images).map((img) => {
-                    if (img.complete && img.naturalHeight !== 0) {
-                        return Promise.resolve();
-                    }
+                    if (img.complete) return Promise.resolve();
                     return new Promise((resolve) => {
-                        img.onload = () => resolve(null);
-                        img.onerror = () => {
-                            console.warn('Image failed to load');
-                            resolve(null);
-                        };
+                        img.onload = resolve;
+                        img.onerror = resolve; // Continue even if image fails
                     });
                 })
             );
 
-            // Wait for QR code canvas to render
+            // Extra wait to ensure everything is painted
             await new Promise(resolve => setTimeout(resolve, 300));
 
             const dataUrl = await toPng(exportRef.current, {
@@ -125,54 +117,21 @@ export function ShareResultModal({
         }
     };
 
-    // Load image when modal opens (same approach as PersonalityResultCard)
+    // Generate image when modal opens
     useEffect(() => {
-        if (!isOpen) {
-            setIsImageReady(false);
+        if (isOpen && heroImgSrc) {
             setGeneratedImage(null);
-            return;
-        }
+            setIsImageReady(false);
 
-        let isStale = false;
-
-        async function loadImage() {
-            // The proxiedImageUrl is proxied through /api/unsplash/image
-            // Just need to wait for it to load
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-
-            img.onload = () => {
-                if (!isStale) {
-                    setIsImageReady(true);
-                }
-            };
-
-            img.onerror = () => {
-                if (!isStale) {
-                    console.error('Failed to load image');
-                    setIsImageReady(true); // Continue anyway
-                }
-            };
-
-            img.src = proxiedImageUrl;
-        }
-
-        loadImage();
-
-        return () => {
-            isStale = true;
-        };
-    }, [isOpen, proxiedImageUrl]);
-
-    // Generate image when ready
-    useEffect(() => {
-        if (isOpen && isImageReady) {
+            // Delay to ensure the dialog and hidden element are fully rendered
             const timer = setTimeout(() => {
+                setIsImageReady(true);
+                console.log('Starting image generation...');
                 generateImage();
-            }, 100);
+            }, 200);
             return () => clearTimeout(timer);
         }
-    }, [isOpen, isImageReady]);
+    }, [isOpen, heroImgSrc]);
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -228,7 +187,7 @@ export function ShareResultModal({
                                 <div style={{ flex: '0 0 270px', display: 'flex', flexDirection: 'column' }}>
                                     <div className="relative" style={{ width: '600px', height: '270px' }}>
                                         <img
-                                            src={proxiedImageUrl}
+                                            src={heroImgSrc}
                                             alt={destination.name}
                                             width={800}
                                             height={270}

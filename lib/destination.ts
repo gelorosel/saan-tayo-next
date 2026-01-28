@@ -12,3 +12,22 @@ export function toQueryName(destination: Destination): string {
 
     return includeRegion ? `${name} ${region}` : name;
 }
+
+export function getFallbackQuery(destination: Destination): string {
+    if (destination.name.toLowerCase().includes('reef')) {
+        return "reef philippines";
+    }
+    
+    if (destination.name.toLowerCase().includes('lake')) {
+        return "lake philippines";
+    }
+    
+    if (!destination.environments?.length) {
+        return "philippines";
+    }
+    
+    const environment = destination.environments[0] === "mountains" ? "peak" : destination.environments[0];
+    return destination.island.toLowerCase() === "luzon"
+        ? `${environment} philippines`
+        : `${environment} ${destination.location?.region || "philippines"}`;
+}

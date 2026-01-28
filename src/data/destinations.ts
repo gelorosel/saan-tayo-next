@@ -924,7 +924,7 @@ export const destinations: Destination[] = [
     name: "Mactan",
     island: "visayas",
     environments: ["beach", "city"],
-    activities: ["swim", "snorkel", "relax", "food_trip"],
+    activities: ["swim", "snorkel", "relax", "food_trip", "explore"],
     bestSeasons: ["cool_dry", "hot_dry"],
     location: { region: "Cebu" },
   },

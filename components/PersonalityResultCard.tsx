@@ -10,7 +10,7 @@ import { loadDescription, DescriptionData } from "@/lib/description";
 import { capitalize } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { openGoogleSearch } from "@/lib/googleSearch";
-import { toQueryName } from "@/lib/destination";
+import { toQueryName, getFallbackQuery } from "@/lib/destination";
 import { ShareResultModal } from "./ShareResultModal";
 import { usePersonalitiesSidebar } from "@/contexts/PersonalitiesSidebarContext";
 import { QRCodeCanvas } from "qrcode.react";
@@ -121,16 +121,22 @@ export function PersonalityResultCard({
             setImageData(null);
             setIsFallbackImage(false);
 
+            const startTime = Date.now();
+
             let imageDataResult = await fetchUnsplashImage(destination.overrideUnsplashName || destination.name);
             let usedFallback = false;
 
-            if (!imageDataResult && destination.environments?.length > 0) {
-                const environment = destination.environments[0] === "mountains" ? "peak" : destination.environments[0];
-                const fallbackQuery = destination.island.toLowerCase() === "luzon"
-                    ? `${environment} philippines`
-                    : `${environment} ${destination.location?.region || "philippines"}`;
+            if (!imageDataResult) {
+                const fallbackQuery = getFallbackQuery(destination);
                 usedFallback = true;
                 imageDataResult = await fetchUnsplashImage(fallbackQuery, true);
+            }
+
+            // Hardcoded delay for suspense
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, 1500 - elapsedTime);
+            if (remainingTime > 0) {
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
             }
 
             // Only update if this request hasn't been superseded

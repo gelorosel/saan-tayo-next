@@ -15,6 +15,7 @@ import { Option } from "@/src/types/question";
 import MiniCard from "@/components/MiniCard";
 import { PersonalityResultCard } from "@/components/PersonalityResultCard";
 import { DevelopmentModal } from "@/components/DevelopmentModal";
+import { PersonalitiesSidebar } from "@/components/PersonalitiesSidebar";
 
 const FAST_MODE_KEY = "fastMode";
 
@@ -214,6 +215,7 @@ export default function Home() {
   return (
     <>
       <DevelopmentModal />
+      <PersonalitiesSidebar />
 
       <main className="min-h-screen flex items-center justify-center p-6">
         <div className="max-w-xl w-full">

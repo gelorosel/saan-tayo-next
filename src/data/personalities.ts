@@ -59,7 +59,7 @@ export const personalities: PersonalityProfile[] = [
       "Sometimes struggles to prioritize must-see highlights",
     ],
     compatibleWith: ["chill_explorer", "cultural_strategist", "mood_based_traveler"],
-    avoidWith: ["master_planner"],
+    avoidWith: ["soft_life_traveler"],
   },
   {
     id: "master_planner",
@@ -99,7 +99,7 @@ export const personalities: PersonalityProfile[] = [
       "Sometimes delays decisions too long",
     ],
     compatibleWith: ["curious_wanderer", "relaxed_escapist", "mood_based_traveler"],
-    avoidWith: ["purposeful_adventurer"],
+    avoidWith: ["master_planner"],
   },
   {
     id: "purposeful_adventurer",

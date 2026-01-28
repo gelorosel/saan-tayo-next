@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { personalities, personalityById } from "@/src/data/personalities";
 import { PersonalityProfile } from "@/src/types/personality";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { X, ChevronRight } from "lucide-react";
+import { X } from "lucide-react";
+import { usePersonalitiesSidebar } from "@/contexts/PersonalitiesSidebarContext";
 
 export function PersonalitiesSidebar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedPersonality, setSelectedPersonality] = useState<PersonalityProfile | null>(null);
+  const { isOpen, selectedPersonality, openSidebar, closeSidebar, setSelectedPersonality } =
+    usePersonalitiesSidebar();
 
   // Sort personalities by category: core, hybrid, rare
   const sortedPersonalities = [...personalities].sort((a, b) => {
@@ -36,30 +36,17 @@ export function PersonalitiesSidebar() {
 
   return (
     <>
-      {/* Toggle Button */}
-      <Button
-        onClick={() => setIsOpen(true)}
-        variant="outline"
-        className="fixed left-4 top-4 z-40 shadow-md"
-      >
-        <ChevronRight className="h-4 w-4 mr-2" />
-        Personality Types
-      </Button>
-
       {/* Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => {
-            setIsOpen(false);
-            setSelectedPersonality(null);
-          }}
+          onClick={closeSidebar}
         />
       )}
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 bottom-0 w-full sm:w-96 bg-white dark:bg-gray-900 shadow-2xl z-50 overflow-y-auto transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed right-0 top-0 bottom-0 w-full sm:w-96 bg-white dark:bg-gray-900 shadow-2xl z-50 overflow-y-auto transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
           }`}
       >
         <div className="p-6">
@@ -69,10 +56,7 @@ export function PersonalitiesSidebar() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => {
-                setIsOpen(false);
-                setSelectedPersonality(null);
-              }}
+              onClick={closeSidebar}
             >
               <X className="h-5 w-5" />
             </Button>
@@ -81,6 +65,7 @@ export function PersonalitiesSidebar() {
           {/* Personality List */}
           <div className="space-y-4">
             {sortedPersonalities.map((personality) => {
+              const isRare = personality.category === "rare";
               const isSelected = selectedPersonality?.id === personality.id;
 
               return (
@@ -96,7 +81,13 @@ export function PersonalitiesSidebar() {
                   {/* Header */}
                   <div className="flex items-start gap-3 mb-2">
                     <div className="text-3xl flex-shrink-0">
-                      {personality.emoji}
+                      {isRare ? (
+                        <div className="w-10 h-10 bg-black rounded flex items-center justify-center text-white opacity-80">
+                          ?
+                        </div>
+                      ) : (
+                        personality.emoji
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-lg leading-tight">
@@ -107,13 +98,13 @@ export function PersonalitiesSidebar() {
                           personality.category
                         )} capitalize text-xs`}
                       >
-                        {personality.category} traveler
+                        {personality.category}
                       </Badge>
                     </div>
                   </div>
 
                   {/* Expanded Details */}
-                  {isSelected && (
+                  {isSelected && !isRare && (
                     <div className="mt-4 space-y-3 text-sm animate-in slide-in-from-top-2 duration-200">
                       {/* Strengths */}
                       <div>
@@ -178,6 +169,16 @@ export function PersonalitiesSidebar() {
                           </div>
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {/* Rare Personality Message */}
+                  {isSelected && isRare && (
+                    <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-center animate-in slide-in-from-top-2 duration-200">
+                      <p className="text-sm text-muted-foreground">
+                        🔒 This is a rare personality type. Complete the quiz
+                        to unlock!
+                      </p>
                     </div>
                   )}
                 </div>

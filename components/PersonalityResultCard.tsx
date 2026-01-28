@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { openGoogleSearch } from "@/lib/googleSearch";
 import { toQueryName } from "@/lib/destination";
 import { ShareResultModal } from "./ShareResultModal";
+import { usePersonalitiesSidebar } from "@/contexts/PersonalitiesSidebarContext";
 
 interface PersonalityResultCardProps {
     personality: PersonalityProfile;
@@ -74,6 +75,8 @@ export function PersonalityResultCard({
     fastMode = false,
     onBeenHere,
 }: PersonalityResultCardProps) {
+    const { openSidebar } = usePersonalitiesSidebar();
+
     // Memoized companion lists
     const perfectCompanions = useMemo(
         () => personality.compatibleWith
@@ -401,7 +404,7 @@ export function PersonalityResultCard({
                                 </div>
                             </div>
                         </div>
-                        <Badge variant={personality.category} className="capitalize text-sm">
+                        <Badge variant={personality.category} className="capitalize text-sm cursor-pointer  hover:opacity-80 transition-opacity" onClick={() => openSidebar(personality)}>
                             {personality.category} traveler
                         </Badge>
                     </div>
@@ -420,7 +423,8 @@ export function PersonalityResultCard({
                                         <Badge
                                             key={c.id}
                                             variant="ideal"
-                                            className="flex items-center gap-1 text-xs"
+                                            className="flex items-center gap-1 text-xs cursor-pointer hover:opacity-80 transition-opacity"
+                                            onClick={() => openSidebar(c)}
                                         >
                                             <span>{c.emoji}</span> {c.name}
                                         </Badge>
@@ -437,7 +441,8 @@ export function PersonalityResultCard({
                                         <Badge
                                             key={c.id}
                                             variant="struggle"
-                                            className="flex items-center gap-1 text-xs"
+                                            className="flex items-center gap-1 text-xs cursor-pointer hover:opacity-80 transition-opacity"
+                                            onClick={() => openSidebar(c)}
                                         >
                                             <span>{c.emoji}</span> {c.name}
                                         </Badge>

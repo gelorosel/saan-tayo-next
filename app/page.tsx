@@ -16,6 +16,7 @@ import MiniCard from "@/components/MiniCard";
 import { PersonalityResultCard } from "@/components/PersonalityResultCard";
 import { DevelopmentModal } from "@/components/DevelopmentModal";
 import { PersonalitiesSidebar } from "@/components/PersonalitiesSidebar";
+import { PersonalitiesSidebarProvider } from "@/contexts/PersonalitiesSidebarContext";
 
 const FAST_MODE_KEY = "fastMode";
 
@@ -213,7 +214,7 @@ export default function Home() {
   }, [finalDestinations.length]);
 
   return (
-    <>
+    <PersonalitiesSidebarProvider>
       <DevelopmentModal />
       <PersonalitiesSidebar />
 
@@ -308,6 +309,6 @@ export default function Home() {
           )}
         </div>
       </main>
-    </>
+    </PersonalitiesSidebarProvider>
   );
 }

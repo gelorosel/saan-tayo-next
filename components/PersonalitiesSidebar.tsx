@@ -46,7 +46,7 @@ export function PersonalitiesSidebar() {
 
       {/* Sidebar */}
       <div
-        className={`fixed right-0 top-0 bottom-0 w-full sm:w-96 bg-white shadow-2xl z-50 overflow-y-auto transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed right-0 top-0 bottom-0 w-full sm:w-96 bg-background shadow-2xl z-50 overflow-y-auto transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
           }`}
       >
         <div className="p-6">
@@ -63,14 +63,14 @@ export function PersonalitiesSidebar() {
           </div>
 
           {/* Personality List */}
-          <div className="space-y-4">
+          <div className="space-y-2">
             {sortedPersonalities.map((personality) => {
               const isSelected = selectedPersonality?.id === personality.id;
 
               return (
                 <div
                   key={personality.id}
-                  className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  className="border bg-card rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
                   onClick={() =>
                     setSelectedPersonality(
                       isSelected ? null : personality

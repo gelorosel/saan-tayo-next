@@ -13,6 +13,7 @@ import { openGoogleSearch } from "@/lib/googleSearch";
 import { toQueryName } from "@/lib/destination";
 import { ShareResultModal } from "./ShareResultModal";
 import { usePersonalitiesSidebar } from "@/contexts/PersonalitiesSidebarContext";
+import { QRCodeCanvas } from "qrcode.react";
 
 interface PersonalityResultCardProps {
     personality: PersonalityProfile;
@@ -491,7 +492,6 @@ export function PersonalityResultCard({
                 onOpenChange={setIsShareDialogOpen}
                 personality={personality}
                 destination={destination}
-                heroImgSrc={heroImgSrc}
                 imageData={imageData}
                 isFallbackImage={isFallbackImage}
                 headerName={headerName}

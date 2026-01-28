@@ -13,7 +13,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { QRCodeCanvas } from "qrcode.react";
+import { QRCodeSVG } from "qrcode.react";
 
 interface UnsplashImageData {
     id?: string;
@@ -29,7 +29,6 @@ interface ShareResultModalProps {
     onOpenChange: (open: boolean) => void;
     personality: PersonalityProfile;
     destination: Destination;
-    heroImgSrc: string;
     imageData: UnsplashImageData | null;
     isFallbackImage: boolean;
     headerName?: string;
@@ -37,12 +36,13 @@ interface ShareResultModalProps {
     struggleCompanions: PersonalityProfile[];
 }
 
+const FALLBACK_IMAGE = "/images/default-img.jpeg";
+
 export function ShareResultModal({
     isOpen,
     onOpenChange,
     personality,
     destination,
-    heroImgSrc,
     imageData,
     isFallbackImage,
     headerName,
@@ -54,6 +54,9 @@ export function ShareResultModal({
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
     const [isImageReady, setIsImageReady] = useState(false);
     const exportRef = useRef<HTMLDivElement>(null);
+
+    // Generate proxied URL from imageData to ensure all images go through our API
+    const proxiedImageUrl = imageData ? `/api/unsplash/image?url=${encodeURIComponent(imageData.url)}` : FALLBACK_IMAGE;
 
     const generateImage = async () => {
         if (!exportRef.current) {
@@ -133,7 +136,7 @@ export function ShareResultModal({
         let isStale = false;
 
         async function loadImage() {
-            // The heroImgSrc is already proxied through /api/unsplash/image
+            // The proxiedImageUrl is proxied through /api/unsplash/image
             // Just need to wait for it to load
             const img = new Image();
             img.crossOrigin = 'anonymous';
@@ -151,7 +154,7 @@ export function ShareResultModal({
                 }
             };
 
-            img.src = heroImgSrc;
+            img.src = proxiedImageUrl;
         }
 
         loadImage();
@@ -159,7 +162,7 @@ export function ShareResultModal({
         return () => {
             isStale = true;
         };
-    }, [isOpen, heroImgSrc]);
+    }, [isOpen, proxiedImageUrl]);
 
     // Generate image when ready
     useEffect(() => {
@@ -225,7 +228,7 @@ export function ShareResultModal({
                                 <div style={{ flex: '0 0 270px', display: 'flex', flexDirection: 'column' }}>
                                     <div className="relative" style={{ width: '600px', height: '270px' }}>
                                         <img
-                                            src={heroImgSrc}
+                                            src={proxiedImageUrl}
                                             alt={destination.name}
                                             width={800}
                                             height={270}
@@ -318,12 +321,15 @@ export function ShareResultModal({
                                     </div>
                                 )}
                                 {/* Branding */}
-                                <div className="text-center pt-4 border-t mb-8" style={{ flexShrink: 0 }}>
-                                    <div className="flex justify-center">
+                                <div className="text-center pt-4 border-t" style={{ flexShrink: 0 }}>
+                                    <div className="flex flex-row gap-4">
+                                        <div className="text-right ml-auto mb-auto">
+                                            <p className="text-sm mt-2">Find your next destination at</p>
+                                            <p className="text-md mt-2"><b className="text-primary">bit.ly/SaanTayoNext</b></p>
+                                        </div>
                                         {/* QR code */}
-                                        <QRCodeCanvas value={"https://saan-tayo-next.vercel.app/"} size={100} />
+                                        <QRCodeSVG value={"saan-tayo-next.gelorosel.com"} size={125} />
                                     </div>
-                                    <p className="text-sm mt-2">Find your next destination with <b className="text-primary">bit.ly/SaanTayoNext</b></p>
                                 </div>
                             </div>
 

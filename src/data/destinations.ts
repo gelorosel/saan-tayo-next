@@ -757,7 +757,8 @@ export const destinations: Destination[] = [
   },
   {
     id: "mindanao-relax-bukidnon-highlands",
-    name: "Bukidnon",
+    name: "Bukidnon Highlands",
+    overrideUnsplashName: "Bukidnon",
     island: "mindanao",
     environments: ["mountains"],
     activities: ["relax", "explore", "natural_wonders", "hike"],

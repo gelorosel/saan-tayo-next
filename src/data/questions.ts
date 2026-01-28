@@ -87,12 +87,20 @@ export const questions: Question[] = [
     ],
   },
   {
+    id: "traveler_new",
+    question: "Are you looking to do something new?",
+    options: [
+      { label: "Yes!", value: "yes" },
+      { label: "Stick with my travel style", value: "stick" },
+    ],
+  },
+  {
     id: "traveler_plans",
     question: "Your trip is about to start! You can't wait to...",
     shuffle: true,
     options: [
       { label: "Escape the routine and wind down", value: "a" },
-      { label: "Experience something new", value: "b" },
+      { label: "Get started with your planned activities", value: "b" },
       { label: "Absorb the local culture", value: "c" },
       { label: "Get the most out of your time and budget", value: "d" },
     ],

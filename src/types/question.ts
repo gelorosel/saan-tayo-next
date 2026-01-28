@@ -10,4 +10,7 @@ export interface Question {
     options?: Option[];
     type?: "text" | "select";
     placeholder?: string;
+    multiSelect?: boolean;
+    minSelections?: number;
+    maxSelections?: number;
 }

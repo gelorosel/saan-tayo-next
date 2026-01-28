@@ -44,12 +44,14 @@ export default function Home() {
   const primaryActivity = useMemo(() => preferredActivities[0], [preferredActivities]);
 
   const scoredDestinations = useMemo(() => {
+    const applyPersonalityFilter = answers.traveler_new !== "yes";
     return scoreDestinations(
       preferences,
       destinations,
-      personalityResult?.preferredActivities ?? []
+      personalityResult?.preferredActivities ?? [],
+      applyPersonalityFilter
     );
-  }, [preferences, personalityResult?.preferredActivities]);
+  }, [preferences, personalityResult?.preferredActivities, answers.traveler_new]);
   const [finalDestinations, setFinalDestinations] = useState<typeof scoredDestinations>([]);
 
   useEffect(() => {
@@ -91,7 +93,16 @@ export default function Home() {
 
       const environment = (answers.environment as Environment) || "beach";
       const vibe = answers.vibe as Vibe | undefined;
-      return { ...baseCurrent, options: getActivityOptions(environment, vibe) };
+      const isAnyEnvironment = answers.environment === "any";
+
+      return {
+        ...baseCurrent,
+        options: getActivityOptions(environment, vibe),
+        question: isAnyEnvironment ? "Pick your top 3 activities" : baseCurrent.question,
+        multiSelect: isAnyEnvironment,
+        minSelections: isAnyEnvironment ? 3 : undefined,
+        maxSelections: isAnyEnvironment ? 3 : undefined,
+      };
     }
 
     return baseCurrent;

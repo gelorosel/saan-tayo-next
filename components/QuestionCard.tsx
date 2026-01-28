@@ -32,6 +32,7 @@ export function QuestionCard({
     canGoBack = false,
 }: Props) {
     const [selectedValue, setSelectedValue] = useState<string | null>(null);
+    const [selectedValues, setSelectedValues] = useState<string[]>([]);
     const [textValue, setTextValue] = useState<string>("");
     const [isExiting, setIsExiting] = useState(false);
     const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
@@ -39,6 +40,7 @@ export function QuestionCard({
     // Reset selection when question changes
     useEffect(() => {
         setSelectedValue(null);
+        setSelectedValues([]);
         setTextValue("");
         setIsExiting(false);
     }, [current.id]);
@@ -51,9 +53,36 @@ export function QuestionCard({
         return options;
     }, [current.id, options, current.shuffle]);
 
+    const handleToggleMultiSelect = (value: string) => {
+        if (isExiting) return;
+
+        setSelectedValues(prev => {
+            if (prev.includes(value)) {
+                return prev.filter(v => v !== value);
+            } else {
+                const maxSelections = current.maxSelections || Infinity;
+                if (prev.length < maxSelections) {
+                    return [...prev, value];
+                }
+                return prev;
+            }
+        });
+    };
+
     const handleNext = () => {
-        const value = current.type === "text" ? textValue : selectedValue;
-        if (value && !isExiting) {
+        if (isExiting) return;
+
+        let value: string | null = null;
+
+        if (current.type === "text") {
+            value = textValue;
+        } else if (current.multiSelect) {
+            value = selectedValues.join(",");
+        } else {
+            value = selectedValue;
+        }
+
+        if (value && value.trim()) {
             setDirection('forward');
             setIsExiting(true);
             // Wait for animation to complete before moving to next question
@@ -120,6 +149,22 @@ export function QuestionCard({
                                 </Button>
                             ))}
                         </div>
+                    ) : current.multiSelect ? (
+                        // multi-select mode
+                        <div className={`grid grid-cols-2 gap-3`}>
+                            {displayOptions.map((opt) => (
+                                <Button
+                                    key={opt.value}
+                                    variant={!isExiting && selectedValues.includes(opt.value) ? "default" : "outline"}
+                                    disabled={isExiting}
+                                    size="lg"
+                                    onClick={() => handleToggleMultiSelect(opt.value)}
+                                    className="h-30 p-3 sm:p-6 sm:h-20 whitespace-normal text-center leading-tight break-words"
+                                >
+                                    {opt.label}
+                                </Button>
+                            ))}
+                        </div>
                     ) : (
                         <div className={`grid grid-cols-2 gap-3`}>
                             {displayOptions.map((opt) => (
@@ -155,7 +200,14 @@ export function QuestionCard({
                             variant="default"
                             size="md"
                             onClick={handleNext}
-                            disabled={(current.type === "text" ? !textValue.trim() : !selectedValue) || isExiting}
+                            disabled={
+                                isExiting ||
+                                (current.type === "text"
+                                    ? !textValue.trim()
+                                    : current.multiSelect
+                                        ? selectedValues.length < (current.minSelections || 1)
+                                        : !selectedValue)
+                            }
                         >
                             Next
                         </Button>

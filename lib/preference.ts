@@ -5,7 +5,7 @@ export function toPreference(answers: Record<string, string>): Preference {
     island: answers.island as Preference["island"],
     environment: answers.environment as Preference["environment"],
     activity: answers.activity
-      ? ([answers.activity] as Preference["activity"])
+      ? (answers.activity.split(",") as Preference["activity"])
       : undefined,
     season: answers.season as Preference["season"],
     group: answers.group as Preference["group"],

@@ -25,15 +25,6 @@ export const destinations: Destination[] = [
     location: { region: "Palawan" },
   },
   {
-    id: "luzon-beach-white-beach-pagudpud",
-    name: "White Beach, Pagudpud",
-    island: "luzon",
-    environments: ["beach"],
-    activities: ["swim", "relax"],
-    bestSeasons: ["cool_dry"],
-    location: { region: "Ilocos Norte" },
-  },
-  {
     id: "luzon-beach-saud-beach",
     name: "Saud Beach, Pagudpud",
     island: "luzon",

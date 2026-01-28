@@ -7,7 +7,7 @@ import { Destination } from "@/src/types/destination";
 import { PersonalityProfile } from "@/src/types/personality";
 import { personalities } from "@/src/data/personalities";
 import { loadDescription, DescriptionData } from "@/lib/description";
-import { prettyEnvironment, seasonLabels } from "@/lib/environment";
+import { capitalize } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { openGoogleSearch } from "@/lib/googleSearch";
 import { toQueryName } from "@/lib/destination";
@@ -16,7 +16,7 @@ import { ShareResultModal } from "./ShareResultModal";
 interface PersonalityResultCardProps {
     personality: PersonalityProfile;
     answers: Record<string, string>;
-    destination: Destination;
+    destination: Destination & { score?: number; reasons?: string[] };
     preferredActivity?: string;
     fastMode?: boolean;
     onBeenHere?: () => void;
@@ -98,25 +98,8 @@ export function PersonalityResultCard({
     const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 
     const activities = destination.activities;
-    const headerName = answers.name?.charAt(0).toUpperCase() + answers.name?.slice(1);
-
-    const reasons = useMemo(() => {
-        const items: string[] = [];
-
-        if (answers.environment && answers.environment !== "any") {
-            items.push(`You wanted ${prettyEnvironment(answers.environment)}.`);
-        }
-
-        if (answers.season) {
-            items.push(`Your timing fits the ${seasonLabels[answers.season] ?? "right season"}.`);
-        }
-
-        if (answers.island) {
-            items.push(`It keeps you in ${answers.island.charAt(0).toUpperCase() + answers.island.slice(1)}.`);
-        }
-
-        return items.slice(0, 3);
-    }, [answers.environment, answers.season, answers.island]);
+    const headerName = answers.name ? capitalize(answers.name) : undefined;
+    const reasons = destination.reasons || [];
 
     // Load image (skip if fast mode is enabled)
     useEffect(() => {
@@ -221,8 +204,8 @@ export function PersonalityResultCard({
                                 <div className="h-4 w-28 bg-muted animate-pulse rounded" />
                             </div>
                             <div className="flex flex-wrap gap-2 justify-start sm:justify-end sm:max-w-[50%] items-center w-full mt-2 sm:mt-0">
-                                {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-                                    <div key={i} className="h-7 w-16 bg-muted animate-pulse rounded-full" />
+                                {[16, 28, 16, 20, 16].map((x, i) => (
+                                    <div key={i} className={`h-7 w-${x} bg-muted animate-pulse rounded-full`} />
                                 ))}
                             </div>
                         </div>

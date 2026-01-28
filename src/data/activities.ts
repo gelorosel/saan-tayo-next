@@ -44,7 +44,7 @@ export const envActivityMap: Record<Environment, ActivityOption[]> =
 
 const vibeActivityMap: Record<Vibe, Activity[]> = {
   rest: ["relax", "swim", "camp", "food_trip", "nightlife", "hike", "history", "waterfalls"],
-  activities: ["hike", "trek", "camp", "dive", "snorkel", "surf", "island_hop", "waterfalls", "natural_wonders"],
+  activities: ["hike", "trek", "camp", "dive", "snorkel", "surf", "island_hop", "waterfalls", "natural_wonders", "swim"],
   sights: ["explore", "island_hop", "natural_wonders", "food_trip", "waterfalls", "history", "museums", "hike", "dive", "snorkel"],
   learn: ["museums", "history", "explore", "food_trip", "natural_wonders", "snorkel", "hike"],
 };

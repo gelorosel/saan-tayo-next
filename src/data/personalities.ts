@@ -18,7 +18,7 @@ export const personalities: PersonalityProfile[] = [
       "Can clash with high-energy travel companions",
       "Sometimes avoids stepping outside the comfort zone",
     ],
-    compatibleWith: ["soft_life_traveler", "chill_explorer"],
+    compatibleWith: ["soft_life_traveler", "chill_explorer", "mood_based_traveler"],
     avoidWith: ["adventurer"],
   },
   {
@@ -38,8 +38,8 @@ export const personalities: PersonalityProfile[] = [
       "May push others beyond their limits",
       "Finds slow-paced trips frustrating",
     ],
-    compatibleWith: ["purposeful_adventurer", "free_spirited_nomad"],
-    avoidWith: ["soft_life_traveler"],
+    compatibleWith: ["purposeful_adventurer", "free_spirited_nomad", "curious_wanderer"],
+    avoidWith: ["relaxed_escapist"],
   },
   {
     id: "curious_wanderer",
@@ -58,7 +58,7 @@ export const personalities: PersonalityProfile[] = [
       "Can feel restricted by rigid schedules",
       "Sometimes struggles to prioritize must-see highlights",
     ],
-    compatibleWith: ["chill_explorer", "cultural_strategist"],
+    compatibleWith: ["chill_explorer", "cultural_strategist", "mood_based_traveler"],
     avoidWith: ["master_planner"],
   },
   {
@@ -78,7 +78,7 @@ export const personalities: PersonalityProfile[] = [
       "May over-optimize at the expense of spontaneity",
       "Can clash with more flexible travelers",
     ],
-    compatibleWith: ["soft_life_traveler", "cultural_strategist"],
+    compatibleWith: ["soft_life_traveler", "cultural_strategist", "purposeful_adventurer"],
     avoidWith: ["chaos_romantic"],
   },
   {
@@ -98,7 +98,7 @@ export const personalities: PersonalityProfile[] = [
       "Can be overshadowed by stronger personalities",
       "Sometimes delays decisions too long",
     ],
-    compatibleWith: ["curious_wanderer", "relaxed_escapist"],
+    compatibleWith: ["curious_wanderer", "relaxed_escapist", "mood_based_traveler"],
     avoidWith: ["purposeful_adventurer"],
   },
   {
@@ -118,7 +118,7 @@ export const personalities: PersonalityProfile[] = [
       "Can feel frustrated by indecisive companions",
       "Sometimes prioritizes goals over rest",
     ],
-    compatibleWith: ["adventurer", "master_planner"],
+    compatibleWith: ["adventurer", "master_planner", "cultural_strategist"],
     avoidWith: ["chaos_romantic"],
   },
   {
@@ -138,7 +138,7 @@ export const personalities: PersonalityProfile[] = [
       "Can cause stress for planners",
       "Sometimes overlooks logistics or timing",
     ],
-    compatibleWith: ["adventurer", "chaos_romantic"],
+    compatibleWith: ["adventurer", "chaos_romantic", "curious_wanderer"],
     avoidWith: ["master_planner"],
   },
   {
@@ -158,8 +158,8 @@ export const personalities: PersonalityProfile[] = [
       "Can feel out of sync with fast-moving companions",
       "Sometimes prioritizes comfort over exploration",
     ],
-    compatibleWith: ["master_planner", "relaxed_escapist"],
-    avoidWith: ["free_spirited_nomad"],
+    compatibleWith: ["master_planner", "relaxed_escapist", "mood_based_traveler"],
+    avoidWith: ["adventurer"],
   },
   {
     id: "cultural_strategist",
@@ -178,7 +178,7 @@ export const personalities: PersonalityProfile[] = [
       "Can feel frustrated by surface-level travel",
       "Sometimes undervalues rest or spontaneity",
     ],
-    compatibleWith: ["curious_wanderer", "master_planner"],
+    compatibleWith: ["curious_wanderer", "master_planner", "purposeful_adventurer"],
     avoidWith: ["chaos_romantic"],
   },
   {
@@ -198,7 +198,7 @@ export const personalities: PersonalityProfile[] = [
       "May overlook important logistics",
       "Sometimes sacrifices stability for novelty",
     ],
-    compatibleWith: ["free_spirited_nomad", "chill_explorer"],
+    compatibleWith: ["free_spirited_nomad", "chill_explorer", "curious_wanderer"],
     avoidWith: ["master_planner"],
   },
   {
@@ -218,7 +218,7 @@ export const personalities: PersonalityProfile[] = [
       "May struggle with firm commitments",
       "Sometimes delays decisions until the last minute",
     ],
-    compatibleWith: ["chill_explorer", "soft_life_traveler"],
+    compatibleWith: ["chill_explorer", "soft_life_traveler", "relaxed_escapist"],
     avoidWith: ["purposeful_adventurer"],
   },
 ];

@@ -65,7 +65,6 @@ export function PersonalitiesSidebar() {
           {/* Personality List */}
           <div className="space-y-4">
             {sortedPersonalities.map((personality) => {
-              const isRare = personality.category === "rare";
               const isSelected = selectedPersonality?.id === personality.id;
 
               return (
@@ -81,13 +80,7 @@ export function PersonalitiesSidebar() {
                   {/* Header */}
                   <div className="flex items-start gap-3 mb-2">
                     <div className="text-3xl flex-shrink-0">
-                      {isRare ? (
-                        <div className="w-10 h-10 bg-black rounded flex items-center justify-center text-white opacity-80">
-                          ?
-                        </div>
-                      ) : (
-                        personality.emoji
-                      )}
+                      {personality.emoji}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-lg leading-tight">
@@ -104,7 +97,7 @@ export function PersonalitiesSidebar() {
                   </div>
 
                   {/* Expanded Details */}
-                  {isSelected && !isRare && (
+                  {isSelected && (
                     <div className="mt-4 space-y-3 text-sm animate-in slide-in-from-top-2 duration-200">
                       {/* Strengths */}
                       <div>
@@ -169,16 +162,6 @@ export function PersonalitiesSidebar() {
                           </div>
                         </div>
                       )}
-                    </div>
-                  )}
-
-                  {/* Rare Personality Message */}
-                  {isSelected && isRare && (
-                    <div className="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded text-center animate-in slide-in-from-top-2 duration-200">
-                      <p className="text-sm text-muted-foreground">
-                        🔒 This is a rare personality type. Complete the quiz
-                        to unlock!
-                      </p>
                     </div>
                   )}
                 </div>

@@ -5,10 +5,28 @@ import { capitalize } from "./utils";
 
 type Scored = Destination & { score: number; reasons: string[] };
 
+const NON_NEGOTIABLE_ACTIVITIES: Activity[] = ["relax", "surf", "dive", "swim", "trek", "camp", "waterfalls", "history", "museums"];
+
 const matchesIsland = (d: Destination, island?: Preference["island"]) =>
   !island || d.island === island;
 const matchesEnvironment = (d: Destination, env?: Preference["environment"]) =>
   !env || env === "any" || d.environments?.includes(env);
+
+const matchesNonNegotiableActivity = (
+  d: Destination,
+  activities?: Activity[]
+): boolean => {
+  // If user selected exactly 1 activity and it's non-negotiable,
+  // the destination MUST have that activity
+  if (activities?.length === 1) {
+    const [singleActivity] = activities;
+    if (NON_NEGOTIABLE_ACTIVITIES.includes(singleActivity)) {
+      return d.activities.includes(singleActivity);
+    }
+  }
+  // Otherwise, don't filter based on this rule
+  return true;
+};
 
 function scoreActivities(dest: Destination, activities: Activity[]) {
   let score = 0;
@@ -106,7 +124,11 @@ export function scoreDestinations(
   const personalitySet = new Set(personalityPreferredActivities);
 
   return dests
-    .filter(d => matchesIsland(d, pref.island) && matchesEnvironment(d, pref.environment))
+    .filter(d =>
+      matchesIsland(d, pref.island) &&
+      matchesEnvironment(d, pref.environment) &&
+      matchesNonNegotiableActivity(d, pref.activity)
+    )
     .sort(() => Math.random() - 0.5)
     .map(d => scoreDestination(d, pref, personalitySet, applyPersonalityFilter))
     .sort((a, b) => b.score - a.score);

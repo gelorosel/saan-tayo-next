@@ -10,7 +10,7 @@ import { loadDescription, DescriptionData } from "@/lib/description";
 import { capitalize } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { openGoogleSearch } from "@/lib/googleSearch";
-import { toQueryName, getFallbackQuery } from "@/lib/destination";
+import { toQueryName, getFallbackUnsplashQuery } from "@/lib/destination";
 import { ShareResultModal } from "./ShareResultModal";
 import { usePersonalitiesSidebar } from "@/contexts/PersonalitiesSidebarContext";
 import { QRCodeCanvas } from "qrcode.react";
@@ -127,7 +127,7 @@ export function PersonalityResultCard({
             let usedFallback = false;
 
             if (!imageDataResult) {
-                const fallbackQuery = getFallbackQuery(destination);
+                const fallbackQuery = getFallbackUnsplashQuery(destination);
                 usedFallback = true;
                 imageDataResult = await fetchUnsplashImage(fallbackQuery, true);
             }

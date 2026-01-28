@@ -46,6 +46,8 @@ export async function geminiShortDescription(
     prompt += ` DO NOT use the phrase "perfect for" in your description.`;
     prompt += ` If the destination is a mountain, MAKE SURE to mention if the hike is difficult, moderate, or beginner friendly, if you dont know, just say "difficult".`;
     prompt += ` If the destination is a city, MAKE SURE to mention nearby destinations in the same region.`;
+    if (activity.toLowerCase().includes('museum')) prompt += ` MAKE SURE to mention nearby museums in the area.`;
+    if (activity.toLowerCase().includes('food_trip')) prompt += ` MAKE SURE to mention must-try dishes in the area.`;
 
     // some weird specific mistakes
     if (destinationName.toLowerCase().includes('carcar')) prompt += ` Carcar city is the shoe capital of Cebu, NOT the Philippines`;
@@ -58,7 +60,7 @@ export async function geminiShortDescription(
             responseSchema: {
                 type: Type.OBJECT,
                 properties: {
-                    description: { type: Type.STRING, description: "A concise 1-2 sentence description. Make sure it is factual and not too long." },
+                    description: { type: Type.STRING, description: "A concise 1-2 sentence description. Make sure it is factual and DO NOT overload with information." },
                     bestMonths: { type: Type.STRING, description: "Best months to visit (e.g., 'December to February' or 'March to May')." },
                 },
                 required: ["description", "bestMonths"]

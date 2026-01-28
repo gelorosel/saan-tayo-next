@@ -16,7 +16,7 @@ export function toQueryName(destination: Destination): string {
     return includeRegion ? `${name} ${region}` : name;
 }
 
-export function getFallbackQuery(destination: Destination): string {
+export function getFallbackUnsplashQuery(destination: Destination): string {
     if (destination.name.toLowerCase().includes('reef')) {
         return "reef philippines";
     }

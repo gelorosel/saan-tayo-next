@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import "./custom.css";
 import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 const comfortaa = Comfortaa({
   subsets: ["latin"],
@@ -52,6 +53,7 @@ export default function RootLayout({
           {children}
         </div>
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

@@ -62,7 +62,11 @@ export function PersonalityResultCard({
     const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 
     const activities = destination.activities;
-    const headerName = answers.name ? capitalize(answers.name) : undefined;
+    const headerName = answers.name
+        ? capitalize(answers.name).length > 12
+            ? capitalize(answers.name).substring(0, 12) + '...'
+            : capitalize(answers.name)
+        : undefined;
     const reasons = destination.reasons || [];
 
     // Notify parent of loading state changes

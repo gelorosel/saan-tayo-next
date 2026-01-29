@@ -18,8 +18,8 @@ interface ErrorModalProps {
 export function ErrorModal({
     isOpen,
     onClose,
-    title = "Connection Issue",
-    message = "Our services are temporarily down, please try again at another time."
+    title = "Something went wrong",
+    message = "An unexpected error occurred. Please try again.",
 }: ErrorModalProps) {
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>

@@ -23,6 +23,7 @@ const FAST_MODE_KEY = "fastMode";
 const ANSWERS_KEY = "quizAnswers";
 const PICK_KEY = "destinationPick";
 
+const SERVICE_UNAVAILABLE_MESSAGE = "Our services are temporarily down, please try again at another time.";
 
 export default function Home() {
   const [step, setStep] = useState(0);
@@ -33,7 +34,6 @@ export default function Home() {
   const [isLoadingDestination, setIsLoadingDestination] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [isKillSwitchActive, setIsKillSwitchActive] = useState(false);
-  const [showKillSwitchModal, setShowKillSwitchModal] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const canGoBack = step > 0 && !isKillSwitchActive;
@@ -81,8 +81,7 @@ export default function Home() {
     const killSwitch = process.env.NEXT_PUBLIC_KILL_SWITCH === 'true';
     setIsKillSwitchActive(killSwitch);
     if (killSwitch) {
-      setShowKillSwitchModal(true);
-      setStep(0); // Force to first question
+      setShowErrorModal(true);
     }
   }, []);
 
@@ -226,7 +225,7 @@ export default function Home() {
   const goNext = useCallback((questionId: string, chosenValue: string) => {
     // Prevent navigation if kill switch is active
     if (isKillSwitchActive) {
-      setShowKillSwitchModal(true);
+      setShowErrorModal(true);
       return;
     }
 
@@ -290,7 +289,7 @@ export default function Home() {
 
   return (
     <PersonalitiesSidebarProvider>
-      <DevelopmentModal />
+      {!isKillSwitchActive && <DevelopmentModal />}
       <PersonalitiesSidebar />
 
       <main className="min-h-screen flex items-center justify-center p-6">
@@ -298,6 +297,7 @@ export default function Home() {
           <div className="max-w-xl w-full mx-auto">
             <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
             <h2 className="text-xl font-semibold mb-4">Find your next destination</h2>
+            {isKillSwitchActive && <p className="text-sm text-muted-foreground mb-4">⚠️ {SERVICE_UNAVAILABLE_MESSAGE}</p>}
             {current ?
               <QuestionCard
                 current={current}
@@ -387,15 +387,11 @@ export default function Home() {
           )}
         </div>
       </main>
-      <ErrorModal 
-        isOpen={showErrorModal} 
-        onClose={() => setShowErrorModal(false)} 
-      />
-      <ErrorModal 
-        isOpen={showKillSwitchModal}
-        onClose={() => setShowKillSwitchModal(false)}
-        title="Service Temporarily Unavailable"
-        message="We're currently performing maintenance. Please check back soon!"
+      <ErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Service Unavailable"
+        message={SERVICE_UNAVAILABLE_MESSAGE}
       />
     </PersonalitiesSidebarProvider>
   );

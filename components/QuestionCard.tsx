@@ -36,6 +36,8 @@ export function QuestionCard({
     const [selectedValue, setSelectedValue] = useState<string | null>(null);
     const [selectedValues, setSelectedValues] = useState<string[]>([]);
     const [textValue, setTextValue] = useState<string>("");
+    const [textError, setTextError] = useState<string>("");
+    const [textWarning, setTextWarning] = useState<string>("");
     const [isExiting, setIsExiting] = useState(false);
     const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
 
@@ -44,6 +46,8 @@ export function QuestionCard({
         setSelectedValue(null);
         setSelectedValues([]);
         setTextValue("");
+        setTextError("");
+        setTextWarning("");
         setIsExiting(false);
     }, [current.id]);
 
@@ -54,6 +58,44 @@ export function QuestionCard({
         }
         return options;
     }, [current.id, options, current.shuffle]);
+
+    // Validate name input
+    const validateNameInput = (value: string): string => {
+        if (value.length === 0) {
+            return "";
+        }
+
+        if (value.length >= 255) {
+            return "Congrats on the long name 👍 use a nickname";
+        }
+
+        // Allow letters, numbers, hspaces, hyphens, apostrophes, and common name characters
+        const nameRegex = /^[a-zA-Z0-9\s\-'\.]+$/;
+        if (!nameRegex.test(value.trim())) {
+            return "Name can only contain letters, numbers, spaces, hyphens, and apostrophes";
+        }
+
+        return "";
+    };
+
+    const handleTextChange = (value: string) => {
+        if (value.length <= 255) {
+            setTextValue(value);
+        }
+
+        // Only validate if it's a name field
+        if (current.id === "name") {
+            const error = validateNameInput(value);
+            setTextError(error);
+
+            // Show warning (not blocking) if name is too long
+            if (value.length > 12 && !error) {
+                setTextWarning("Your name might not appear correctly, please use a nickname");
+            } else {
+                setTextWarning("");
+            }
+        }
+    };
 
     const handleToggleMultiSelect = (value: string) => {
         if (isExiting) return;
@@ -121,20 +163,29 @@ export function QuestionCard({
                     <h2 className="text-xl font-semibold">{current.question}</h2>
 
                     {current.type === "text" ? (
-                        <input
-                            type="text"
-                            value={textValue}
-                            onChange={(e) => setTextValue(e.target.value)}
-                            placeholder={current.placeholder || "Enter your answer"}
-                            disabled={isExiting}
-                            className="w-full px-4 py-3 rounded-md border border-input text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            autoFocus
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && textValue.trim()) {
-                                    handleNext();
-                                }
-                            }}
-                        />
+                        <div className="space-y-2">
+                            <input
+                                type="text"
+                                value={textValue}
+                                onChange={(e) => handleTextChange(e.target.value)}
+                                placeholder={current.placeholder || "Enter your answer"}
+                                disabled={isExiting || disabled}
+                                className={`w-full px-4 py-3 rounded-md border ${textError ? 'border-red-500 focus:ring-red-500' : textWarning ? 'border-yellow-500 focus:ring-yellow-500' : 'border-input focus:ring-ring'
+                                    } text-foreground focus:outline-none focus:ring-2 focus:ring-offset-2`}
+                                autoFocus
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && textValue.trim() && !textError) {
+                                        handleNext();
+                                    }
+                                }}
+                            />
+                            {textError && (
+                                <p className="text-sm text-red-500">{textError}</p>
+                            )}
+                            {!textError && textWarning && (
+                                <p className="text-sm text-yellow-600">{textWarning}</p>
+                            )}
+                        </div>
                     ) : current.id === "island" ? (
                         // specific styling for island question
                         <div className={`grid grid-cols-1 gap-3`}>
@@ -206,7 +257,7 @@ export function QuestionCard({
                                 isExiting ||
                                 disabled ||
                                 (current.type === "text"
-                                    ? !textValue.trim()
+                                    ? !textValue.trim() || !!textError
                                     : current.multiSelect
                                         ? selectedValues.length < (current.minSelections || 1)
                                         : !selectedValue)

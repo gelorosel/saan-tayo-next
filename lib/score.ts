@@ -194,18 +194,23 @@ function scoreDestination(
   // Score season/timing match
   // -------------------------------------------------------------------------
 
-  const hasSeasonPreference = preferences.season && preferences.season !== "any";
+  // Treat all 3 seasons selected as no preference
+  const allSeasonsSelected = preferences.season?.length === 3;
+  const hasSeasonPreference = preferences.season && preferences.season.length > 0 && !allSeasonsSelected;
+
+  // Check if destination matches any of the selected seasons
   const matchesSeason = !preferences.season ||
-    preferences.season === "any" ||
-    destination.bestSeasons.includes(preferences.season);
+    allSeasonsSelected ||
+    preferences.season.some(season => destination.bestSeasons.includes(season));
 
   if (matchesSeason) {
     totalScore += SCORE_WEIGHTS.SEASON_MATCH;
 
     if (hasSeasonPreference) {
-      reasons.push(`Your timing fits the ${seasonLabels[preferences.season!]}.`);
-    } else {
-      reasons.push("Your timing fits the right season.");
+      const selectedSeasonLabels = preferences.season!
+        .map(s => seasonLabels[s])
+        .join(" or ");
+      reasons.push(`Your timing fits the ${selectedSeasonLabels}.`);
     }
   } else {
     totalScore += SCORE_WEIGHTS.SEASON_MISMATCH;

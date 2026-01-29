@@ -9,12 +9,13 @@ export const questions: Question[] = [
   },
   {
     id: "season",
-    question: "When are you traveling?",
+    question: "When are you traveling? (Select up to 3)",
+    multiSelect: true,
+    minSelections: 1,
     options: [
       { label: "Cool dry season (Dec - Feb)", value: "cool_dry" },
       { label: "Hot dry season (March - May)", value: "hot_dry" },
       { label: "Wet season (June - Nov)", value: "wet" },
-      { label: "Any time!", value: "any" },
     ],
   },
   {

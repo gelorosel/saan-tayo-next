@@ -7,7 +7,9 @@ export function toPreference(answers: Record<string, string>): Preference {
     activity: answers.activity
       ? (answers.activity.split(",") as Preference["activity"])
       : undefined,
-    season: answers.season as Preference["season"],
+    season: answers.season
+      ? (answers.season.split(",") as Preference["season"])
+      : undefined,
     group: answers.group as Preference["group"],
   };
 }

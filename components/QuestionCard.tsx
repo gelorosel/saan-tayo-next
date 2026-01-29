@@ -41,6 +41,10 @@ export function QuestionCard({
     const [isExiting, setIsExiting] = useState(false);
     const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
 
+    // Determine layout configuration based on question type
+    const useSingleColumn = current.id === "island" || current.id === "season";
+    const isMultiSelect = current.multiSelect || false;
+
     // Reset selection when question changes
     useEffect(() => {
         setSelectedValue(null);
@@ -186,48 +190,19 @@ export function QuestionCard({
                                 <p className="text-sm text-yellow-600">{textWarning}</p>
                             )}
                         </div>
-                    ) : current.id === "island" ? (
-                        // specific styling for island question
-                        <div className={`grid grid-cols-1 gap-3`}>
-                            {displayOptions.map((opt) => (
-                                <Button
-                                    key={opt.value}
-                                    variant={!isExiting && selectedValue === opt.value ? "default" : "outline"}
-                                    disabled={isExiting || disabled}
-                                    size="lg"
-                                    onClick={() => setSelectedValue(opt.value)}
-                                    className="whitespace-normal text-center leading-tight"
-                                >
-                                    {opt.label}
-                                </Button>
-                            ))}
-                        </div>
-                    ) : current.multiSelect ? (
-                        // multi-select mode
-                        <div className={`grid grid-cols-2 gap-3`}>
-                            {displayOptions.map((opt) => (
-                                <Button
-                                    key={opt.value}
-                                    variant={!isExiting && selectedValues.includes(opt.value) ? "default" : "outline"}
-                                    disabled={isExiting || disabled}
-                                    size="lg"
-                                    onClick={() => handleToggleMultiSelect(opt.value)}
-                                    className="h-30 p-3 sm:p-6 sm:h-20 whitespace-normal text-center leading-tight break-words"
-                                >
-                                    {opt.label}
-                                </Button>
-                            ))}
-                        </div>
                     ) : (
-                        <div className={`grid grid-cols-2 gap-3`}>
+                        <div className={`grid ${useSingleColumn ? 'grid-cols-1' : 'grid-cols-2'} gap-3`}>
                             {displayOptions.map((opt) => (
                                 <Button
                                     key={opt.value}
-                                    variant={!isExiting && selectedValue === opt.value ? "default" : "outline"}
+                                    variant={!isExiting && (isMultiSelect ? selectedValues.includes(opt.value) : selectedValue === opt.value) ? "default" : "outline"}
                                     disabled={isExiting || disabled}
                                     size="lg"
-                                    onClick={() => setSelectedValue(opt.value)}
-                                    className="h-30 p-3 sm:p-6 sm:h-20 whitespace-normal text-center leading-tight break-words"
+                                    onClick={() => isMultiSelect ? handleToggleMultiSelect(opt.value) : setSelectedValue(opt.value)}
+                                    className={useSingleColumn
+                                        ? "whitespace-normal text-center leading-tight"
+                                        : "h-30 p-3 sm:p-6 sm:h-20 whitespace-normal text-center leading-tight break-words"
+                                    }
                                 >
                                     {opt.label}
                                 </Button>

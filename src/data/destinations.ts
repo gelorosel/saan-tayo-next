@@ -329,7 +329,7 @@ export const destinations: Destination[] = [
     island: "luzon",
     environments: ["beach", "city"],
     activities: ["history", "food_trip", "explore", "relax", "swim"],
-    bestSeasons: ["cool_dry", "hot_dry"],
+    bestSeasons: ["cool_dry", "hot_dry", "wet"],
     location: { region: "Bataan" },
   },
 
@@ -1093,7 +1093,7 @@ export const destinations: Destination[] = [
     island: "luzon",
     environments: ["mountains"],
     activities: ["explore", "natural_wonders"],
-    bestSeasons: ["cool_dry", "wet"],
+    bestSeasons: ["cool_dry", "hot_dry"],
     location: { region: "Albay" },
   },
   {
@@ -1219,7 +1219,7 @@ export const destinations: Destination[] = [
   },
   {
     id: "angeles-city",
-    name: "Angeles, Pampanga",
+    name: "Angeles City",
     island: "luzon",
     environments: ["city"],
     activities: ["food_trip", "nightlife", "explore"],
@@ -1232,7 +1232,7 @@ export const destinations: Destination[] = [
     island: "visayas",
     environments: ["city"],
     activities: ["food_trip", "history", "explore", "museums", "relax"],
-    bestSeasons: ["cool_dry", "hot_dry"],
+    bestSeasons: ["cool_dry", "hot_dry", "wet"],
     location: { region: "Iloilo" },
   },
   {
@@ -1241,7 +1241,7 @@ export const destinations: Destination[] = [
     island: "luzon",
     environments: ["city"],
     activities: ["natural_wonders", "history", "food_trip", "explore"],
-    bestSeasons: ["cool_dry", "hot_dry"],
+    bestSeasons: ["hot_dry"],
     location: { region: "Albay" },
   },
   {
@@ -1279,7 +1279,7 @@ export const destinations: Destination[] = [
     island: "visayas",
     environments: ["city"],
     activities: ["explore", "history", "museums"],
-    bestSeasons: ["cool_dry", "hot_dry"],
+    bestSeasons: ["cool_dry", "wet"],
     location: { region: "Negros Occidental" },
   },
   {
@@ -1405,7 +1405,7 @@ export const destinations: Destination[] = [
     island: "luzon",
     environments: ["beach"],
     activities: ["explore", "island_hop", "swim", "natural_wonders"],
-    bestSeasons: ["cool_dry", "hot_dry"],
+    bestSeasons: ["cool_dry", "wet"],
     location: { region: "Pangasinan" },
   },
   {

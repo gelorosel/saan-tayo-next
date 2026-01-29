@@ -412,7 +412,7 @@ export const destinations: Destination[] = [
   },
   {
     id: "visayas-beach-bohol",
-    name: "Bohol",
+    name: "Bohol Island",
     island: "visayas",
     environments: ["beach", "mountains", "city"],
     activities: ["swim", "dive", "snorkel", "island_hop", "explore", "natural_wonders", "food_trip"],
@@ -1104,7 +1104,7 @@ export const destinations: Destination[] = [
     island: "visayas",
     environments: ["mountains"],
     activities: ["explore", "natural_wonders"],
-    bestSeasons: ["cool_dry", "hot_dry", "wet"],
+    bestSeasons: ["hot_dry"],
     location: { region: "Bohol" },
   },
   {

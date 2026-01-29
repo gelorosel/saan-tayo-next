@@ -7,47 +7,83 @@ This project was inspired by [bchiang7/time-to-have-more-fun](https://github.com
 ## Features
 
 ### Personality-Based Recommendations
-- **8 Unique Travel Personalities**: Discover your travel archetype through a quiz (The Master Planner, The Soft-Life Traveler, The Cultural Strategist, The Chaos Romantic, The Adrenaline Chaser, The Nature Romantic, The Beach Minimalist, The Everywhere Explorer)
-- **Personality Matching**: Each personality has preferred activities and travel companions that influence destination scoring
-- **"Something New" Mode**: Choose to explore destinations outside your usual travel style for fresh experiences
+- 8 unique travel personalities: The Master Planner, The Soft-Life Traveler, The Cultural Strategist, The Chaos Romantic, The Adrenaline Chaser, The Nature Romantic, The Beach Minimalist, The Everywhere Explorer
+- Personality matching influences destination scoring
+- "Something New" selection explores destinations outside your usual style
 
 ### Smart Destination Matching
-- **Multi-Criteria Filtering**: Filter by island group (Luzon, Visayas, Mindanao), environment (beach, mountains, city, any), and season
-- **Activity-Based Scoring**: Select activities to find destinations that match your interests
-- **Vibe-Based Activities**: Choose your travel mood (rest, activities, sights, learn) to get relevant activity suggestions
-- **Dynamic Reasons**: See personalized explanations for why each destination fits your preferences
+- Multi-criteria filtering: island group, environment, season
+- Activity-based scoring
+- Vibe-based activity suggestions (rest, activities, sights, learn)
+- Personalized explanations for each recommendation
 
 ### Scoring Algorithm
 
-Destinations are scored using an optimized multi-factor algorithm:
-- **Environment Match**: Filters destinations by your preferred environment
-- **Island Group Filter**: Narrows results to your chosen region
-- **Primary Activity**: +5 points for matching your top activity choice
-- **Additional Activities**: +2 points per additional matching activity (when selecting multiple)
-- **Personality Match**: +2 points per activity that aligns with your travel personality (when enabled)
-- **Season Compatibility**: +2 points for optimal season, +1 for acceptable season
-- **Special Bonuses**: +5 points for reef diving destinations when diving is selected
-- **"Something New" Detection**: Highlights destinations with activities outside your personality profile
+Implemented in `lib/score.ts`:
 
-### Image Handling
+**Filtering Phase:**
+- Island group match (Luzon/Visayas/Mindanao)
+- Environment match (beach, mountains, city, or "any")
+- Non-negotiable activities: single activity selections for dive, surf, trek, camp, waterfalls, history, museums, relax, swim require destinations to include that activity
 
-Images are dynamically fetched from Unsplash with a sophisticated fallback strategy:
+**Scoring Phase:**
+- Primary activity match: +5 points
+- Additional activities: +2 points each
+- Personality match: +2 points per matched activity (unless "Something New" mode)
+- Season compatibility: +2 points (optimal) or +1 point (acceptable)
+- Reef diving bonus: +5 points
 
-1. **Primary Query**: Uses destination name (or `overrideUnsplashName` if specified)
-2. **Fallback Query**: Falls back to `{island} {environment} philippines` (e.g., "Luzon beach philippines")
-3. **Random Selection**: Randomly selects from top 10 results for variety
+**Final Ranking:**
+- Destinations randomized before scoring
+- Sorted by total score (highest first)
+- Personalized reasons generated for each match
 
-**Fast Mode**: Skips all image fetching for faster results.
+### Unsplash API Integration
+
+Implemented in `lib/unsplash.ts` and `app/api/unsplash/route.ts`:
+
+**Image Selection:**
+1. Primary query: destination name or `overrideUnsplashName`
+2. Fallback query: intelligent fallback based on environment (e.g., "beach philippines")
+3. Smart random selection from top 20 results
+4. Filters out blocked images and last 3 used fallback images
+
+**Caching:**
+- API response cache: prevents duplicate API calls
+- Image binary cache: stores proxied image data
+- Fallback image cache (localStorage): tracks last 3 used images to prevent repeats
+
+**Image Proxy:**
+- All images proxied through `/api/unsplash/image` for iOS compatibility
+- CORS headers and download tracking
+
+**Fast Mode:** Skips image fetching, uses local fallback.
+
+### Generated Descriptions
+Fetch destination information from either Wikipedia API or Google Gemini.
+Wikipedia first, Gemini as fallback. Reverse with `PRIORITIZE_GEMINI_DESCRIPTION=true`.
 
 ### Share Results
 
-- **Image Generation**: Creates shareable PNG images using `html-to-image`
-- **Download & Share**: Download your results or share directly to social media
-- **Personalized Cards**: Includes your name, personality type, destination details, and reasons
+- Generate shareable PNG images using `html-to-image`
+- Download or share directly to social media
+- Includes personality type, destination details, and match reasons
 
-### Description Priority
+### Google Gemini API Integration
 
-By default, descriptions are fetched from Wikipedia first, with Gemini AI as fallback. You can reverse this priority by setting `PRIORITIZE_GEMINI_DESCRIPTION=true`.
+Implemented in `lib/gemini.ts` using Gemini 2.5 Flash Lite model:
+
+**Generated Content:**
+- 2-3 sentence destination description
+- Best months to visit
+- Activity-specific details (trail difficulty, marine life, wave conditions, etc.)
+- Personality-tailored recommendations
+
+**Caching & Performance:**
+- In-memory cache (500 entries with LRU eviction)
+- Cache key: `destinationName|activity|personalityId`
+- Retry logic with exponential backoff (up to 2 retries)
+- Reduces API calls by ~80-90%
 
 ## Getting Started
 
@@ -78,9 +114,7 @@ npm run dev
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-The app will auto-reload as you edit files.
-
-## ⚙️ Environment Variables
+## Environment Variables
 
 Create a `.env.local` file in the root directory:
 
@@ -93,11 +127,11 @@ GEMINI_API_KEY=your_google_gemini_api_key
 PRIORITIZE_GEMINI_DESCRIPTION=true  # Default: false (uses Wikipedia first)
 ```
 
-**Getting API Keys:**
-- **Unsplash**: Sign up at [Unsplash Developers](https://unsplash.com/developers)
-- **Google Gemini**: Get your key at [Google AI Studio](https://ai.google.dev)
+**API Keys:**
+- Unsplash: [Unsplash Developers](https://unsplash.com/developers)
+- Google Gemini: [Google AI Studio](https://ai.google.dev)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 saan-tayo-next/
@@ -105,7 +139,10 @@ saan-tayo-next/
 │   ├── page.tsx                  # Main quiz interface
 │   ├── layout.tsx                # Root layout with fonts
 │   └── api/                      # API routes
-│       └── unsplash/image/       # Image proxy endpoint
+│       └── unsplash/             # Unsplash API endpoints
+│           ├── route.ts          # Image search endpoint
+│           ├── image/route.ts    # Image proxy endpoint
+│           └── download/route.ts # Download tracking endpoint
 ├── components/                   # React components
 │   ├── QuestionCard.tsx          # Quiz question UI
 │   ├── PersonalityResultCard.tsx # Result display
@@ -122,43 +159,59 @@ saan-tayo-next/
 │   ├── score.ts                  # Destination scoring algorithm
 │   ├── personalityScore.ts       # Personality calculation
 │   ├── preference.ts             # Preference parsing
+│   ├── gemini.ts                 # Gemini AI integration with caching
+│   ├── unsplash.ts               # Unsplash API integration with fallback logic
+│   ├── description.ts            # Description fetching (Wikipedia + Gemini)
 │   └── utils.ts                  # Helper utilities
 └── public/                       # Static assets
 ```
 
 ## Tech Stack
 
-- **Framework**: [Next.js 16.1.4](https://nextjs.org) (App Router)
-- **Language**: TypeScript
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com)
-- **UI Components**: [Radix UI](https://www.radix-ui.com)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Image Processing**: [html-to-image](https://github.com/bubkoo/html-to-image)
-- **Icons**: [Lucide React](https://lucide.dev)
-- **APIs**: Unsplash, Google Gemini, Wikipedia
+- Framework: [Next.js 16.1.4](https://nextjs.org) (App Router)
+- Language: TypeScript
+- Styling: [Tailwind CSS 4](https://tailwindcss.com)
+- UI Components: [Radix UI](https://www.radix-ui.com)
+- Animations: [Framer Motion](https://www.framer.com/motion/)
+- Image Processing: [html-to-image](https://github.com/bubkoo/html-to-image)
+- QR Codes: [qrcode.react](https://github.com/zpao/qrcode.react)
+- Icons: [Lucide React](https://lucide.dev)
+- AI: [Google Generative AI SDK](https://www.npmjs.com/package/@google/genai)
+- APIs: Unsplash, Google Gemini, Wikipedia
 
 ## Deployment
 
-### Vercel (Recommended)
+### Vercel
 
-The easiest way to deploy is using the [Vercel Platform](https://vercel.com/new):
+1. Push code to GitHub
+2. Import repository to [Vercel](https://vercel.com/new)
+3. Add environment variables
+4. Deploy
 
-1. Push your code to GitHub
-2. Import your repository to Vercel
-3. Add environment variables in the Vercel dashboard
-4. Deploy!
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See [Next.js deployment docs](https://nextjs.org/docs/app/building-your-application/deploying) for details.
 
 ### Other Platforms
 
-This app can be deployed to any platform that supports Next.js:
-- Netlify
-- AWS Amplify
-- Railway
-- Render
+Compatible with Netlify, AWS Amplify, Railway, Render, or any platform supporting Next.js.
 
-## 📝 Adding New Destinations
+## API Usage & Rate Limits
+
+**Unsplash API:**
+- Free tier: 50 requests/hour
+- In-memory caching reduces duplicate requests
+- Local fallback when quota exceeded
+
+**Google Gemini API:**
+- Model: Gemini 2.5 Flash Lite
+- Pricing: Pay-as-you-go ([pricing info](https://ai.google.dev/pricing))
+- Caching reduces costs by ~80-90%
+- Generous free tier available
+
+**Wikipedia API:**
+- Free, no API key required
+- Default description source
+
+## Adding New Destinations
 
 Edit `src/data/destinations.ts`:
 
@@ -170,11 +223,15 @@ Edit `src/data/destinations.ts`:
   environments: ["beach", "mountains"], // Array of Environment types
   activities: ["swim", "hike", "explore"], // Array of Activity types
   bestSeasons: ["hot_dry"], // Array of Season types
-  overrideUnsplashName: "Custom Search Term", // Optional
+  overrideUnsplashName: "Custom Search Term", // Optional: for better image results
+  overrideGoogleSearchName: "Custom Search", // Optional: for better Google results
+  location: { 
+    region: "Region Name" // Optional: for grouping related destinations
+  }
 }
 ```
 
-## 🧪 Development Scripts
+## Development Scripts
 
 ```bash
 npm run dev      # Start development server
@@ -183,17 +240,16 @@ npm run start    # Start production server
 npm run lint     # Run ESLint
 ```
 
-## 📄 License
+## License
 
-See [LICENSE](LICENSE) file for details.
+See [LICENSE](LICENSE) file.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Inspired by [time-to-have-more-fun](https://github.com/bchiang7/time-to-have-more-fun)
-- Destination data compiled from various Philippine tourism sources
-- Images provided by [Unsplash](https://unsplash.com)
+- Images from [Unsplash](https://unsplash.com)
 
-## 📚 Learn More
+## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Tailwind CSS](https://tailwindcss.com)

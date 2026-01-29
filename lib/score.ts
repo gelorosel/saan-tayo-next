@@ -5,131 +5,266 @@ import { capitalize } from "./utils";
 
 type Scored = Destination & { score: number; reasons: string[] };
 
-const NON_NEGOTIABLE_ACTIVITIES: Activity[] = ["relax", "surf", "dive", "swim", "trek", "camp", "waterfalls", "history", "museums"];
+/**
+ * Activities that must be present when user selects only one activity.
+ * These are specific enough that we should only show destinations that support them.
+ */
+const NON_NEGOTIABLE_ACTIVITIES: Activity[] = [
+  "relax",
+  "surf",
+  "dive",
+  "swim",
+  "trek",
+  "camp",
+  "waterfalls",
+  "history",
+  "museums"
+];
 
-const matchesIsland = (d: Destination, island?: Preference["island"]) =>
-  !island || d.island === island;
-const matchesEnvironment = (d: Destination, env?: Preference["environment"]) =>
-  !env || env === "any" || d.environments?.includes(env);
+/** Score values for different matching criteria */
+const SCORE_WEIGHTS = {
+  PRIMARY_ACTIVITY: 5,
+  SECONDARY_ACTIVITY: 2,
+  PERSONALITY_MATCH: 2,
+  SEASON_MATCH: 4,
+  SEASON_MISMATCH: 1,
+  REEF_DIVING_BONUS: 5,
+} as const;
 
+// ============================================================================
+// Filter Functions
+// ============================================================================
+
+/**
+ * Check if destination matches the selected island preference.
+ */
+const matchesIsland = (destination: Destination, island?: Preference["island"]): boolean => {
+  return !island || destination.island === island;
+};
+
+/**
+ * Check if destination matches the selected environment preference.
+ */
+const matchesEnvironment = (destination: Destination, environment?: Preference["environment"]): boolean => {
+  return !environment || environment === "any" || destination.environments?.includes(environment);
+};
+
+/**
+ * Check if destination matches non-negotiable activity requirements.
+ * When a user selects exactly one activity that is specific/non-negotiable,
+ * we should only show destinations that support it.
+ */
 const matchesNonNegotiableActivity = (
-  d: Destination,
+  destination: Destination,
   activities?: Activity[]
 ): boolean => {
-  // If user selected exactly 1 activity and it's non-negotiable,
-  // the destination MUST have that activity
-  if (activities?.length === 1) {
-    const [singleActivity] = activities;
-    if (NON_NEGOTIABLE_ACTIVITIES.includes(singleActivity)) {
-      return d.activities.includes(singleActivity);
-    }
+  if (activities?.length !== 1) {
+    return true; // Multiple activities are flexible
   }
-  // Otherwise, don't filter based on this rule
+
+  const [singleActivity] = activities;
+  const isNonNegotiable = NON_NEGOTIABLE_ACTIVITIES.includes(singleActivity);
+
+  if (isNonNegotiable) {
+    return destination.activities.includes(singleActivity);
+  }
+
   return true;
 };
 
-function scoreActivities(dest: Destination, activities: Activity[]) {
+// ============================================================================
+// Scoring Functions
+// ============================================================================
+
+/**
+ * Score how well the destination matches the user's selected activities.
+ * Primary activity gets more weight than secondary activities.
+ */
+function scoreActivities(destination: Destination, activities: Activity[]) {
   let score = 0;
   const reasons: string[] = [];
 
-  const [primary, ...others] = activities;
+  const [primaryActivity, ...secondaryActivities] = activities;
 
-  if (primary && dest.activities.includes(primary)) {
-    score += 5;
+  // Score primary activity (most important)
+  if (primaryActivity && destination.activities.includes(primaryActivity)) {
+    score += SCORE_WEIGHTS.PRIMARY_ACTIVITY;
     reasons.push("Fits your main activity");
   }
 
-  const otherMatches = others.filter(act => dest.activities.includes(act)).length;
-  if (otherMatches > 0) {
-    score += otherMatches * 2;
-    reasons.push(otherMatches === 1
+  // Score secondary activities (nice to have)
+  const secondaryMatches = secondaryActivities.filter(activity =>
+    destination.activities.includes(activity)
+  ).length;
+
+  if (secondaryMatches > 0) {
+    score += secondaryMatches * SCORE_WEIGHTS.SECONDARY_ACTIVITY;
+
+    const reasonText = secondaryMatches === 1
       ? "Includes another activity you picked"
-      : `Includes ${otherMatches} more activities you picked`
-    );
+      : `Includes ${secondaryMatches} more activities you picked`;
+    reasons.push(reasonText);
   }
 
   return { score, reasons };
 }
 
+/**
+ * Score how well the destination matches the user's personality type.
+ * Can optionally boost destinations that match personality or highlight new experiences.
+ */
 function scorePersonality(
-  dest: Destination,
+  destination: Destination,
   personalityActivities: Set<Activity>,
-  applyFilter: boolean
+  shouldBoostPersonalityMatches: boolean
 ) {
-  const matched = dest.activities.filter(a => personalityActivities.has(a)).length;
+  const matchingActivitiesCount = destination.activities.filter(activity =>
+    personalityActivities.has(activity)
+  ).length;
 
-  if (applyFilter && matched > 0) {
-    return { score: matched * 2, reason: "Matches your travel personality" };
+  // Boost destinations that match personality
+  if (shouldBoostPersonalityMatches && matchingActivitiesCount > 0) {
+    return {
+      score: matchingActivitiesCount * SCORE_WEIGHTS.PERSONALITY_MATCH,
+      reason: "Matches your travel personality"
+    };
   }
 
-  if (!applyFilter && personalityActivities.size > 0 && matched === 0) {
+  // Highlight destinations that offer something new
+  const hasPersonalityActivities = personalityActivities.size > 0;
+  const hasNoMatches = matchingActivitiesCount === 0;
+
+  if (!shouldBoostPersonalityMatches && hasPersonalityActivities && hasNoMatches) {
     return { score: 0, reason: "Something new for you" };
   }
 
   return { score: 0, reason: null };
 }
 
+/**
+ * Calculate a comprehensive score for how well a destination matches user preferences.
+ * Returns the destination with score and human-readable reasons.
+ */
 function scoreDestination(
-  dest: Destination,
-  pref: Preference,
+  destination: Destination,
+  preferences: Preference,
   personalityActivities: Set<Activity>,
-  applyPersonalityFilter: boolean
+  shouldBoostPersonalityMatches: boolean
 ): Scored {
-  let score = 0;
+  let totalScore = 0;
   const reasons: string[] = [];
 
-  // Add contextual reasons
-  if (pref.environment && pref.environment !== "any") {
-    reasons.push(`You wanted ${prettyEnvironment(pref.environment)}.`);
-  }
-  if (pref.season) {
-    reasons.push(`Your timing fits the ${seasonLabels[pref.season] ?? "right season"}.`);
-  }
-  if (pref.island) {
-    reasons.push(`It keeps you in ${capitalize(pref.island)}.`);
+  // -------------------------------------------------------------------------
+  // Add contextual reasons for base filters
+  // -------------------------------------------------------------------------
+
+  if (preferences.environment && preferences.environment !== "any") {
+    reasons.push(`You wanted ${prettyEnvironment(preferences.environment)}.`);
   }
 
+  if (preferences.island) {
+    reasons.push(`It keeps you in ${capitalize(preferences.island)}.`);
+  }
+
+  // -------------------------------------------------------------------------
   // Score user-selected activities
-  if (pref.activity?.length) {
-    const activityScore = scoreActivities(dest, pref.activity);
-    score += activityScore.score;
+  // -------------------------------------------------------------------------
+
+  if (preferences.activity?.length) {
+    const activityScore = scoreActivities(destination, preferences.activity);
+    totalScore += activityScore.score;
     reasons.push(...activityScore.reasons);
   }
 
+  // -------------------------------------------------------------------------
   // Score personality match
-  const personalityScore = scorePersonality(dest, personalityActivities, applyPersonalityFilter);
-  score += personalityScore.score;
-  if (personalityScore.reason) reasons.push(personalityScore.reason);
+  // -------------------------------------------------------------------------
 
-  // Score season match
-  const seasonMatch = !pref.season || pref.season === "any" || dest.bestSeasons.includes(pref.season);
-  score += seasonMatch ? 2 : 1;
-  if (seasonMatch) reasons.push("Good for your travel season");
+  const personalityScore = scorePersonality(
+    destination,
+    personalityActivities,
+    shouldBoostPersonalityMatches
+  );
+  totalScore += personalityScore.score;
+  if (personalityScore.reason) {
+    reasons.push(personalityScore.reason);
+  }
 
-  // Bonus for reef diving
-  if (dest.environments.includes("reef") && pref.activity?.includes("dive")) {
-    score += 5;
+  // -------------------------------------------------------------------------
+  // Score season/timing match
+  // -------------------------------------------------------------------------
+
+  const hasSeasonPreference = preferences.season && preferences.season !== "any";
+  const matchesSeason = !preferences.season ||
+    preferences.season === "any" ||
+    destination.bestSeasons.includes(preferences.season);
+
+  if (matchesSeason) {
+    totalScore += SCORE_WEIGHTS.SEASON_MATCH;
+
+    if (hasSeasonPreference) {
+      reasons.push(`Your timing fits the ${seasonLabels[preferences.season!]}.`);
+    } else {
+      reasons.push("Your timing fits the right season.");
+    }
+  } else {
+    totalScore += SCORE_WEIGHTS.SEASON_MISMATCH;
+  }
+
+  // -------------------------------------------------------------------------
+  // Apply special bonuses
+  // -------------------------------------------------------------------------
+
+  // Bonus for reef diving destinations
+  const isReefDivingMatch = destination.environments.includes("reef") &&
+    preferences.activity?.includes("dive");
+  if (isReefDivingMatch) {
+    totalScore += SCORE_WEIGHTS.REEF_DIVING_BONUS;
     reasons.push("Perfect reef diving destination");
   }
 
-  return { ...dest, score, reasons };
+  return { ...destination, score: totalScore, reasons };
 }
 
-export function scoreDestinations(
-  pref: Preference,
-  dests: Destination[],
-  personalityPreferredActivities: Activity[] = [],
-  applyPersonalityFilter: boolean = true
-): Scored[] {
-  const personalitySet = new Set(personalityPreferredActivities);
+// ============================================================================
+// Main Export
+// ============================================================================
 
-  return dests
-    .filter(d =>
-      matchesIsland(d, pref.island) &&
-      matchesEnvironment(d, pref.environment) &&
-      matchesNonNegotiableActivity(d, pref.activity)
+/**
+ * Score and rank destinations based on user preferences and personality.
+ * 
+ * @param preferences - User's travel preferences (island, environment, activities, season)
+ * @param destinations - List of all available destinations to consider
+ * @param personalityPreferredActivities - Activities preferred by user's personality type
+ * @param shouldBoostPersonalityMatches - Whether to boost destinations matching personality
+ * @returns Filtered, scored, and sorted destinations (highest score first)
+ */
+export function scoreDestinations(
+  preferences: Preference,
+  destinations: Destination[],
+  personalityPreferredActivities: Activity[] = [],
+  shouldBoostPersonalityMatches: boolean = true
+): Scored[] {
+  const personalityActivitiesSet = new Set(personalityPreferredActivities);
+
+  return destinations
+    // Step 1: Apply hard filters (must-have requirements)
+    .filter(destination =>
+      matchesIsland(destination, preferences.island) &&
+      matchesEnvironment(destination, preferences.environment) &&
+      matchesNonNegotiableActivity(destination, preferences.activity)
     )
+    // Step 2: Randomize to add variety before scoring
     .sort(() => Math.random() - 0.5)
-    .map(d => scoreDestination(d, pref, personalitySet, applyPersonalityFilter))
+    // Step 3: Calculate scores with reasons
+    .map(destination =>
+      scoreDestination(
+        destination,
+        preferences,
+        personalityActivitiesSet,
+        shouldBoostPersonalityMatches
+      )
+    )
+    // Step 4: Sort by score (highest first)
     .sort((a, b) => b.score - a.score);
 }

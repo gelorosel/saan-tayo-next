@@ -5,10 +5,25 @@ import { Badge } from "@/components/ui/badge";
 import { Destination } from "@/src/types/destination";
 
 type Props = {
-    destination: Destination;
+    destination?: Destination;
+    isLoading?: boolean;
 };
 
-export default function MiniCard({ destination }: Props) {
+export default function MiniCard({ destination, isLoading = false }: Props) {
+    if (isLoading || !destination) {
+        return (
+            <Card className="p-6 gap-2">
+                <div className="h-7 w-40 bg-muted animate-pulse rounded mb-2" />
+                <div className="h-5 w-28 bg-muted animate-pulse rounded mb-4" />
+                <div className="flex flex-wrap gap-1">
+                    {[16, 28, 16, 20, 16].map((x, i) => (
+                        <div key={i} className={`h-7 w-${x} bg-muted animate-pulse rounded-full`} />
+                    ))}
+                </div>
+            </Card>
+        );
+    }
+
     return (
         <Card className="p-6 gap-2">
             <h3 className="text-styled text-xl">{destination.name}</h3>

@@ -249,7 +249,7 @@ export function ShareResultModal({
                                             <>
                                                 {
                                                     destination.overrideImageAttribution ? (
-                                                        <div className="absolute bottom-2 right-3 text-white text-xs opacity-80">
+                                                        <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20">
                                                             {destination.overrideImageAttribution}
                                                         </div>
                                                     ) : (
@@ -266,7 +266,6 @@ export function ShareResultModal({
                                                     )
                                                 }
                                             </>
-
                                         )}
 
                                         {/* Destination Info */}

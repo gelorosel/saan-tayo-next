@@ -87,11 +87,11 @@ export async function GET(request: NextRequest) {
           downloadLocation: image.links?.download_location,
         };
       }
-      
+
       // Store in cache
       unsplashCache.set(cacheKey, result);
       console.log(`[Unsplash Cached] ${cacheKey} - Cache size: ${unsplashCache.size}`);
-      
+
       return NextResponse.json(result);
     }
 

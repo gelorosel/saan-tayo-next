@@ -29,6 +29,7 @@ export default function Home() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [fastMode, setFastMode] = useState(false);
   const [hasShownDestination, setHasShownDestination] = useState(false);
+  const [isLoadingDestination, setIsLoadingDestination] = useState(false);
 
   const canGoBack = step > 0;
   const preferences = useMemo(() => toPreference(answers), [answers]);
@@ -254,6 +255,10 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [finalDestinations.length]);
 
+  const handleLoadingChange = useCallback((isLoading: boolean) => {
+    setIsLoadingDestination(isLoading);
+  }, []);
+
   return (
     <PersonalitiesSidebarProvider>
       <DevelopmentModal />
@@ -282,6 +287,7 @@ export default function Home() {
                       preferredActivity={primaryActivity}
                       fastMode={fastMode}
                       onBeenHere={handleBeenHere}
+                      onLoadingChange={handleLoadingChange}
                     />
                   )}
                 </div>
@@ -337,7 +343,7 @@ export default function Home() {
                         }
                       }}
                     >
-                      <MiniCard destination={relatedDest} />
+                      <MiniCard destination={relatedDest} isLoading={isLoadingDestination} />
                     </div>
                   ))}
                 </div>

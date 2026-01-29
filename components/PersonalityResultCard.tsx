@@ -22,6 +22,7 @@ interface PersonalityResultCardProps {
     preferredActivity?: string;
     fastMode?: boolean;
     onBeenHere?: () => void;
+    onLoadingChange?: (isLoading: boolean) => void;
 }
 
 export function PersonalityResultCard({
@@ -31,6 +32,7 @@ export function PersonalityResultCard({
     preferredActivity,
     fastMode = false,
     onBeenHere,
+    onLoadingChange,
 }: PersonalityResultCardProps) {
     const { openSidebar } = usePersonalitiesSidebar();
 
@@ -60,6 +62,13 @@ export function PersonalityResultCard({
     const activities = destination.activities;
     const headerName = answers.name ? capitalize(answers.name) : undefined;
     const reasons = destination.reasons || [];
+
+    // Notify parent of loading state changes
+    useEffect(() => {
+        if (onLoadingChange) {
+            onLoadingChange(isLoadingImage || isLoadingDescription);
+        }
+    }, [isLoadingImage, isLoadingDescription, onLoadingChange]);
 
     // Load image (skip if fast mode is enabled)
     useEffect(() => {

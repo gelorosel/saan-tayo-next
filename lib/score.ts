@@ -24,9 +24,9 @@ const NON_NEGOTIABLE_ACTIVITIES: Activity[] = [
 /** Score values for different matching criteria */
 const SCORE_WEIGHTS = {
   PRIMARY_ACTIVITY: 5,
-  SECONDARY_ACTIVITY: 2,
+  SECONDARY_ACTIVITY: 3,
   PERSONALITY_MATCH: 2,
-  SEASON_MATCH: 4,
+  SEASON_MATCH: 3,
   SEASON_MISMATCH: 1,
   REEF_DIVING_BONUS: 5,
 } as const;

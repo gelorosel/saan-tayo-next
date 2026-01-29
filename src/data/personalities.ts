@@ -58,8 +58,8 @@ export const personalities: PersonalityProfile[] = [
       "Can feel restricted by rigid schedules",
       "Sometimes struggles to prioritize must-see highlights",
     ],
-    compatibleWith: ["chill_explorer", "cultural_strategist", "mood_based_traveler"],
-    avoidWith: ["soft_life_traveler"],
+    compatibleWith: ["chill_explorer", "cultural_strategist", "chaos_romantic"],
+    avoidWith: ["adventurer"],
   },
   {
     id: "master_planner",

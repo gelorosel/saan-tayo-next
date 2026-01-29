@@ -87,16 +87,29 @@ function buildPrompt(
         parts.push(`- Mention nearby attractions in the same island or province`);
     }
 
-    // Specific corrections
+    // Specific mentions and corrections
+    if (destinationName.toLowerCase().includes('lipa')) {
+        parts.push(`- Mention that Lipa City was formerly known as the "coffee capital of the world"`);
+    }
+    if (destinationName.toLowerCase().includes('binondo')) {
+        parts.push(`- Mention that Binondo is the world's oldest chinatown`);
+    }
     if (destinationName.toLowerCase().includes('carcar')) {
         parts.push(`- Note: Carcar City is the shoe capital of Cebu, not the Philippines`);
     }
     if (destinationName.toLowerCase().includes('tubbataha')) {
         parts.push(`- Note: Tubbataha Reefs uses plural "Reefs" as the official name`);
     }
-    if (destinationName.toLowerCase().includes('carcar')) {
-        parts.push(`- Mention that Lipa City was formerly known as the "coffee capital of the world"`);
+    if (destinationName.toLowerCase().includes('cagayan')) {
+        parts.push(`- Note: Cagayan River is in Luzon, Mindanao has Cagayan de Oro River`);
     }
+
+    // UNESCO World Heritage Sites
+    const unescoSites = ['vigan', 'tubbataha', 'puerto princesa', 'underground river', 'banaue', 'rice terraces', 'hamiguitan'];
+    if (unescoSites.some(site => destinationName.toLowerCase().includes(site))) {
+        parts.push(`- Mention that it's a UNESCO World Heritage Site`);
+    }
+
     parts.push(`- Note: Do not call Kinilaw the "Filipino Ceviche"`);
 
     return parts.join('\n');

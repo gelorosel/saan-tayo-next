@@ -59,6 +59,7 @@ function buildPrompt(
     parts.push(`\nGuidelines:`);
     parts.push(`- Be concise and factual`);
     parts.push(`- DO NOT SAY "perfect for"`);
+    parts.push(`- DO NOT misspell names`);
     parts.push(`- Focus on unique features and practical information`);
     parts.push(`- Use natural, conversational language`);
 

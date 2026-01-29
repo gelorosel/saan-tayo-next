@@ -433,6 +433,15 @@ export const destinations: Destination[] = [
     location: { region: "Negros Island" },
   },
   {
+    id: "visayas-mtn-mt-kanlaon-natural-park",
+    name: "Mt. Kanlaon Natural Park",
+    island: "visayas",
+    environments: ["mountains"],
+    activities: ["waterfalls", "natural_wonders", "explore", "hike", "swim"],
+    bestSeasons: ["cool_dry", "hot_dry"],
+    location: { region: "Negros Occidental" },
+  },
+  {
     id: "visayas-mtn-osmena-peak",
     name: "Osmeña Peak",
     island: "visayas",
@@ -1291,6 +1300,16 @@ export const destinations: Destination[] = [
     environments: ["city"],
     activities: ["explore", "history", "museums"],
     bestSeasons: ["cool_dry", "wet"],
+    location: { region: "Negros Occidental" },
+  },
+  {
+    id: "bacolod-city",
+    name: "Bacolod City",
+    overrideUnsplashName: "Bacolod", // "bacolod city" fetches a wedding photo
+    island: "visayas",
+    environments: ["city"],
+    activities: ["food_trip", "explore", "history", "museums", "nightlife", "relax"],
+    bestSeasons: ["cool_dry", "hot_dry", "wet"],
     location: { region: "Negros Occidental" },
   },
   {

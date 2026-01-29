@@ -140,7 +140,7 @@ export function ShareResultModal({
                 while (attempts < maxAttempts) {
                     try {
                         // Convert the image to data URL for better compatibility with html-to-image
-                        const dataUrl = await convertImageToDataUrl(heroImgSrc);
+                        const dataUrl = await convertImageToDataUrl(destination.overrideImageUrl || heroImgSrc);
                         setDataUrlImage(dataUrl);
                         setIsImageReady(true);
                         console.log('Successfully converted image to data URL');
@@ -247,14 +247,24 @@ export function ShareResultModal({
                                         {/* Unsplash Attribution */}
                                         {imageData && (
                                             <>
-                                                {isFallbackImage && (
-                                                    <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
-                                                        (may not be the actual destination)
-                                                    </div>
-                                                )}
-                                                <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20">
-                                                    Photo by {imageData.photographerName} on Unsplash
-                                                </div>
+                                                {
+                                                    destination.overrideImageAttribution ? (
+                                                        <div className="absolute bottom-2 right-3 text-white text-xs opacity-80">
+                                                            {destination.overrideImageAttribution}
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            {isFallbackImage && (
+                                                                <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
+                                                                    (may not be the actual destination)
+                                                                </div>
+                                                            )}
+                                                            <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20">
+                                                                Photo by {imageData.photographerName} on Unsplash
+                                                            </div>
+                                                        </>
+                                                    )
+                                                }
                                             </>
 
                                         )}

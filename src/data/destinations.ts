@@ -684,7 +684,8 @@ export const destinations: Destination[] = [
   {
     id: "mindanao-mtn-mt-apo",
     name: "Mt. Apo",
-    overrideUnsplashName: "Mount Apo",
+    overrideImageUrl: "/images/mt-apo.jpg",
+    overrideImageAttribution: "Photo by tanawexplorer.com",
     island: "mindanao",
     environments: ["mountains"],
     activities: ["trek", "hike", "natural_wonders", "camp", "explore"],

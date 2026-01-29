@@ -43,4 +43,7 @@ export interface Destination {
 
   /** Optional: override the name used for Google search */
   overrideGoogleSearchName?: string;
+
+  overrideImageUrl?: string;
+  overrideImageAttribution?: string;
 }

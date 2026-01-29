@@ -260,7 +260,7 @@ export function PersonalityResultCard({
                 {!fastMode && (
                     <div className="relative w-full aspect-[16/9] overflow-hidden">
                         <img
-                            src={heroImgSrc}
+                            src={destination.overrideImageUrl || heroImgSrc}
                             alt={destination.name}
                             width={800}
                             height={450}
@@ -274,30 +274,40 @@ export function PersonalityResultCard({
                         {/* Unsplash Attribution */}
                         {imageData && (
                             <>
-                                {isFallbackImage && (
-                                    <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
-                                        (may not be the actual destination)
-                                    </div>
-                                )}
-                                <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 hover:opacity-100 transition-opacity z-20">
-                                    <a
-                                        href={imageData.photographerUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="hover:underline"
-                                    >
-                                        Photo by {imageData.photographerName}
-                                    </a>
-                                    {" on "}
-                                    <a
-                                        href="https://unsplash.com"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="hover:underline"
-                                    >
-                                        Unsplash
-                                    </a>
-                                </div>
+                                {
+                                    destination.overrideImageAttribution ? (
+                                        <div className="absolute bottom-2 right-3 text-white text-xs opacity-80">
+                                            {destination.overrideImageAttribution}
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {isFallbackImage && (
+                                                <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
+                                                    (may not be the actual destination)
+                                                </div>
+                                            )}
+                                            <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 hover:opacity-100 transition-opacity z-20">
+                                                <a
+                                                    href={imageData.photographerUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="hover:underline"
+                                                >
+                                                    Photo by {imageData.photographerName}
+                                                </a>
+                                                {" on "}
+                                                <a
+                                                    href="https://unsplash.com"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="hover:underline"
+                                                >
+                                                    Unsplash
+                                                </a>
+                                            </div>
+                                        </>
+                                    )
+                                }
                             </>
                         )}
                     </div>

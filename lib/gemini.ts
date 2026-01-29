@@ -90,6 +90,9 @@ function buildPrompt(
     if (destinationName.toLowerCase().includes('carcar')) {
         parts.push(`- Note: Carcar City is the shoe capital of Cebu, not the Philippines`);
     }
+    if (destinationName.toLowerCase().includes('tubbataha')) {
+        parts.push(`- Note: Tubbataha Reefs uses plural "Reefs" as the official name`);
+    }
     parts.push(`- Note: Do not call Kinilaw the "Filipino Ceviche"`);
 
     return parts.join('\n');

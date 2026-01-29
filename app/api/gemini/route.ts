@@ -6,7 +6,6 @@ export async function GET(request: NextRequest) {
   const destination = searchParams.get('destination');
   const activity = searchParams.get('activity');
   const personalityId = searchParams.get('personalityId');
-  const preferredActivities = searchParams.get('preferredActivities');
 
   if (!destination) {
     return NextResponse.json(
@@ -16,9 +15,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const preferredList = preferredActivities
-      ? preferredActivities.split(",").map((item) => item.trim()).filter(Boolean)
-      : undefined;
     const result = await geminiShortDescription(
       destination,
       activity || 'travel',

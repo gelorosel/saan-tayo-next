@@ -58,7 +58,7 @@ function buildPrompt(
     // General guidelines
     parts.push(`\nGuidelines:`);
     parts.push(`- Be concise and factual`);
-    parts.push(`- Avoid phrases like "perfect for", "ideal", or "ultimate"`);
+    parts.push(`- DO NOT SAY "perfect for"`);
     parts.push(`- Focus on unique features and practical information`);
     parts.push(`- Use natural, conversational language`);
 

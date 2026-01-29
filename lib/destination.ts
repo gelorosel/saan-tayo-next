@@ -5,9 +5,9 @@ export function toQueryName(destination: Destination): string {
     if (destination.overrideGoogleSearchName) {
         return destination.overrideGoogleSearchName;
     }
-    let name = destination.name.toLowerCase()
-    // if name contains "mt." remove it
-    name = name.replace(/\bmt\.\s*/g, '');
+    let name = destination.name.toLowerCase();
+    // Replace "mt." with "mount"
+    name = name.replace(/\bmt\.\s*/g, 'mount ');
 
     const region = destination.location?.region
     const includeRegion = region && region.toLowerCase() !== name.toLowerCase()

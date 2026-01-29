@@ -4,7 +4,7 @@ export const FALLBACK_IMAGE = "/images/default-img.jpeg";
 const BLOCKED_FALLBACK_IMAGE_IDS = new Set([
     "Ac7sWF9ogFA", // Chocolate Hills - oversaturates results
     "lcrtG-zEHEY", // Not generic enough
-    "VhUxFqnFx28", // Davao City - oversaturates results
+    "ouXsKzf7R98", // Davao City - oversaturates results
 ]);
 
 // Cache for recently used fallback images - prevents repeating images
@@ -49,6 +49,9 @@ export async function fetchUnsplashImage(
     isFallbackQuery: boolean = false
 ): Promise<UnsplashImageData | null> {
     try {
+        // if query contains "mt." remove it
+        query = query.replace(/\bmt\.\s*/g, '');
+
         const perPage = isFallbackQuery ? 20 : 1;
         const response = await fetch(`/api/unsplash?query=${encodeURIComponent(query)}&per_page=${perPage}`);
         if (!response.ok) {

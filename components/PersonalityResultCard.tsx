@@ -271,6 +271,7 @@ export function PersonalityResultCard({
                         <img
                             src={destination.overrideImageUrl || heroImgSrc}
                             alt={destination.name}
+                            id={imageData?.id}
                             width={800}
                             height={450}
                             loading="eager"

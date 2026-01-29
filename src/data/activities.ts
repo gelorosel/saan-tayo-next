@@ -4,7 +4,10 @@ export type ActivityOption = { label: string; value: Activity };
 export type Environment = "beach" | "mountains" | "city" | "reef" | "any";
 export type Vibe = "rest" | "activities" | "sights" | "learn";
 
-export const envActivityMap: Record<Environment, ActivityOption[]> =
+export const pretty = (v: string) =>
+  v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+export const envActivityMap: Record<string, ActivityOption[]> =
 {
   beach: [
     { label: "Swim", value: "swim" },
@@ -25,6 +28,9 @@ export const envActivityMap: Record<Environment, ActivityOption[]> =
     { label: "Natural wonders", value: "natural_wonders" },
     { label: "Explore", value: "explore" },
     { label: "Heritage / Historical sites", value: "history" },
+    { label: "Relax", value: "relax" },
+    { label: "Swim", value: "swim" },
+    { label: "Food trip", value: "food_trip" },
   ],
   city: [
     { label: "Food trip", value: "food_trip" },
@@ -33,17 +39,10 @@ export const envActivityMap: Record<Environment, ActivityOption[]> =
     { label: "Nightlife", value: "nightlife" },
     { label: "Explore", value: "explore" },
   ],
-  reef: [
-    { label: "Dive", value: "dive" },
-    { label: "Snorkel", value: "snorkel" },
-    { label: "Swim", value: "swim" },
-    { label: "Natural wonders", value: "natural_wonders" },
-  ],
-  any: []
 };
 
 const vibeActivityMap: Record<Vibe, Activity[]> = {
-  rest: ["relax", "swim", "camp", "food_trip", "nightlife", "hike", "history", "explore"],
+  rest: ["relax", "swim", "camp", "food_trip", "nightlife", "hike", "history", "explore", "museums"],
   activities: ["hike", "trek", "camp", "dive", "snorkel", "surf", "island_hop", "waterfalls", "natural_wonders", "swim"],
   sights: ["explore", "island_hop", "natural_wonders", "food_trip", "waterfalls", "history", "museums", "hike", "dive", "snorkel"],
   learn: ["museums", "history", "explore", "food_trip", "natural_wonders", "snorkel", "hike", "swim"],
@@ -69,7 +68,6 @@ export const getActivityOptions = (
           ...envActivityMap.beach,
           ...envActivityMap.mountains,
           ...envActivityMap.city,
-          ...envActivityMap.reef,
         ]
       )
       : envActivityMap[environment] ?? [];

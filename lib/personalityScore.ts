@@ -75,16 +75,36 @@ export function personalityScore(
 }
 
 const personalityPreferredActivities: Record<PersonalityId, Activity[]> = {
-  relaxed_escapist: ["relax", "swim", "food_trip", "camp", "snorkel"],
-  adventurer: ["hike", "trek", "dive", "surf", "waterfalls", "natural_wonders", "camp"],
+  // Pure relaxation - gets Tagaytay, Mactan, peaceful beaches
+  relaxed_escapist: ["relax", "swim", "food_trip"],
+
+  // Hardcore adventure - gets Siargao, Lanuza, La Union, mountain treks
+  adventurer: ["surf", "hike", "trek", "dive", "waterfalls", "natural_wonders"],
+
+  // Cultural exploration - wandering, local experiences
   curious_wanderer: ["explore", "food_trip", "museums", "history", "nightlife", "island_hop"],
-  // this mf wants to do everything
-  master_planner: ["museums", "history", "food_trip", "natural_wonders", "island_hop", "explore", "camp", "snorkel", "hike", "trek", "dive", "surf", "waterfalls"],
-  chill_explorer: ["relax", "explore", "food_trip", "swim", "camp", "waterfalls", "snorkel"],
-  purposeful_adventurer: ["hike", "trek", "waterfalls", "dive", "surf", "natural_wonders", "camp"],
-  free_spirited_nomad: ["explore", "nightlife", "surf", "island_hop", "food_trip", "snorkel", "dive"],
-  soft_life_traveler: ["relax", "swim", "food_trip", "camp", "snorkel", "nightlife"],
-  cultural_strategist: ["museums", "history", "food_trip", "explore", "natural_wonders", "island_hop"],
-  chaos_romantic: ["explore", "nightlife", "island_hop", "food_trip", "surf", "dive", "snorkel"],
-  mood_based_traveler: ["relax", "explore", "food_trip", "swim", "hike", "nightlife", "camp"],
+
+  // Can plan anything - master planner gets all activities
+  master_planner: ["museums", "history", "food_trip", "natural_wonders", "island_hop", "explore", "camp", "snorkel", "hike", "trek", "dive", "surf", "waterfalls", "relax", "swim"],
+
+  // Balanced explorer - gentle adventures with rest (camping, easy hikes, snorkeling)
+  chill_explorer: ["relax", "explore", "food_trip", "swim", "snorkel", "camp", "island_hop"],
+
+  // Planned adventure - same as adventurer but organized
+  purposeful_adventurer: ["hike", "trek", "dive", "surf", "waterfalls", "natural_wonders", "camp"],
+
+  // Spontaneous traveler - island hopping, surfing, social activities
+  free_spirited_nomad: ["island_hop", "surf", "explore", "nightlife", "food_trip", "dive", "snorkel"],
+
+  // Comfort-focused - easy activities, no roughing it
+  soft_life_traveler: ["relax", "swim", "food_trip", "explore", "snorkel"],
+
+  // Heritage & culture - gets Vigan, Binondo, historical cities
+  cultural_strategist: ["museums", "history", "food_trip", "explore"],
+
+  // Unpredictable mix - variety of social and adventurous activities
+  chaos_romantic: ["explore", "nightlife", "island_hop", "surf", "food_trip", "dive", "snorkel"],
+
+  // Flexible traveler - balanced mix that adapts to mood
+  mood_based_traveler: ["relax", "explore", "food_trip", "swim", "hike", "camp"],
 };

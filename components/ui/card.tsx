@@ -2,9 +2,6 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-export const pretty = (v: string) =>
-  v.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

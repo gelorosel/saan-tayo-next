@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Card, CardContent, pretty } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Destination } from "@/src/types/destination";
 import { PersonalityProfile } from "@/src/types/personality";
 import { personalities } from "@/src/data/personalities";
+import { pretty } from "@/src/data/activities";
 import { loadDescription, DescriptionData } from "@/lib/description";
 import { capitalize } from "@/lib/utils";
 import { Button } from "./ui/button";

@@ -2,6 +2,7 @@ import { Destination } from "@/src/types/destination";
 import { Activity, Preference } from "@/src/types/preference";
 import { prettyEnvironment, seasonLabels } from "./environment";
 import { capitalize } from "./utils";
+import { pretty } from "@/src/data/activities";
 
 type Scored = Destination & { score: number; reasons: string[] };
 
@@ -13,7 +14,6 @@ const NON_NEGOTIABLE_ACTIVITIES: Activity[] = [
   "relax",
   "surf",
   "dive",
-  "swim",
   "trek",
   "camp",
   "waterfalls",
@@ -28,9 +28,13 @@ const SCORE_WEIGHTS = {
   PERSONALITY_MATCH_BOOST: 4,      // When sticking to travel style
   PERSONALITY_MATCH_NORMAL: 2,     // Normal personality influence
   PERSONALITY_NEW_EXPERIENCE: 3,   // When trying something new
+  PERFECT_FIT_BONUS: 5,            // Minimal destinations with perfect personality match
   SEASON_MATCH: 3,
   SEASON_MISMATCH: 1,
+  WET_SEASON_BONUS: 6,             // Double bonus for rare wet season matches
   REEF_DIVING_BONUS: 5,
+  CITY_NATURE_BONUS: 3,
+  BEACH_MOUNTAINS_BONUS: 2,
 } as const;
 
 // ============================================================================
@@ -91,7 +95,7 @@ function scoreActivities(destination: Destination, activities: Activity[]) {
   // Score primary activity (most important)
   if (primaryActivity && destination.activities.includes(primaryActivity)) {
     score += SCORE_WEIGHTS.PRIMARY_ACTIVITY;
-    reasons.push("Fits your main activity");
+    reasons.push(`Fits your main activity: ${pretty(primaryActivity)}`);
   }
 
   // Score secondary activities (nice to have)
@@ -117,6 +121,7 @@ function scoreActivities(destination: Destination, activities: Activity[]) {
  */
 function scorePersonality(
   destination: Destination,
+  preferences: Preference,
   personalityActivities: Set<Activity>,
   shouldBoostPersonalityMatches: boolean
 ) {
@@ -126,6 +131,19 @@ function scorePersonality(
 
   const totalPersonalityActivities = personalityActivities.size;
   const hasPersonalityActivities = totalPersonalityActivities > 0;
+
+  // Check if this is a minimal destination with perfect personality match
+  const allActivitiesMatchPersonality = destination.activities.every(activity =>
+    personalityActivities.has(activity)
+  );
+
+  // Perfect fit bonus: minimal destinations (≤4 activities) that perfectly match personality
+  if (allActivitiesMatchPersonality && destination.activities.length <= 4 && destination.activities.length > 0) {
+    return {
+      score: matchingActivitiesCount * SCORE_WEIGHTS.PERSONALITY_MATCH_BOOST + SCORE_WEIGHTS.PERFECT_FIT_BONUS,
+      reason: "Matches your travel style"
+    };
+  }
 
   // User wants to stick to their travel style - boost personality matches strongly
   if (shouldBoostPersonalityMatches && matchingActivitiesCount > 0) {
@@ -137,14 +155,15 @@ function scorePersonality(
 
   // User wants to try something new - reward destinations that diverge from personality
   if (!shouldBoostPersonalityMatches && hasPersonalityActivities) {
-    const nonMatchingCount = destination.activities.filter(activity =>
-      !personalityActivities.has(activity)
-    ).length;
+    const nonMatchingActivities = destination.activities.filter(activity =>
+      activity !== "relax" && activity !== "natural_wonders" && !personalityActivities.has(activity) && !preferences.activity?.includes(activity)
+    );
+    const nonMatchingCount = nonMatchingActivities.length;
 
     // Destinations with activities outside their comfort zone
     if (nonMatchingCount > 0) {
       const score = Math.min(nonMatchingCount, 3) * SCORE_WEIGHTS.PERSONALITY_NEW_EXPERIENCE;
-      return { score, reason: "Something new for you" };
+      return { score, reason: `Other activities for you: ${nonMatchingActivities.slice(0, 3).map(pretty).join(", ")}` };
     }
   }
 
@@ -157,6 +176,47 @@ function scorePersonality(
   }
 
   return { score: 0, reason: null };
+}
+
+/**
+ * Score destinations that offer multiple environments (versatility bonus).
+ */
+function scoreVersatility(destination: Destination, preferences: Preference) {
+  let score = 0;
+  const reasons: string[] = [];
+
+  const environmentCount = destination.environments.length;
+
+  // Multi-environment destinations are more versatile
+  if (environmentCount >= 2) {
+    score += 2; // Base versatility bonus
+
+    // Check if user's preferred environment is included
+    if (preferences.environment &&
+      destination.environments.includes(preferences.environment)) {
+      score += 1; // Matches preference + offers variety
+
+      // List the bonus environments
+      const otherEnvironments = destination.environments
+        .filter(e => e !== preferences.environment)
+        .join(", ");
+    }
+  }
+
+  // Special case: beach + mountains (ultimate versatility)
+  if (destination.environments.includes("beach") &&
+    destination.environments.includes("mountains")) {
+    score += SCORE_WEIGHTS.BEACH_MOUNTAINS_BONUS; // Extra bonus for best combo
+    reasons.push("Best of both worlds: beach and mountains");
+  }
+
+  // City + anything (good for diverse groups)
+  if (destination.environments.includes("city") && environmentCount >= 2) {
+    score += SCORE_WEIGHTS.CITY_NATURE_BONUS; // Extra bonus for best combo
+    reasons.push("Established infrastructure alongside nature");
+  }
+
+  return { score, reasons };
 }
 
 /**
@@ -200,6 +260,7 @@ function scoreDestination(
 
   const personalityScore = scorePersonality(
     destination,
+    preferences,
     personalityActivities,
     shouldBoostPersonalityMatches
   );
@@ -209,6 +270,14 @@ function scoreDestination(
   }
 
   // -------------------------------------------------------------------------
+  // Score environment versatility
+  // -------------------------------------------------------------------------
+
+  const versatilityScore = scoreVersatility(destination, preferences);
+  totalScore += versatilityScore.score;
+  reasons.push(...versatilityScore.reasons);
+
+  // -------------------------------------------------------------------------
   // Score season/timing match
   // -------------------------------------------------------------------------
 
@@ -216,22 +285,37 @@ function scoreDestination(
   const allSeasonsSelected = preferences.season?.length === 3;
   const hasSeasonPreference = preferences.season && preferences.season.length > 0 && !allSeasonsSelected;
 
+  // Check if wet season only is selected (be more lenient)
+  const isWetSeasonOnly = preferences.season?.length === 1 && preferences.season[0] === "wet";
+
   // Check if destination matches any of the selected seasons
   const matchesSeason = !preferences.season ||
     allSeasonsSelected ||
     preferences.season.some(season => destination.bestSeasons.includes(season));
 
-  if (matchesSeason) {
-    totalScore += SCORE_WEIGHTS.SEASON_MATCH;
-
-    if (hasSeasonPreference) {
-      const selectedSeasonLabels = preferences.season!
-        .map(s => seasonLabels[s])
-        .join(" or ");
-      reasons.push(`Your timing fits the ${selectedSeasonLabels}.`);
+  if (isWetSeasonOnly) {
+    // Wet season leniency: boost matches heavily, but don't penalize mismatches
+    if (matchesSeason) {
+      totalScore += SCORE_WEIGHTS.WET_SEASON_BONUS;
+      reasons.push("Perfect timing for the wet season");
+    } else {
+      // No penalty for non-wet destinations - they can still be visited
+      reasons.push("Can visit year-round");
     }
   } else {
-    totalScore += SCORE_WEIGHTS.SEASON_MISMATCH;
+    // Normal season scoring for other cases
+    if (matchesSeason) {
+      totalScore += SCORE_WEIGHTS.SEASON_MATCH;
+
+      if (hasSeasonPreference) {
+        const selectedSeasonLabels = preferences.season!
+          .map(s => seasonLabels[s])
+          .join(" or ");
+        reasons.push(`Your timing fits the ${selectedSeasonLabels}.`);
+      }
+    } else {
+      totalScore += SCORE_WEIGHTS.SEASON_MISMATCH;
+    }
   }
 
   // -------------------------------------------------------------------------

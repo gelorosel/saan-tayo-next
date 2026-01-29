@@ -106,6 +106,9 @@ function buildPrompt(
     if (destinationName.toLowerCase().includes('iloilo')) {
         parts.push(`- Note: Iloilo City is recognized by UNESCO as the first Creative City of Gastronomy in the Philippines`);
     }
+    if (destinationName.toLowerCase().includes('pulag')) {
+        parts.push(`- Note: Ambangeg Trail is the easiest trail, takes 6 hours to complete`);
+    }
 
     // UNESCO World Heritage Sites
     const unescoSites = ['vigan', 'tubbataha', 'puerto princesa', 'underground river', 'banaue', 'rice terraces', 'hamiguitan'];

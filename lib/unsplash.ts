@@ -59,6 +59,10 @@ export async function fetchUnsplashImage(
         const perPage = isFallbackQuery ? 20 : 1;
         const response = await fetch(`/api/unsplash?query=${encodeURIComponent(query)}&per_page=${perPage}`);
         if (!response.ok) {
+            // Throw error for server/API issues (5xx, 429, etc.)
+            if (response.status >= 500 || response.status === 429) {
+                throw new Error(`Unsplash API error: ${response.status}`);
+            }
             return null;
         }
         const data = await response.json();

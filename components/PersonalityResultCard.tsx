@@ -23,6 +23,7 @@ interface PersonalityResultCardProps {
     fastMode?: boolean;
     onBeenHere?: () => void;
     onLoadingChange?: (isLoading: boolean) => void;
+    onImageError?: () => void;
 }
 
 export function PersonalityResultCard({
@@ -33,6 +34,7 @@ export function PersonalityResultCard({
     fastMode = false,
     onBeenHere,
     onLoadingChange,
+    onImageError,
 }: PersonalityResultCardProps) {
     const { openSidebar } = usePersonalitiesSidebar();
 
@@ -88,36 +90,50 @@ export function PersonalityResultCard({
 
             const startTime = Date.now();
 
-            let imageDataResult = await fetchUnsplashImage(destination.overrideUnsplashName || destination.name);
-            let usedFallback = false;
+            try {
+                let imageDataResult = await fetchUnsplashImage(destination.overrideUnsplashName || destination.name);
+                let usedFallback = false;
 
-            if (!imageDataResult) {
-                const fallbackQuery = getFallbackUnsplashQuery(destination);
-                usedFallback = true;
-                imageDataResult = await fetchUnsplashImage(fallbackQuery, true);
-            }
+                if (!imageDataResult) {
+                    const fallbackQuery = getFallbackUnsplashQuery(destination);
+                    usedFallback = true;
+                    imageDataResult = await fetchUnsplashImage(fallbackQuery, true);
+                }
 
-            // Hardcoded delay for suspense
-            const elapsedTime = Date.now() - startTime;
-            const remainingTime = Math.max(0, 1500 - elapsedTime);
-            if (remainingTime > 0) {
-                await new Promise(resolve => setTimeout(resolve, remainingTime));
-            }
+                // Hardcoded delay for suspense
+                const elapsedTime = Date.now() - startTime;
+                const remainingTime = Math.max(0, 1500 - elapsedTime);
+                if (remainingTime > 0) {
+                    await new Promise(resolve => setTimeout(resolve, remainingTime));
+                }
 
-            // Only update if this request hasn't been superseded
-            if (!isStale) {
-                if (imageDataResult) {
-                    // Proxy the image through our API for iOS compatibility
-                    const proxiedUrl = `/api/unsplash/image?url=${encodeURIComponent(imageDataResult.url)}`;
-                    setHeroImgSrc(proxiedUrl);
-                    setImageData(imageDataResult);
-                    setIsFallbackImage(usedFallback);
-                    triggerDownload(imageDataResult.downloadLocation);
-                } else {
+                // Only update if this request hasn't been superseded
+                if (!isStale) {
+                    if (imageDataResult) {
+                        // Proxy the image through our API for iOS compatibility
+                        const proxiedUrl = `/api/unsplash/image?url=${encodeURIComponent(imageDataResult.url)}`;
+                        setHeroImgSrc(proxiedUrl);
+                        setImageData(imageDataResult);
+                        setIsFallbackImage(usedFallback);
+                        triggerDownload(imageDataResult.downloadLocation);
+                    } else {
+                        setHeroImgSrc(FALLBACK_IMAGE);
+                        setIsFallbackImage(true);
+                    }
+                    setIsLoadingImage(false);
+                }
+            } catch (error) {
+                console.error('Error loading image:', error);
+                // API/Network error occurred
+                if (!isStale) {
                     setHeroImgSrc(FALLBACK_IMAGE);
                     setIsFallbackImage(true);
+                    setIsLoadingImage(false);
+                    // Notify parent component about the error
+                    if (onImageError) {
+                        onImageError();
+                    }
                 }
-                setIsLoadingImage(false);
             }
         }
 

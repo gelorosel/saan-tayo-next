@@ -12,6 +12,7 @@ interface Props {
     onSelect: (value: string) => void;
     onBack?: () => void;
     canGoBack?: boolean;
+    disabled?: boolean;
 }
 
 // Fisher-Yates shuffle algorithm
@@ -30,6 +31,7 @@ export function QuestionCard({
     onSelect,
     onBack,
     canGoBack = false,
+    disabled = false,
 }: Props) {
     const [selectedValue, setSelectedValue] = useState<string | null>(null);
     const [selectedValues, setSelectedValues] = useState<string[]>([]);
@@ -140,7 +142,7 @@ export function QuestionCard({
                                 <Button
                                     key={opt.value}
                                     variant={!isExiting && selectedValue === opt.value ? "default" : "outline"}
-                                    disabled={isExiting}
+                                    disabled={isExiting || disabled}
                                     size="lg"
                                     onClick={() => setSelectedValue(opt.value)}
                                     className="whitespace-normal text-center leading-tight"
@@ -156,7 +158,7 @@ export function QuestionCard({
                                 <Button
                                     key={opt.value}
                                     variant={!isExiting && selectedValues.includes(opt.value) ? "default" : "outline"}
-                                    disabled={isExiting}
+                                    disabled={isExiting || disabled}
                                     size="lg"
                                     onClick={() => handleToggleMultiSelect(opt.value)}
                                     className="h-30 p-3 sm:p-6 sm:h-20 whitespace-normal text-center leading-tight break-words"
@@ -171,7 +173,7 @@ export function QuestionCard({
                                 <Button
                                     key={opt.value}
                                     variant={!isExiting && selectedValue === opt.value ? "default" : "outline"}
-                                    disabled={isExiting}
+                                    disabled={isExiting || disabled}
                                     size="lg"
                                     onClick={() => setSelectedValue(opt.value)}
                                     className="h-30 p-3 sm:p-6 sm:h-20 whitespace-normal text-center leading-tight break-words"
@@ -189,7 +191,7 @@ export function QuestionCard({
                                 variant="ghost"
                                 size="md"
                                 onClick={handleBack}
-                                disabled={isExiting}
+                                disabled={isExiting || disabled}
                             >
                                 Go back
                             </Button>
@@ -202,6 +204,7 @@ export function QuestionCard({
                             onClick={handleNext}
                             disabled={
                                 isExiting ||
+                                disabled ||
                                 (current.type === "text"
                                     ? !textValue.trim()
                                     : current.multiSelect

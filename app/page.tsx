@@ -15,6 +15,7 @@ import { Option } from "@/src/types/question";
 import MiniCard from "@/components/MiniCard";
 import { PersonalityResultCard } from "@/components/PersonalityResultCard";
 import { DevelopmentModal } from "@/components/DevelopmentModal";
+import { ErrorModal } from "@/components/ErrorModal";
 import { PersonalitiesSidebar } from "@/components/PersonalitiesSidebar";
 import { PersonalitiesSidebarProvider } from "@/contexts/PersonalitiesSidebarContext";
 
@@ -30,9 +31,12 @@ export default function Home() {
   const [fastMode, setFastMode] = useState(false);
   const [hasShownDestination, setHasShownDestination] = useState(false);
   const [isLoadingDestination, setIsLoadingDestination] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [isKillSwitchActive, setIsKillSwitchActive] = useState(false);
+  const [showKillSwitchModal, setShowKillSwitchModal] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const canGoBack = step > 0;
+  const canGoBack = step > 0 && !isKillSwitchActive;
   const preferences = useMemo(() => toPreference(answers), [answers]);
   const personalityResult = useMemo(() => personalityScore(answers), [answers]);
   const personalityProfile = useMemo(() => {
@@ -72,8 +76,21 @@ export default function Home() {
     }
   }, [pick, finalDestinations.length]);
 
+  // Check kill switch on mount
+  useEffect(() => {
+    const killSwitch = process.env.NEXT_PUBLIC_KILL_SWITCH === 'true';
+    setIsKillSwitchActive(killSwitch);
+    if (killSwitch) {
+      setShowKillSwitchModal(true);
+      setStep(0); // Force to first question
+    }
+  }, []);
+
   // Load saved state on mount
   useEffect(() => {
+    // Don't load saved state if kill switch is active
+    if (isKillSwitchActive) return;
+
     const savedFastMode = localStorage.getItem(FAST_MODE_KEY);
     if (savedFastMode !== null) {
       setFastMode(savedFastMode === "true");
@@ -98,7 +115,7 @@ export default function Home() {
         setPick(pickNum);
       }
     }
-  }, []);
+  }, [isKillSwitchActive]);
 
   const baseCurrent = questions[step];
 
@@ -207,6 +224,12 @@ export default function Home() {
   }, [finalDestinations]);
 
   const goNext = useCallback((questionId: string, chosenValue: string) => {
+    // Prevent navigation if kill switch is active
+    if (isKillSwitchActive) {
+      setShowKillSwitchModal(true);
+      return;
+    }
+
     setAnswers((prev) => {
       const next = { ...prev, [questionId]: chosenValue };
 
@@ -218,7 +241,7 @@ export default function Home() {
     });
 
     setStep((prev) => prev + 1);
-  }, []);
+  }, [isKillSwitchActive]);
 
   const handleSelect = useCallback((value: string) => {
     if (!current) return;
@@ -282,6 +305,7 @@ export default function Home() {
                 onSelect={handleSelect}
                 onBack={handleBack}
                 canGoBack={canGoBack}
+                disabled={isKillSwitchActive}
               /> :
               finalDestinations.length ? (
                 <div className="flex flex-col lg:flex-row items-start">
@@ -294,6 +318,7 @@ export default function Home() {
                       fastMode={fastMode}
                       onBeenHere={handleBeenHere}
                       onLoadingChange={handleLoadingChange}
+                      onImageError={() => setShowErrorModal(true)}
                     />
                   )}
                 </div>
@@ -362,6 +387,16 @@ export default function Home() {
           )}
         </div>
       </main>
+      <ErrorModal 
+        isOpen={showErrorModal} 
+        onClose={() => setShowErrorModal(false)} 
+      />
+      <ErrorModal 
+        isOpen={showKillSwitchModal}
+        onClose={() => setShowKillSwitchModal(false)}
+        title="Service Temporarily Unavailable"
+        message="We're currently performing maintenance. Please check back soon!"
+      />
     </PersonalitiesSidebarProvider>
   );
 }

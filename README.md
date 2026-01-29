@@ -43,10 +43,11 @@ Implemented in `lib/score.ts`:
 Implemented in `lib/unsplash.ts` and `app/api/unsplash/route.ts`:
 
 **Image Selection:**
-1. Primary query: destination name or `overrideUnsplashName`
-2. Fallback query: intelligent fallback based on environment (e.g., "beach philippines")
-3. Smart random selection from top 20 results
-4. Filters out blocked images and last 3 used fallback images
+1. Some destinations deserve their own non-automated tribute photos, they are stored locally in `public/images/` and override the unsplash process completely
+2. Primary query: destination name or `overrideUnsplashName`
+3. Fallback query: intelligent fallback based on environment (e.g., "beach philippines")
+4. Smart random selection from top 20 results
+5. Filters out blocked images and last 3 used fallback images
 
 **Caching:**
 - API response cache: prevents duplicate API calls

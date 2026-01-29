@@ -86,10 +86,11 @@ function buildPrompt(
         parts.push(`- Mention nearby attractions in the same island or province`);
     }
 
-    // Destination-specific corrections
+    // Specific corrections
     if (destinationName.toLowerCase().includes('carcar')) {
         parts.push(`- Note: Carcar City is the shoe capital of Cebu, not the Philippines`);
     }
+    parts.push(`- Note: Do not call Kinilaw the "Filipino Ceviche"`);
 
     return parts.join('\n');
 }

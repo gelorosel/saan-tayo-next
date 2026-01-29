@@ -1231,7 +1231,7 @@ export const destinations: Destination[] = [
     name: "Iloilo City",
     island: "visayas",
     environments: ["city"],
-    activities: ["food_trip", "history", "explore", "museums"],
+    activities: ["food_trip", "history", "explore", "museums", "relax"],
     bestSeasons: ["cool_dry", "hot_dry"],
     location: { region: "Iloilo" },
   },

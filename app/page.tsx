@@ -187,8 +187,8 @@ export default function Home() {
       d => d.id !== currentDestinationId && !regionDestinationIds.has(d.id)
     );
 
-    // Combine: region destinations first, then rest of finalDestinations, limit to 5
-    return [...regionDestinations, ...restOfFinalDestinations].slice(0, 5);
+    // Combine: region destinations first, then rest of finalDestinations, limit to 10
+    return [...regionDestinations, ...restOfFinalDestinations].slice(0, 10);
   }, [current, finalDestinations, pick, preferences, personalityResult?.preferredActivities]);
 
   const handleMiniCardClick = useCallback((destinationId: string) => {

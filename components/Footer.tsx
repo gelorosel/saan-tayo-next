@@ -19,7 +19,17 @@ export default function Footer() {
               className="underline"
             >
               Gelo Rosel
-            </a>{" "}
+            </a>
+            {" "}
+            &#x2022;
+            {" "}
+            <a
+              href="https://github.com/gelorosel/saan-tayo-next"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline">
+              View on Github
+            </a>
             {/* &#x2022; not affiliated with the DOT */}
           </p>
           <button

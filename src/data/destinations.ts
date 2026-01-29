@@ -71,6 +71,15 @@ export const destinations: Destination[] = [
   },
   {
     id: "luzon-beach-puraran",
+    name: "Catanduanes Island",
+    island: "luzon",
+    environments: ["beach", "city"],
+    activities: ["surf", "swim", "relax", "natural_wonders", "explore"],
+    bestSeasons: ["cool_dry", "hot_dry"],
+    location: { region: "Catanduanes" },
+  },
+  {
+    id: "luzon-beach-puraran",
     name: "Puraran Beach",
     island: "luzon",
     environments: ["beach"],

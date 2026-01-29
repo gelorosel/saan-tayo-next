@@ -224,7 +224,7 @@ export function ShareResultModal({
                         width: generatedImage ? '0px' : '600px',
                     }}
                 >
-                    <Card className="overflow-hidden rounded-2xl shadow-sm" style={{ width: '600px', height: '1113px' }}>
+                    <Card className="border-none overflow-hidden rounded-2xl shadow-sm" style={{ width: '600px', height: '1113px' }}>
                         <CardContent className="p-0" style={{ height: '1113px', display: 'flex', flexDirection: 'column' }}>
                             {/* Header Statement */}
                             <h1 className="mt-12 mb-4 text-center text-styled text-5xl" style={{ flexShrink: 0 }}>Saan Tayo Next?</h1>

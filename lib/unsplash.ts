@@ -3,8 +3,9 @@ export const FALLBACK_IMAGE = "/images/default-img.jpeg";
 // Unwanted Unsplash image IDs (e.g., overused, low quality, or misleading images)
 const BLOCKED_FALLBACK_IMAGE_IDS = new Set([
     "Ac7sWF9ogFA", // Chocolate Hills - oversaturates results
-    "lcrtG-zEHEY", // Not generic enough
     "ouXsKzf7R98", // Davao City - oversaturates results
+    "lcrtG-zEHEY", // Not generic enough
+    "tNaDgrIE9us", // Irrelevant image
 ]);
 
 // Cache for recently used fallback images - prevents repeating images

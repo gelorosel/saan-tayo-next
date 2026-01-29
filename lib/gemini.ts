@@ -64,7 +64,7 @@ function buildPrompt(
 
     // Activity-specific instructions
     const activityLower = activity.toLowerCase();
-    if (activityLower.includes('trek') || activityLower.includes('hike')) {
+    if (activityLower.includes('trek') || activityLower.includes('hike') || destinationName.toLowerCase().includes('mt')) {
         parts.push(`- Mention trail difficulty (beginner/moderate/difficult)`);
         parts.push(`- Note approximate duration if known`);
     }

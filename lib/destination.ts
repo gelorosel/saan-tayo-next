@@ -26,7 +26,6 @@ export function getFallbackUnsplashQuery(destination: Destination): string {
     if (!destination.environments?.length) {
         return "philippines";
     }
-    return destination.island.toLowerCase() === "luzon"
-        ? `${destination.environments[0] === "mountains" ? "peak" : destination.environments[0]} philippines` // "mountains luzon" -> "peak philippines"
-        : `${destination.environments[0]} ${destination.location?.region || "philippines"}`;
+
+    return `${destination.environments[0]} philippines`;
 }

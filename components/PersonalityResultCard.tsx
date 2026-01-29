@@ -26,6 +26,12 @@ interface PersonalityResultCardProps {
 
 const FALLBACK_IMAGE = "/images/default-img.jpeg";
 
+// Unwanted Unsplash image IDs (e.g., overused, low quality, or misleading images)
+const BLOCKED_FALLBACK_IMAGE_IDS = new Set([
+    "Ac7sWF9ogFA", // Chocolate Hills - oversaturates results
+    "lcrtG-zEHEY", // Not generic enough
+]);
+
 interface UnsplashImageData {
     id?: string;
     url: string;
@@ -37,19 +43,31 @@ interface UnsplashImageData {
 
 async function fetchUnsplashImage(
     query: string,
-    randomFromTop10: boolean = false
+    isFallbackQuery: boolean = false
 ): Promise<UnsplashImageData | null> {
     try {
-        const perPage = randomFromTop10 ? 10 : 1;
+        const perPage = isFallbackQuery ? 20 : 1;
         const response = await fetch(`/api/unsplash?query=${encodeURIComponent(query)}&per_page=${perPage}`);
         if (!response.ok) {
             return null;
         }
         const data = await response.json();
 
-        if (randomFromTop10 && data.results && data.results.length > 0) {
-            const randomIndex = Math.floor(Math.random() * data.results.length);
-            return data.results[randomIndex] || null;
+        if (isFallbackQuery && data.results && data.results.length > 0) {
+            // Filter out blocked images
+            const filtered = data.results.filter((image: any) => {
+                return !BLOCKED_FALLBACK_IMAGE_IDS.has(image.id);
+            });
+
+            if (filtered.length > 0) {
+                const randomIndex = Math.floor(Math.random() * Math.min(filtered.length, 20));
+                const image = filtered[randomIndex];
+                console.log(image)
+                return image || null;
+            }
+
+            // If all results were blocked, return null to trigger fallback
+            return null;
         }
 
         return data || null;

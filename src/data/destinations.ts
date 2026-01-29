@@ -896,7 +896,7 @@ export const destinations: Destination[] = [
     overrideUnsplashName: "Masungi",
     island: "luzon",
     environments: ["mountains"],
-    activities: ["explore", "hike"],
+    activities: ["explore", "hike", "natural_wonders"],
     bestSeasons: ["cool_dry"],
     location: { region: "Rizal" },
   },

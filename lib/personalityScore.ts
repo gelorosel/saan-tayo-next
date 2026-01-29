@@ -69,18 +69,7 @@ export function personalityScore(
 
   // Check for hybrid type
   const topPair = [sortedKeys[0], sortedKeys[1]].sort().join("+");
-  let primary = hybridByPair[topPair] || answerToPersonality[sortedKeys[0]];
-
-  // Final filter: adjust personality based on selected activity
-  const selectedActivity = answers.activity as Activity | undefined;
-  if (selectedActivity && !personalityPreferredActivities[primary].includes(selectedActivity)) {
-    // Find highest-scoring personality that includes this activity
-    const match = sortedKeys
-      .map(key => answerToPersonality[key])
-      .find(id => personalityPreferredActivities[id].includes(selectedActivity));
-
-    if (match) primary = match;
-  }
+  const primary = hybridByPair[topPair] || answerToPersonality[sortedKeys[0]];
 
   return { primary, scores: answerCounts as any, preferredActivities: personalityPreferredActivities[primary] };
 }

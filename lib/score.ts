@@ -25,7 +25,9 @@ const NON_NEGOTIABLE_ACTIVITIES: Activity[] = [
 const SCORE_WEIGHTS = {
   PRIMARY_ACTIVITY: 5,
   SECONDARY_ACTIVITY: 3,
-  PERSONALITY_MATCH: 2,
+  PERSONALITY_MATCH_BOOST: 4,      // When sticking to travel style
+  PERSONALITY_MATCH_NORMAL: 2,     // Normal personality influence
+  PERSONALITY_NEW_EXPERIENCE: 3,   // When trying something new
   SEASON_MATCH: 3,
   SEASON_MISMATCH: 1,
   REEF_DIVING_BONUS: 5,
@@ -122,20 +124,36 @@ function scorePersonality(
     personalityActivities.has(activity)
   ).length;
 
-  // Boost destinations that match personality
+  const totalPersonalityActivities = personalityActivities.size;
+  const hasPersonalityActivities = totalPersonalityActivities > 0;
+
+  // User wants to stick to their travel style - boost personality matches strongly
   if (shouldBoostPersonalityMatches && matchingActivitiesCount > 0) {
     return {
-      score: matchingActivitiesCount * SCORE_WEIGHTS.PERSONALITY_MATCH,
+      score: matchingActivitiesCount * SCORE_WEIGHTS.PERSONALITY_MATCH_BOOST,
       reason: "Matches your travel personality"
     };
   }
 
-  // Highlight destinations that offer something new
-  const hasPersonalityActivities = personalityActivities.size > 0;
-  const hasNoMatches = matchingActivitiesCount === 0;
+  // User wants to try something new - reward destinations that diverge from personality
+  if (!shouldBoostPersonalityMatches && hasPersonalityActivities) {
+    const nonMatchingCount = destination.activities.filter(activity =>
+      !personalityActivities.has(activity)
+    ).length;
 
-  if (!shouldBoostPersonalityMatches && hasPersonalityActivities && hasNoMatches) {
-    return { score: 0, reason: "Something new for you" };
+    // Destinations with activities outside their comfort zone
+    if (nonMatchingCount > 0) {
+      const score = Math.min(nonMatchingCount, 3) * SCORE_WEIGHTS.PERSONALITY_NEW_EXPERIENCE;
+      return { score, reason: "Something new for you" };
+    }
+  }
+
+  // Baseline personality influence when neither boosting nor penalizing
+  if (matchingActivitiesCount > 0) {
+    return {
+      score: matchingActivitiesCount * SCORE_WEIGHTS.PERSONALITY_MATCH_NORMAL,
+      reason: null
+    };
   }
 
   return { score: 0, reason: null };

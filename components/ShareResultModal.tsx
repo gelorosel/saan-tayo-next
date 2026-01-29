@@ -93,7 +93,6 @@ export function ShareResultModal({
                 cacheBust: true,
                 backgroundColor: '#ffffff',
                 width: 600,
-                height: 1113,
                 skipFonts: false,
             });
 
@@ -198,18 +197,18 @@ export function ShareResultModal({
                             src={generatedImage}
                             alt="Share preview"
                             width={600}
-                            height={1113} // 2:3.71 aspect ratio
                             loading="lazy"
                             decoding="async"
                             className="w-full h-auto rounded-lg"
                         />
                     </div>
-                ) : <div className="w-full aspect-[1/2] flex items-center justify-center bg-muted rounded-lg p-0 m-0"><p className="text-muted-foreground">
-                    {'Generating preview...'}
-                </p>
+                ) : <div className="w-full aspect-[1/2] flex items-center justify-center bg-muted rounded-lg p-0 m-0">
+                    <p className="text-muted-foreground">
+                        {'Generating preview...'}
+                    </p>
                 </div>}
 
-                {/* Hidden export version for generation - 9:16 aspect ratio - always rendered */}
+                {/* Hidden export version for generation - always rendered */}
                 <div
                     ref={exportRef}
                     className="pointer-events-none bg-white overflow-hidden"
@@ -220,25 +219,28 @@ export function ShareResultModal({
                         zIndex: -999,
                         opacity: isGenerating ? 1 : 0.01,
                         visibility: generatedImage ? 'hidden' : 'visible',
-                        height: generatedImage ? '0px' : '1113px',
                         width: generatedImage ? '0px' : '600px',
                     }}
                 >
-                    <Card className="border-none overflow-hidden rounded-2xl shadow-sm" style={{ width: '600px', height: '1113px' }}>
-                        <CardContent className="p-0" style={{ height: '1113px', display: 'flex', flexDirection: 'column' }}>
+                    <Card className="border-none overflow-hidden rounded-2xl shadow-sm" style={{ width: '600px' }}>
+                        <CardContent className="p-0" style={{ display: 'flex', flexDirection: 'column' }}>
                             {/* Header Statement */}
                             <h1 className="mt-12 mb-4 text-center text-styled text-5xl" style={{ flexShrink: 0 }}>Saan Tayo Next?</h1>
                             <div className="p-0" style={{ height: '270px', display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ flex: '0 0 270px', display: 'flex', flexDirection: 'column' }}>
-                                    <div className="relative" style={{ width: '600px', height: '270px' }}>
+                                    <div className="relative" style={{ width: '600px', height: '270px', overflow: 'hidden' }}>
                                         {dataUrlImage && <img
                                             src={dataUrlImage}
                                             alt={destination.name}
-                                            width={800}
-                                            height={270}
                                             loading="eager"
                                             decoding="async"
-                                            className="h-full w-full object-cover brightness-90"
+                                            style={{
+                                                width: '600px',
+                                                height: '270px',
+                                                objectFit: 'cover',
+                                                objectPosition: 'center'
+                                            }}
+                                            className="brightness-90"
                                             crossOrigin="anonymous"
                                         />}
                                         {/* Gradient overlay */}

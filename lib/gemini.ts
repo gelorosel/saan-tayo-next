@@ -103,6 +103,9 @@ function buildPrompt(
     if (destinationName.toLowerCase().includes('cagayan')) {
         parts.push(`- Note: Cagayan River is in Luzon, Mindanao has Cagayan de Oro River`);
     }
+    if (destinationName.toLowerCase().includes('iloilo')) {
+        parts.push(`- Note: Iloilo City is recognized by UNESCO as the first Creative City of Gastronomy in the Philippines`);
+    }
 
     // UNESCO World Heritage Sites
     const unescoSites = ['vigan', 'tubbataha', 'puerto princesa', 'underground river', 'banaue', 'rice terraces', 'hamiguitan'];

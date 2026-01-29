@@ -1059,6 +1059,15 @@ export const destinations: Destination[] = [
     location: { region: "Eastern Samar" },
   },
   {
+    id: "samar-island-natural-park",
+    name: "Samar Island Natural Park",
+    island: "visayas",
+    environments: ["mountains"],
+    activities: ["hike", "explore", "natural_wonders", "waterfalls", "camp"],
+    bestSeasons: ["cool_dry"],
+    location: { region: "Eastern Samar" },
+  },
+  {
     id: "laoang",
     name: "Laoang",
     overrideUnsplashName: "samar beach", // Sometimes fetches a name of a person

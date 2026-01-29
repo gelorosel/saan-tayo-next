@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { QuestionCard } from "@/components/QuestionCard";
 import { questions } from "@/src/data/questions";
 import { getActivityOptions, Vibe, Environment } from "@/src/data/activities";
@@ -30,6 +30,7 @@ export default function Home() {
   const [fastMode, setFastMode] = useState(false);
   const [hasShownDestination, setHasShownDestination] = useState(false);
   const [isLoadingDestination, setIsLoadingDestination] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const canGoBack = step > 0;
   const preferences = useMemo(() => toPreference(answers), [answers]);
@@ -198,6 +199,10 @@ export default function Home() {
       setPick(destinationIndex);
       // Scroll to top smoothly
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Scroll the horizontal container back to the left
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+      }
     }
   }, [finalDestinations]);
 
@@ -250,6 +255,7 @@ export default function Home() {
   }, []);
 
   const handleBeenHere = useCallback(() => {
+    setIsLoadingDestination(true);
     setPick((prev) => Math.min(prev + 1, finalDestinations.length - 1));
     // Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -327,7 +333,7 @@ export default function Home() {
               </h3>
               <div className="relative -mx-6 px-6">
                 {/* Scrollable container */}
-                <div className="flex flex-row gap-3.5 overflow-x-auto pb-2">
+                <div ref={scrollContainerRef} className="flex flex-row gap-3.5 overflow-x-auto pb-2">
                   {relatedDestinations.map((relatedDest) => (
                     <div
                       key={relatedDest.id}

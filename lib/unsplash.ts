@@ -4,8 +4,11 @@ export const FALLBACK_IMAGE = "/images/default-img.jpeg";
 const BLOCKED_FALLBACK_IMAGE_IDS = new Set([
     "Ac7sWF9ogFA", // Chocolate Hills - oversaturates results
     "ouXsKzf7R98", // Davao City - oversaturates results
+    "h108t1opIhY", // Entomophobia risk
     "lcrtG-zEHEY", // Not generic enough
     "tNaDgrIE9us", // Irrelevant image
+    "BD_fOwfFiLM", // Irrelevant image
+    "1OKsBTeKIok", // Irrelevant image
 ]);
 
 // Cache for recently used fallback images - prevents repeating images

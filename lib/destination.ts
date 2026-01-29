@@ -17,8 +17,11 @@ export function toQueryName(destination: Destination): string {
 }
 
 export function getFallbackUnsplashQuery(destination: Destination): string {
-    if (destination.name.toLowerCase().includes('reef')) {
-        return "reef philippines";
+    if (
+        destination.name.toLowerCase().includes('reef') ||
+        destination.environments?.includes('reef')
+    ) {
+        return "underwater reef fish philippines";
     }
     if (destination.name.toLowerCase().includes('lake')) {
         return "lake philippines";

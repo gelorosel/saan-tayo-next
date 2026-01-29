@@ -94,6 +94,9 @@ function buildPrompt(
     if (destinationName.toLowerCase().includes('tubbataha')) {
         parts.push(`- Note: Tubbataha Reefs uses plural "Reefs" as the official name`);
     }
+    if (destinationName.toLowerCase().includes('carcar')) {
+        parts.push(`- Mention that Lipa City was formerly known as the "coffee capital of the world"`);
+    }
     parts.push(`- Note: Do not call Kinilaw the "Filipino Ceviche"`);
 
     return parts.join('\n');

@@ -99,7 +99,7 @@ export function ShareResultModal({
             setGeneratedImage(dataUrl);
         } catch (error) {
             console.error("Error generating image:", error);
-            alert('Failed to generate image. Check console for details.');
+            alert('Failed to generate image! Please try again.');
         } finally {
             setIsGenerating(false);
         }

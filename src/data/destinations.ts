@@ -1301,7 +1301,7 @@ export const destinations: Destination[] = [
 
   {
     id: "tubbataha-reef-luzon",
-    name: "Tubbataha Reef Natural Park",
+    name: "Tubbataha Reefs Natural Park",
     overrideImageUrl: "/images/tubbataha.jpg",
     overrideImageAttribution: "Photo by Yvette Lee - tubbatahareefs.org",
     // https://tubbatahareefs.org/get-involved/f/in-loving-memory-of-yvette-lee-and-chrissie-bone
@@ -1314,7 +1314,7 @@ export const destinations: Destination[] = [
   },
   {
     id: "tubbataha-reef-visayas",
-    name: "Tubbataha Reef Natural Park",
+    name: "Tubbataha Reefs Natural Park",
     overrideImageUrl: "/images/tubbataha.jpg",
     overrideImageAttribution: "Photo by Yvette Lee - tubbatahareefs.org",
     island: "visayas",

@@ -416,15 +416,17 @@ export function PersonalityResultCard({
                             <div className="h-4 bg-muted animate-pulse rounded" />
                         </div>
                     ) : description?.description ? (
-                        <div className="space-y-2">
-                            <p className="text-sm text-muted-foreground">
-                                {description.description}
-                            </p>
-                        </div>
+                        <>
+                            <div className="space-y-2">
+                                <p className="text-sm text-muted-foreground">
+                                    {description.description}
+                                </p>
+                            </div>
+                            <p className="text-sm text-muted-foreground">Perfect for</p>
+                        </>
                     ) : null}
 
                     {/* Personality Info Section */}
-                    <p className="text-sm text-muted-foreground">Perfect for</p>
                     <div className="space-y-1">
                         <div className="flex items-center gap-4">
                             <div className="flex items-end gap-4">

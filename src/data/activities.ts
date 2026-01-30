@@ -17,7 +17,7 @@ export const envActivityMap: Record<string, ActivityOption[]> =
     { label: "Surf", value: "surf" },
     { label: "Relax", value: "relax" },
     { label: "Natural wonders", value: "natural_wonders" },
-    { label: "Nightlife", value: "nightlife" },
+    { label: "Party / Nightlife", value: "nightlife" },
     { label: "Food trip", value: "food_trip" },
   ],
   mountains: [
@@ -36,7 +36,7 @@ export const envActivityMap: Record<string, ActivityOption[]> =
     { label: "Food trip", value: "food_trip" },
     { label: "Museums", value: "museums" },
     { label: "Heritage / Historical sites", value: "history" },
-    { label: "Nightlife", value: "nightlife" },
+    { label: "Party / Nightlife", value: "nightlife" },
     { label: "Explore", value: "explore" },
     { label: "Relax", value: "relax" },
   ],
@@ -45,7 +45,7 @@ export const envActivityMap: Record<string, ActivityOption[]> =
 const vibeActivityMap: Record<Vibe, Activity[]> = {
   rest: ["relax", "swim", "camp", "food_trip", "nightlife", "hike", "history", "explore", "museums"],
   activities: ["hike", "trek", "camp", "dive", "snorkel", "surf", "island_hop", "waterfalls", "natural_wonders", "swim"],
-  sights: ["explore", "island_hop", "natural_wonders", "food_trip", "waterfalls", "history", "museums", "hike", "dive", "snorkel"],
+  sights: ["explore", "island_hop", "natural_wonders", "food_trip", "waterfalls", "history", "museums", "hike", "dive", "snorkel", "swim"],
   learn: ["museums", "history", "explore", "food_trip", "natural_wonders", "snorkel", "hike", "swim"],
 };
 
@@ -77,6 +77,10 @@ export const getActivityOptions = (
 
   const allowed = new Set(vibeActivityMap[vibe] ?? []);
   const filtered = baseOptions.filter((option) => allowed.has(option.value));
-  return filtered.length > 0 ? filtered : baseOptions;
+
+  const activityOptions = filtered.length > 0 ? filtered : baseOptions
+  return activityOptions.slice().sort((a, b) =>
+    a.label.localeCompare(b.label)
+  );
 };
 

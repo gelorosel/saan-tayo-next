@@ -82,9 +82,10 @@ export default function Home() {
       preferences,
       destinations,
       personalityResult?.preferredActivities ?? [],
-      applyPersonalityFilter
+      applyPersonalityFilter,
+      personalityResult?.primary
     );
-  }, [preferences, personalityResult?.preferredActivities, answers.traveler_new]);
+  }, [preferences, personalityResult?.preferredActivities, personalityResult?.primary, answers.traveler_new]);
   const [finalDestinations, setFinalDestinations] = useState<typeof scoredDestinations>([]);
 
   useEffect(() => {
@@ -230,7 +231,9 @@ export default function Home() {
         const scoredRegionDests = scoreDestinations(
           preferences,
           regionDests,
-          personalityResult?.preferredActivities ?? []
+          personalityResult?.preferredActivities ?? [],
+          true,
+          personalityResult?.primary
         );
         regionDestinations = scoredRegionDests.slice(0, 5);
       }

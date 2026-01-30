@@ -1,5 +1,6 @@
 import { Destination } from "@/src/types/destination";
 import { Activity, Preference } from "@/src/types/preference";
+import { PersonalityId } from "@/src/types/personality";
 import { prettyEnvironment, seasonLabels } from "./environment";
 import { capitalize } from "./utils";
 import { pretty } from "@/src/data/activities";
@@ -11,28 +12,43 @@ type Scored = Destination & { score: number; reasons: string[] };
  * These are specific enough that we should only show destinations that support them.
  */
 const NON_NEGOTIABLE_ACTIVITIES: Activity[] = [
-  "relax",
-  "surf",
-  "dive",
-  "trek",
   "camp",
-  "waterfalls",
+  "dive",
+  "food_trip",
   "history",
-  "museums"
+  "island_hop",
+  "museums",
+  "nightlife",
+  "relax",
+  "snorkel",
+  "surf",
+  "surf",
+  "trek",
 ];
 
 /**
  * Activities that are not normally the first pick, but are nice to consider.
  */
 const BONUS_ACTIVITIES: Activity[] = [
-  "snorkel",
-  "island_hop",
-  "nightlife",
-  "food_trip",
-  "hike",
-  "waterfalls",
+  "camp",
   "history",
+  "island_hop",
   "museums",
+  "nightlife",
+  "snorkel",
+  "waterfalls",
+  "surf"
+];
+
+/**
+ * Maximalist personalities appreciate destinations with many activity options.
+ * These travelers want to maximize experiences and prefer destinations with variety.
+ */
+const MAXIMALIST_PERSONALITIES: PersonalityId[] = [
+  "master_planner",
+  "adventurer",
+  "purposeful_adventurer",
+  "chaos_romantic",
 ];
 
 /** Score values for different matching criteria */
@@ -49,6 +65,7 @@ const SCORE_WEIGHTS = {
   REEF_DIVING_BONUS: 5,
   CITY_NATURE_BONUS: 3,
   BEACH_MOUNTAINS_BONUS: 2,
+  MAXIMALIST_BONUS: 1,             // Bonus per activity for maximalist personalities
 } as const;
 
 // ============================================================================
@@ -190,6 +207,30 @@ function scorePersonality(
 }
 
 /**
+ * Score activity variety for maximalist personalities.
+ * Maximalists (Master Planner, Adventurer, Purposeful Adventurer, Chaos Romantic)
+ * appreciate destinations with many different activities available.
+ */
+function scoreMaximalistVariety(destination: Destination, personalityId?: PersonalityId) {
+  if (!personalityId || !MAXIMALIST_PERSONALITIES.includes(personalityId)) {
+    return { score: 0, reason: null };
+  }
+
+  const activityCount = destination.activities.length;
+
+  // Reward destinations with 6+ activities (substantial variety)
+  if (activityCount >= 6) {
+    const score = activityCount * SCORE_WEIGHTS.MAXIMALIST_BONUS;
+    return {
+      score,
+      reason: null
+    };
+  }
+
+  return { score: 0, reason: null };
+}
+
+/**
  * Score destinations that offer multiple environments (versatility bonus).
  */
 function scoreVersatility(destination: Destination, preferences: Preference) {
@@ -237,7 +278,8 @@ function scoreDestination(
   destination: Destination,
   preferences: Preference,
   personalityActivities: Set<Activity>,
-  shouldBoostPersonalityMatches: boolean
+  shouldBoostPersonalityMatches: boolean,
+  personalityId?: PersonalityId
 ): Scored {
   let totalScore = 0;
   const reasons: string[] = [];
@@ -286,6 +328,16 @@ function scoreDestination(
   const versatilityScore = scoreVersatility(destination, preferences);
   totalScore += versatilityScore.score;
   reasons.push(...versatilityScore.reasons);
+
+  // -------------------------------------------------------------------------
+  // Score activity variety for Maximalists
+  // -------------------------------------------------------------------------
+
+  const varietyScore = scoreMaximalistVariety(destination, personalityId);
+  totalScore += varietyScore.score;
+  if (varietyScore.reason) {
+    reasons.push(varietyScore.reason);
+  }
 
   // -------------------------------------------------------------------------
   // Score season/timing match
@@ -354,13 +406,15 @@ function scoreDestination(
  * @param destinations - List of all available destinations to consider
  * @param personalityPreferredActivities - Activities preferred by user's personality type
  * @param shouldBoostPersonalityMatches - Whether to boost destinations matching personality
+ * @param personalityId - User's personality type ID (for special scoring rules like Master Planner)
  * @returns Filtered, scored, and sorted destinations (highest score first)
  */
 export function scoreDestinations(
   preferences: Preference,
   destinations: Destination[],
   personalityPreferredActivities: Activity[] = [],
-  shouldBoostPersonalityMatches: boolean = true
+  shouldBoostPersonalityMatches: boolean = true,
+  personalityId?: PersonalityId
 ): Scored[] {
   const personalityActivitiesSet = new Set(personalityPreferredActivities);
 
@@ -379,7 +433,8 @@ export function scoreDestinations(
         destination,
         preferences,
         personalityActivitiesSet,
-        shouldBoostPersonalityMatches
+        shouldBoostPersonalityMatches,
+        personalityId
       )
     )
     // Step 4: Sort by score (highest first)

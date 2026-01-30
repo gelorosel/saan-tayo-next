@@ -21,6 +21,20 @@ const NON_NEGOTIABLE_ACTIVITIES: Activity[] = [
   "museums"
 ];
 
+/**
+ * Activities that are not normally the first pick, but are nice to consider.
+ */
+const BONUS_ACTIVITIES: Activity[] = [
+  "snorkel",
+  "island_hop",
+  "nightlife",
+  "food_trip",
+  "hike",
+  "waterfalls",
+  "history",
+  "museums",
+];
+
 /** Score values for different matching criteria */
 const SCORE_WEIGHTS = {
   PRIMARY_ACTIVITY: 5,
@@ -101,14 +115,15 @@ function scoreActivities(destination: Destination, activities: Activity[]) {
   // Score secondary activities (nice to have)
   const secondaryMatches = secondaryActivities.filter(activity =>
     destination.activities.includes(activity)
-  ).length;
+  );
+  const secondaryMatchesCount = secondaryMatches.length;
 
-  if (secondaryMatches > 0) {
-    score += secondaryMatches * SCORE_WEIGHTS.SECONDARY_ACTIVITY;
+  if (secondaryMatchesCount > 0) {
+    score += secondaryMatchesCount * SCORE_WEIGHTS.SECONDARY_ACTIVITY;
 
-    const reasonText = secondaryMatches === 1
+    const reasonText = secondaryMatchesCount === 1
       ? "Includes another activity you picked"
-      : `Includes ${secondaryMatches} more activities you picked`;
+      : `Includes ${secondaryMatchesCount} more activities you picked`;
     reasons.push(reasonText);
   }
 
@@ -129,19 +144,15 @@ function scorePersonality(
     personalityActivities.has(activity)
   ).length;
 
-  const totalPersonalityActivities = personalityActivities.size;
-  const hasPersonalityActivities = totalPersonalityActivities > 0;
+  // Perfect fit bonus: at least 2 destination activities match personality (which has ≥3 activities)
+  const hasPerfectFit = matchingActivitiesCount >= 2;
 
-  // Check if this is a minimal destination with perfect personality match
-  const allActivitiesMatchPersonality = destination.activities.every(activity =>
-    personalityActivities.has(activity)
-  );
-
-  // Perfect fit bonus: minimal destinations (≤4 activities) that perfectly match personality
-  if (allActivitiesMatchPersonality && destination.activities.length <= 4 && destination.activities.length > 0) {
+  // Perfect fit bonus: destinations with good personality alignment
+  if (hasPerfectFit) {
     return {
       score: matchingActivitiesCount * SCORE_WEIGHTS.PERSONALITY_MATCH_BOOST + SCORE_WEIGHTS.PERFECT_FIT_BONUS,
-      reason: "Matches your travel style"
+      // reason: "Premiere destination for your travel style"
+      // reason: "You probably already went here before!"
     };
   }
 
@@ -149,14 +160,14 @@ function scorePersonality(
   if (shouldBoostPersonalityMatches && matchingActivitiesCount > 0) {
     return {
       score: matchingActivitiesCount * SCORE_WEIGHTS.PERSONALITY_MATCH_BOOST,
-      reason: "Matches your travel personality"
+      reason: "Matches your travel style"
     };
   }
 
   // User wants to try something new - reward destinations that diverge from personality
-  if (!shouldBoostPersonalityMatches && hasPersonalityActivities) {
+  if (!shouldBoostPersonalityMatches && personalityActivities.size > 0) {
     const nonMatchingActivities = destination.activities.filter(activity =>
-      activity !== "relax" && activity !== "natural_wonders" && !personalityActivities.has(activity) && !preferences.activity?.includes(activity)
+      BONUS_ACTIVITIES.includes(activity) && !personalityActivities.has(activity) && !preferences.activity?.includes(activity)
     );
     const nonMatchingCount = nonMatchingActivities.length;
 
@@ -203,17 +214,16 @@ function scoreVersatility(destination: Destination, preferences: Preference) {
     }
   }
 
-  // Special case: beach + mountains (ultimate versatility)
-  if (destination.environments.includes("beach") &&
-    destination.environments.includes("mountains")) {
-    score += SCORE_WEIGHTS.BEACH_MOUNTAINS_BONUS; // Extra bonus for best combo
-    reasons.push("Best of both worlds: beach and mountains");
-  }
-
   // City + anything (good for diverse groups)
   if (destination.environments.includes("city") && environmentCount >= 2) {
     score += SCORE_WEIGHTS.CITY_NATURE_BONUS; // Extra bonus for best combo
-    reasons.push("Established infrastructure alongside nature");
+    reasons.push("Established infrastructure alongside nature.");
+  }
+  // if not City - special case: beach + mountains (ultimate versatility)
+  else if (destination.environments.includes("beach") &&
+    destination.environments.includes("mountains")) {
+    score += SCORE_WEIGHTS.BEACH_MOUNTAINS_BONUS; // Extra bonus for best combo
+    reasons.push("Best of both worlds: beach and mountains.");
   }
 
   return { score, reasons };
@@ -297,10 +307,10 @@ function scoreDestination(
     // Wet season leniency: boost matches heavily, but don't penalize mismatches
     if (matchesSeason) {
       totalScore += SCORE_WEIGHTS.WET_SEASON_BONUS;
-      reasons.push("Perfect timing for the wet season");
+      reasons.push("Perfect timing for the wet season.");
     } else {
       // No penalty for non-wet destinations - they can still be visited
-      reasons.push("Can visit year-round");
+      reasons.push("Can visit year-round.");
     }
   } else {
     // Normal season scoring for other cases
@@ -327,7 +337,7 @@ function scoreDestination(
     preferences.activity?.includes("dive");
   if (isReefDivingMatch) {
     totalScore += SCORE_WEIGHTS.REEF_DIVING_BONUS;
-    reasons.push("Perfect reef diving destination");
+    reasons.push("Perfect reef diving destination.");
   }
 
   return { ...destination, score: totalScore, reasons };

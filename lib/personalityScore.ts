@@ -32,51 +32,67 @@ export type PersonalityScoreResult = {
   preferredActivities: Activity[];
 };
 
-export function personalityScore(
-  answers: Record<string, string>
-): PersonalityScoreResult | null {
-  const answerCounts: Record<AnswerKey, number> = { a: 0, b: 0, c: 0, d: 0 };
+function countAnswers(answers: Record<string, string>): Record<AnswerKey, number> {
+  const counts: Record<AnswerKey, number> = { a: 0, b: 0, c: 0, d: 0 };
 
-  // Count answers
   for (const id of QUESTION_IDS) {
     const answer = answers[id] as AnswerKey | undefined;
     if (answer && answer in answerToPersonality) {
-      answerCounts[answer] += 1;
+      counts[answer]++;
     }
   }
 
-  // Check if any answers were given
-  const distinctAnswers = Object.values(answerCounts).filter((count) => count > 0).length;
-  if (distinctAnswers === 0) return null;
-
-  // Sort answers by count
-  const sortedKeys = (["a", "b", "c", "d"] as AnswerKey[]).sort((a, b) =>
-    answerCounts[b] - answerCounts[a]
-  );
-
-  const maxCount = answerCounts[sortedKeys[0]];
-
-  // Check for rare types
-  if (distinctAnswers === 4 && maxCount - answerCounts[sortedKeys[3]] <= 1) {
-    const primary = "chaos_romantic";
-    return { primary, scores: answerCounts as any, preferredActivities: personalityPreferredActivities[primary] };
-  }
-
-  if (distinctAnswers >= 3 && maxCount <= 2) {
-    const primary = "mood_based_traveler";
-    return { primary, scores: answerCounts as any, preferredActivities: personalityPreferredActivities[primary] };
-  }
-
-  // Check for hybrid type
-  const topPair = [sortedKeys[0], sortedKeys[1]].sort().join("+");
-  const primary = hybridByPair[topPair] || answerToPersonality[sortedKeys[0]];
-
-  return { primary, scores: answerCounts as any, preferredActivities: personalityPreferredActivities[primary] };
+  return counts;
 }
 
-const personalityPreferredActivities: Record<PersonalityId, Activity[]> = {
+function determinePersonality(counts: Record<AnswerKey, number>): PersonalityId {
+  const sorted = (["a", "b", "c", "d"] as AnswerKey[]).sort((a, b) => counts[b] - counts[a]);
+  const [first, second, , fourth] = sorted;
+  const [max, secondMax] = [counts[first], counts[second]];
+  const distinctCount = Object.values(counts).filter(c => c > 0).length;
+
+  // Chaos romantic: all 4 types with similar counts
+  if (distinctCount === 4 && max - counts[fourth] <= 1) {
+    return "chaos_romantic";
+  }
+
+  // Mood based: 3+ types with low max count
+  if (distinctCount >= 3 && max <= 2) {
+    return "mood_based_traveler";
+  }
+
+  // Hybrid: top 2 are close (tied or within 1)
+  if (secondMax > 0 && max - secondMax <= 1) {
+    const pair = [first, second].sort().join("+");
+    return hybridByPair[pair] || answerToPersonality[first];
+  }
+
+  // Core type: clear winner
+  return answerToPersonality[first];
+}
+
+export function personalityScore(
+  answers: Record<string, string>
+): PersonalityScoreResult | null {
+  const counts = countAnswers(answers);
+
+  // No answers given
+  if (Object.values(counts).every(c => c === 0)) {
+    return null;
+  }
+
+  const primary = determinePersonality(counts);
+
+  return {
+    primary,
+    scores: counts as any,
+    preferredActivities: personalityPreferredActivities[primary]
+  };
+}
+
+export const personalityPreferredActivities: Record<PersonalityId, Activity[]> = {
   // Pure relaxation - gets Tagaytay, Mactan, peaceful beaches
-  relaxed_escapist: ["relax", "swim", "food_trip"],
+  relaxed_escapist: ["relax", "swim", "food_trip", "explore"],
 
   // Hardcore adventure - gets Siargao, Lanuza, La Union, mountain treks
   adventurer: ["surf", "hike", "trek", "dive", "waterfalls", "natural_wonders"],

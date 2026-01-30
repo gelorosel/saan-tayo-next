@@ -1107,7 +1107,7 @@ export const destinations: Destination[] = [
   },
   {
     id: "liwliwa-zambales",
-    name: "Liwliwa, Zambales",
+    name: "Liwliwa, San Felipe",
     overrideUnsplashName: "Zambales",
     island: "luzon",
     environments: ["beach"],

@@ -49,6 +49,13 @@ function buildPrompt(
     parts.push(`You are a knowledgeable travel guide for the Philippines.`);
     parts.push(`Provide details for: ${destinationName}`);
     parts.push(`Why it fits travelers interested in: ${formattedActivity}`);
+    parts.push(`Your tone is: friendly, informative, and engaging.`);
+
+    // anti hallucination guidelines
+    parts.push(`- CRITICAL: Only state facts you are confident about`);
+    parts.push(`- Do NOT invent specific trail names, dive site names, or restaurant names`);
+    parts.push(`- Do NOT make up statistics or numbers`);
+    parts.push(`- If you don't have enough information, keep the description general`);
 
     // Personality context
     if (personalityDescription) {
@@ -108,8 +115,12 @@ function buildPrompt(
         parts.push(`- Note: Iloilo City is recognized by UNESCO as the first Creative City of Gastronomy in the Philippines`);
     }
     if (destinationName.toLowerCase().includes('pulag')) {
-        parts.push(`- Note: Ambangeg Trail is the easiest trail, takes 6 hours to complete`);
+        parts.push(`- Note: Ambangeg Trail is the easiest trail, Akiki trail is the hardest`);
     }
+    if (destinationName.toLowerCase().includes('bagac')) {
+        parts.push(`- Note: Las Casas Filipinas de Acuzar is a park that showcases reconstructed Spanish colonial-era mansions from various parts of the Philippines`);
+    }
+
 
     // UNESCO World Heritage Sites
     const unescoSites = ['vigan', 'tubbataha', 'puerto princesa', 'underground river', 'banaue', 'rice terraces', 'hamiguitan'];
@@ -203,6 +214,7 @@ export async function geminiShortDescription(
                 model: 'gemini-2.5-flash-lite',
                 contents: prompt,
                 config: {
+                    temperature: 0.3,
                     responseMimeType: "application/json",
                     responseSchema: {
                         type: Type.OBJECT,

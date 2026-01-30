@@ -94,7 +94,7 @@ export function QuestionCard({
 
             // Show warning (not blocking) if name is too long
             if (value.length > 12 && !error) {
-                setTextWarning("Your name might not appear correctly, please use a nickname");
+                setTextWarning("Your name might not display correctly, please use a nickname");
             } else {
                 setTextWarning("");
             }

@@ -6,9 +6,10 @@ import { questions } from "@/src/data/questions";
 import { getActivityOptions, Vibe, Environment } from "@/src/data/activities";
 import { toPreference } from "@/lib/preference";
 import { scoreDestinations } from "@/lib/score";
-import { personalityScore } from "@/lib/personalityScore";
+import { personalityScore, personalityPreferredActivities } from "@/lib/personalityScore";
 import { destinations } from "@/src/data/destinations";
-import { personalityById } from "@/src/data/personalities";
+import { personalityById, personalities } from "@/src/data/personalities";
+import type { PersonalityId } from "@/src/types/personality";
 import { Activity } from "@/src/types/preference";
 import { Option } from "@/src/types/question";
 
@@ -18,31 +19,53 @@ import { DevelopmentModal } from "@/components/DevelopmentModal";
 import { ErrorModal } from "@/components/ErrorModal";
 import { PersonalitiesSidebar } from "@/components/PersonalitiesSidebar";
 import { PersonalitiesSidebarProvider } from "@/contexts/PersonalitiesSidebarContext";
+import { DebugPanel } from "@/components/DebugPanel";
 
 const FAST_MODE_KEY = "fastMode";
 const ANSWERS_KEY = "quizAnswers";
 const PICK_KEY = "destinationPick";
+
+let DEBUG_MODE = false;
+// DEBUG_MODE = true; // Comment in to enable debug mode
 
 const SERVICE_UNAVAILABLE_MESSAGE = "Our services are temporarily down, please try again at another time.";
 
 export default function Home() {
   const [step, setStep] = useState(0);
   const [pick, setPick] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [fastMode, setFastMode] = useState(false);
+  const [answers, setAnswers] = useState<Record<string, string>>(
+    DEBUG_MODE ? { name: "Gelo" } : {}
+  );
+  const [fastMode, setFastMode] = useState(DEBUG_MODE); // Enable fast mode in debug
   const [hasShownDestination, setHasShownDestination] = useState(false);
   const [isLoadingDestination, setIsLoadingDestination] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [isKillSwitchActive, setIsKillSwitchActive] = useState(false);
+  const [debugPersonality, setDebugPersonality] = useState<PersonalityId | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const canGoBack = step > 0 && !isKillSwitchActive;
   const preferences = useMemo(() => toPreference(answers), [answers]);
-  const personalityResult = useMemo(() => personalityScore(answers), [answers]);
+  const personalityResult = useMemo(() => {
+    // In debug mode, use debugPersonality if set
+    if (DEBUG_MODE && debugPersonality) {
+      return {
+        primary: debugPersonality,
+        scores: {} as any,
+        preferredActivities: personalityPreferredActivities[debugPersonality]
+      };
+    }
+    return personalityScore(answers);
+  }, [answers, debugPersonality]);
+
   const personalityProfile = useMemo(() => {
+    // In debug mode, use debugPersonality if set
+    if (DEBUG_MODE && debugPersonality) {
+      return personalityById.get(debugPersonality) ?? null;
+    }
     if (!personalityResult) return null;
     return personalityById.get(personalityResult.primary) ?? null;
-  }, [personalityResult]);
+  }, [personalityResult, debugPersonality]);
   const preferredActivities = useMemo(() => {
     const items: Activity[] = [];
     if (preferences.activity?.length) items.push(...preferences.activity);
@@ -85,6 +108,21 @@ export default function Home() {
     }
   }, []);
 
+  // Filter questions based on debug mode
+  const filteredQuestions = useMemo(() => {
+    if (!DEBUG_MODE) return questions;
+    // Skip personality questions in debug mode
+    const personalityQuestionIds = [
+      "traveler_morning",
+      "traveler_afternoon",
+      "traveler_spend",
+      "traveler_suitcase",
+      "traveler_new",
+      "traveler_plans"
+    ];
+    return questions.filter(q => !personalityQuestionIds.includes(q.id));
+  }, []);
+
   // Load saved state on mount
   useEffect(() => {
     // Don't load saved state if kill switch is active
@@ -101,7 +139,7 @@ export default function Home() {
         const parsedAnswers = JSON.parse(savedAnswers);
         setAnswers(parsedAnswers);
         // Set step to show results if quiz was completed
-        setStep(questions.length);
+        setStep(filteredQuestions.length);
       } catch (e) {
         // Invalid JSON, ignore
       }
@@ -116,7 +154,7 @@ export default function Home() {
     }
   }, [isKillSwitchActive]);
 
-  const baseCurrent = questions[step];
+  const baseCurrent = filteredQuestions[step];
 
   const toggleFastMode = useCallback(() => {
     const newValue = !fastMode;
@@ -298,15 +336,29 @@ export default function Home() {
             <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
             <h2 className="text-xl font-semibold mb-4">Find your next destination</h2>
             {isKillSwitchActive && <p className="text-sm text-muted-foreground mb-4">⚠️ {SERVICE_UNAVAILABLE_MESSAGE}</p>}
-            {current ?
-              <QuestionCard
-                current={current}
-                options={current.options as Option[]}
-                onSelect={handleSelect}
-                onBack={handleBack}
-                canGoBack={canGoBack}
-                disabled={isKillSwitchActive}
-              /> :
+
+            {/* Debug Controls */}
+            {DEBUG_MODE && (
+              <DebugPanel
+                answers={answers}
+                setAnswers={setAnswers}
+                debugPersonality={debugPersonality}
+                setDebugPersonality={setDebugPersonality}
+                onShowResults={() => setStep(filteredQuestions.length)}
+              />
+            )}
+            {current ? (
+              DEBUG_MODE ? null : (
+                <QuestionCard
+                  current={current}
+                  options={current.options as Option[]}
+                  onSelect={handleSelect}
+                  onBack={handleBack}
+                  canGoBack={canGoBack}
+                  disabled={isKillSwitchActive}
+                />
+              )
+            ) :
               finalDestinations.length ? (
                 <div className="flex flex-col lg:flex-row items-start">
                   {personalityProfile && (
@@ -319,6 +371,10 @@ export default function Home() {
                       onBeenHere={handleBeenHere}
                       onLoadingChange={handleLoadingChange}
                       onImageError={() => setShowErrorModal(true)}
+                      destinationName={DEBUG_MODE ? `${finalDestinations[pick].name} (${finalDestinations[pick].score})` : finalDestinations[pick].name}
+                      currentIndex={pick}
+                      totalCount={finalDestinations.length}
+                      onStartOver={handleStartOver}
                     />
                   )}
                 </div>
@@ -327,8 +383,16 @@ export default function Home() {
               )
             }
 
-            {canGoBack &&
+            {(canGoBack || DEBUG_MODE) &&
               <div className="my-3 flex flex-row justify-between gap-4">
+                {canGoBack && (
+                  <button
+                    className="underline text-sm cursor-pointer"
+                    onClick={handleBack}
+                  >
+                    {current ? "Back" : "Back to questions"}
+                  </button>
+                )}
                 <button
                   className="underline text-sm cursor-pointer"
                   onClick={handleStartOver}
@@ -374,7 +438,11 @@ export default function Home() {
                         }
                       }}
                     >
-                      <MiniCard destination={relatedDest} isLoading={isLoadingDestination} />
+                      <MiniCard
+                        destination={relatedDest}
+                        isLoading={isLoadingDestination}
+                        destinationName={DEBUG_MODE ? `${relatedDest.name} (${relatedDest.score})` : relatedDest.name}
+                      />
                     </div>
                   ))}
                 </div>

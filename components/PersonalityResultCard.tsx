@@ -25,6 +25,10 @@ interface PersonalityResultCardProps {
     onBeenHere?: () => void;
     onLoadingChange?: (isLoading: boolean) => void;
     onImageError?: () => void;
+    destinationName?: string;
+    currentIndex?: number;
+    totalCount?: number;
+    onStartOver?: () => void;
 }
 
 export function PersonalityResultCard({
@@ -36,6 +40,10 @@ export function PersonalityResultCard({
     onBeenHere,
     onLoadingChange,
     onImageError,
+    destinationName,
+    currentIndex,
+    totalCount,
+    onStartOver,
 }: PersonalityResultCardProps) {
     const { openSidebar } = usePersonalitiesSidebar();
 
@@ -307,13 +315,13 @@ export function PersonalityResultCard({
                             <>
                                 {
                                     destination.overrideImageAttribution ? (
-                                        <div className="absolute bottom-2 right-3 text-white text-xs opacity-80">
+                                        <div className="absolute bottom-2 right-3 text-white text-xs opacity-80 z-20 cursor-default select-none">
                                             {destination.overrideImageAttribution}
                                         </div>
                                     ) : (
                                         <>
                                             {isFallbackImage && (
-                                                <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20">
+                                                <div className="absolute bottom-6 right-3 text-white text-xs opacity-70 z-20 cursor-default select-none">
                                                     (may not be the actual destination)
                                                 </div>
                                             )}
@@ -353,7 +361,7 @@ export function PersonalityResultCard({
                                         {headerName}, your next destination is
                                     </p>
                                 )}
-                                <h2 className="text-styled text-3xl mt-2">{destination.name}</h2>
+                                <h2 className="text-styled text-3xl mt-2">{destinationName || destination.name}</h2>
                                 {destination.location?.region && (
                                     <p className="text-sm text-muted-foreground">
                                         {destination.location.region}
@@ -379,14 +387,27 @@ export function PersonalityResultCard({
                         >
                             Share my results
                         </Button>
-                        <Button
-                            onClick={onBeenHere}
-                            variant="outline"
-                            size="md"
-                            className="flex-1"
-                        >
-                            I&apos;ve been here!
-                        </Button>
+                        {currentIndex !== undefined && totalCount !== undefined && currentIndex >= totalCount - 1 ? (
+                            <Button
+                                variant="outline"
+                                size="md"
+                                className="flex-1"
+                                disabled
+                            >
+                                <div className="flex flex-col items-center justify-center">
+                                    You've reached the end! 🎉
+                                </div>
+                            </Button>
+                        ) : (
+                            <Button
+                                onClick={onBeenHere}
+                                variant="outline"
+                                size="md"
+                                className="flex-1"
+                            >
+                                I&apos;ve been here!
+                            </Button>
+                        )}
                     </div>
 
                     {/* Description */}

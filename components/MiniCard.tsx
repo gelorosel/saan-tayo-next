@@ -1,15 +1,17 @@
 "use client";
 
-import { Card, pretty } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Destination } from "@/src/types/destination";
+import { pretty } from "@/src/data/activities";
 
 type Props = {
     destination?: Destination;
     isLoading?: boolean;
+    destinationName?: string;
 };
 
-export default function MiniCard({ destination, isLoading = false }: Props) {
+export default function MiniCard({ destination, isLoading = false, destinationName }: Props) {
     if (isLoading || !destination) {
         return (
             <Card className="p-6 gap-2">
@@ -26,7 +28,7 @@ export default function MiniCard({ destination, isLoading = false }: Props) {
 
     return (
         <Card className="p-6 gap-2">
-            <h3 className="text-styled text-xl">{destination.name}</h3>
+            <h3 className="text-styled text-xl">{destinationName || destination.name}</h3>
             {destination.location?.region && (
                 <p className="text-sm font-semibold mb-2">
                     {destination.location.region}

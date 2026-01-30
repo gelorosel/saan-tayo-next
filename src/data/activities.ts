@@ -38,6 +38,7 @@ export const envActivityMap: Record<string, ActivityOption[]> =
     { label: "Heritage / Historical sites", value: "history" },
     { label: "Nightlife", value: "nightlife" },
     { label: "Explore", value: "explore" },
+    { label: "Relax", value: "relax" },
   ],
 };
 

@@ -33,7 +33,7 @@ export const questions: Question[] = [
     question: "What kind of day do you want?",
     options: [
       { label: "A slow and easy day for resting", value: "rest" },
-      { label: "An exciting day for outdoor activities", value: "activities" },
+      { label: "An exciting day for outdoor or water activities", value: "activities" },
       { label: "A day fully booked with sights and scenes", value: "sights" },
       { label: "An inspiring day for learning and culture", value: "learn" },
     ],

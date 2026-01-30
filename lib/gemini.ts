@@ -72,6 +72,7 @@ function buildPrompt(
     if (activityLower.includes('dive') || activityLower.includes('snorkel')) {
         parts.push(`- Mention marine life or underwater features`);
         parts.push(`- Note visibility and best dive sites if applicable`);
+        parts.push(`- Note if suitable for beginners or advanced`);
     }
     if (activityLower.includes('surf')) {
         parts.push(`- Mention wave conditions and surf spots`);

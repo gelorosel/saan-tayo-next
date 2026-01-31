@@ -15,6 +15,7 @@ import { toQueryName, getFallbackUnsplashQuery } from "@/lib/destination";
 import { ShareResultModal } from "./ShareResultModal";
 import { usePersonalitiesSidebar } from "@/contexts/PersonalitiesSidebarContext";
 import { FALLBACK_IMAGE, fetchUnsplashImage, triggerDownload, UnsplashImageData } from "@/lib/unsplash";
+import { isRateLimited } from "@/lib/rateLimit";
 
 interface PersonalityResultCardProps {
     personality: PersonalityProfile;
@@ -25,10 +26,10 @@ interface PersonalityResultCardProps {
     onBeenHere?: () => void;
     onLoadingChange?: (isLoading: boolean) => void;
     onImageError?: () => void;
+    onRateLimitReached?: () => void;
     destinationName?: string;
     currentIndex?: number;
     totalCount?: number;
-    onStartOver?: () => void;
 }
 
 export function PersonalityResultCard({
@@ -40,10 +41,10 @@ export function PersonalityResultCard({
     onBeenHere,
     onLoadingChange,
     onImageError,
+    onRateLimitReached,
     destinationName,
     currentIndex,
     totalCount,
-    onStartOver,
 }: PersonalityResultCardProps) {
     const { openSidebar } = usePersonalitiesSidebar();
 
@@ -85,15 +86,7 @@ export function PersonalityResultCard({
         }
     }, [isLoadingImage, isLoadingDescription, onLoadingChange]);
 
-    // Load image (skip if fast mode is enabled)
     useEffect(() => {
-        if (fastMode) {
-            setHeroImgSrc(FALLBACK_IMAGE);
-            setIsLoadingImage(false);
-            setIsFallbackImage(true);
-            return;
-        }
-
         let isStale = false;
 
         async function loadImage() {
@@ -113,7 +106,7 @@ export function PersonalityResultCard({
                     imageDataResult = await fetchUnsplashImage(fallbackQuery, true);
                 }
 
-                // Hardcoded delay for suspense
+                // Hardcoded delay for suspense (skip delay when loading for share)
                 const elapsedTime = Date.now() - startTime;
                 const remainingTime = Math.max(0, 1500 - elapsedTime);
                 if (remainingTime > 0) {
@@ -162,6 +155,23 @@ export function PersonalityResultCard({
         let isStale = false;
 
         async function fetchDescription() {
+            // Skip rate limit check if fast mode is enabled (descriptions aren't loading anyway)
+            if (fastMode) {
+                setIsLoadingDescription(false);
+                setDescription(null);
+                return;
+            }
+
+            // Check rate limit before starting
+            if (isRateLimited()) {
+                if (onRateLimitReached) {
+                    onRateLimitReached();
+                }
+                setIsLoadingDescription(false);
+                setDescription(null);
+                return;
+            }
+
             setIsLoadingDescription(true);
             setDescription(null);
 
@@ -176,6 +186,13 @@ export function PersonalityResultCard({
             if (!isStale) {
                 setDescription(descriptionData);
                 setIsLoadingDescription(false);
+
+                // Check if rate limit was hit during the fetch
+                if (!descriptionData && isRateLimited()) {
+                    if (onRateLimitReached) {
+                        onRateLimitReached();
+                    }
+                }
             }
         }
 
@@ -184,7 +201,7 @@ export function PersonalityResultCard({
         return () => {
             isStale = true;
         };
-    }, [destination.id, preferredActivity, personality?.id]);
+    }, [destination.id, preferredActivity, personality?.id, fastMode, onRateLimitReached]);
 
     // Skeleton loading state
     if (!fastMode && (isLoadingImage || isLoadingDescription)) {

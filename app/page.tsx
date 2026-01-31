@@ -20,6 +20,8 @@ import { ErrorModal } from "@/components/ErrorModal";
 import { PersonalitiesSidebar } from "@/components/PersonalitiesSidebar";
 import { PersonalitiesSidebarProvider } from "@/contexts/PersonalitiesSidebarContext";
 import { DebugPanel } from "@/components/DebugPanel";
+import { getRemainingRequests, MAX_DESCRIPTION_REQUESTS } from "@/lib/rateLimit";
+import { RateLimitModal } from "@/components/RateLimitModal";
 
 const FAST_MODE_KEY = "fastMode";
 const ANSWERS_KEY = "quizAnswers";
@@ -43,6 +45,8 @@ export default function Home() {
   const [isKillSwitchActive, setIsKillSwitchActive] = useState(false);
   const [debugPersonality, setDebugPersonality] = useState<PersonalityId | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [remainingRequests, setRemainingRequests] = useState(MAX_DESCRIPTION_REQUESTS);
+  const [showRateLimitModal, setShowRateLimitModal] = useState(false);
 
   const canGoBack = step > 0 && !isKillSwitchActive;
   const preferences = useMemo(() => toPreference(answers), [answers]);
@@ -100,13 +104,23 @@ export default function Home() {
     }
   }, [pick, finalDestinations.length]);
 
-  // Check kill switch on mount
+  // Check kill switch on mount and update rate limit counter
   useEffect(() => {
     const killSwitch = process.env.NEXT_PUBLIC_KILL_SWITCH === 'true';
     setIsKillSwitchActive(killSwitch);
     if (killSwitch) {
       setShowErrorModal(true);
     }
+
+    // Update remaining requests counter
+    setRemainingRequests(getRemainingRequests());
+
+    // Update counter periodically (every 30 seconds) to catch changes
+    const interval = setInterval(() => {
+      setRemainingRequests(getRemainingRequests());
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // Filter questions based on debug mode
@@ -157,8 +171,8 @@ export default function Home() {
 
   const baseCurrent = filteredQuestions[step];
 
-  const toggleFastMode = useCallback(() => {
-    const newValue = !fastMode;
+  const toggleFastMode = useCallback((forceValue?: boolean) => {
+    const newValue = forceValue !== undefined ? forceValue : !fastMode;
     setFastMode(newValue);
     localStorage.setItem(FAST_MODE_KEY, String(newValue));
     window.dispatchEvent(new CustomEvent("fastModeChanged", { detail: newValue }));
@@ -374,10 +388,10 @@ export default function Home() {
                       onBeenHere={handleBeenHere}
                       onLoadingChange={handleLoadingChange}
                       onImageError={() => setShowErrorModal(true)}
+                      onRateLimitReached={() => setShowRateLimitModal(true)}
                       destinationName={DEBUG_MODE ? `${finalDestinations[pick].name} (${finalDestinations[pick].score})` : finalDestinations[pick].name}
                       currentIndex={pick}
                       totalCount={finalDestinations.length}
-                      onStartOver={handleStartOver}
                     />
                   )}
                 </div>
@@ -405,15 +419,17 @@ export default function Home() {
               </div>
             }
             {hasShownDestination && (
-              <label className="flex items-center gap-2 text-sm mb-6 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={fastMode}
-                  onChange={toggleFastMode}
-                  className="cursor-pointer"
-                />
-                <span>Fast mode (skip loading images and description)</span>
-              </label>
+              <>
+                <label className="flex items-center gap-2 text-sm mb-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={fastMode}
+                    onChange={() => toggleFastMode()}
+                    className="cursor-pointer"
+                  />
+                  <span>Fast mode (skip loading images and description)</span>
+                </label>
+              </>
             )}
           </div>
 
@@ -463,6 +479,11 @@ export default function Home() {
         onClose={() => setShowErrorModal(false)}
         title="Service Unavailable"
         message={SERVICE_UNAVAILABLE_MESSAGE}
+      />
+      <RateLimitModal
+        isOpen={showRateLimitModal}
+        onClose={() => setShowRateLimitModal(false)}
+        onEnableFastMode={() => toggleFastMode(true)}
       />
     </PersonalitiesSidebarProvider>
   );

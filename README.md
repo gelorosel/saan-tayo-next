@@ -60,6 +60,14 @@ Implemented in `lib/unsplash.ts` and `app/api/unsplash/route.ts`:
 
 **Fast Mode:** Skips image fetching, uses local fallback.
 
+**Rate Limiting:**
+- Client-side rate limiting prevents excessive API usage
+- Default: 50 description requests per session (24-hour timeout)
+- Cached descriptions don't count toward the limit
+- Elegant modal notification when limit is reached
+- Counter shows remaining requests
+- Easy to configure via `RATE_LIMIT_TIMEOUT_HOURS` in `lib/rateLimit.ts`
+
 ### Generated Descriptions
 Fetch destination information from either Wikipedia API or Google Gemini.
 Wikipedia first, Gemini as fallback. Reverse with `PRIORITIZE_GEMINI_DESCRIPTION=true`.

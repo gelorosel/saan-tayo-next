@@ -1,5 +1,6 @@
 import { Destination } from "@/src/types/destination";
 import { toQueryName } from "./destination";
+import { isRateLimited, incrementRateLimit } from "./rateLimit";
 
 export interface DescriptionData {
     description: string;
@@ -22,6 +23,12 @@ export async function loadDescription(
     options: LoadDescriptionOptions
 ): Promise<DescriptionData | null> {
     const { destination, preferredActivity, activities, personalityId } = options;
+
+    // Check rate limit first
+    if (isRateLimited()) {
+        console.warn('Rate limit exceeded for description fetching');
+        return null;
+    }
 
     // Get configuration
     let prioritizeGemini = false;
@@ -67,6 +74,8 @@ export async function loadDescription(
             if (geminiResponse.ok) {
                 const geminiData = await geminiResponse.json();
                 if (geminiData.description) {
+                    // Increment rate limit only on successful fetch
+                    incrementRateLimit();
                     return {
                         description: geminiData.description,
                         source: 'gemini',
@@ -84,6 +93,8 @@ export async function loadDescription(
             if (wikiResponse.ok) {
                 const wikiData = await wikiResponse.json();
                 if (wikiData.description) {
+                    // Increment rate limit only on successful fetch
+                    incrementRateLimit();
                     return {
                         description: wikiData.description,
                         source: 'wiki'
@@ -115,9 +126,13 @@ export async function loadDescription(
         const wikiData = wikiResult.status === 'fulfilled' ? wikiResult.value : null;
 
         if (geminiData) {
+            // Increment rate limit only on successful fetch
+            incrementRateLimit();
             return geminiData;
         }
         if (wikiData) {
+            // Increment rate limit only on successful fetch
+            incrementRateLimit();
             return wikiData;
         }
     }

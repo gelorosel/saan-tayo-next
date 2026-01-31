@@ -11,7 +11,8 @@ export default function Footer() {
       <footer className="py-6">
         <div className="max-w-[960px] mx-auto text-[color:var(--color-text-muted)] text-sm text-center px-6 space-y-2">
           <p>
-            &copy; {new Date().getFullYear()} Saan Tayo Next? &#x2022; made by{" "}
+            &copy; {new Date().getFullYear()} Saan Tayo Next?
+            {/* &#x2022; made by{" "}
             <a
               href="https://gelorosel.com"
               target="_blank"
@@ -20,7 +21,7 @@ export default function Footer() {
             >
               Gelo Rosel
             </a>
-            {" "}
+            {" "} */}
             {/* &#x2022;
             {" "}
             <a

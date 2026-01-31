@@ -104,7 +104,7 @@ export function PersonalitiesSidebar() {
                         <h4 className="font-medium mb-1 flex items-center gap-1">
                           <span>✨</span> Strengths
                         </h4>
-                        <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                        <ul className="list-disc list-outside pl-5 space-y-2 text-muted-foreground">
                           {personality.strengths.map((strength, idx) => (
                             <li key={idx}>{strength}</li>
                           ))}
@@ -116,7 +116,7 @@ export function PersonalitiesSidebar() {
                         <h4 className="font-medium mb-1 flex items-center gap-1">
                           <span>⚡</span> Struggles
                         </h4>
-                        <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                        <ul className="list-disc list-outside pl-5 space-y-2 text-muted-foreground">
                           {personality.struggles.map((struggle, idx) => (
                             <li key={idx}>{struggle}</li>
                           ))}

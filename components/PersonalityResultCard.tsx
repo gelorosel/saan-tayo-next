@@ -136,7 +136,7 @@ export function PersonalityResultCard({
                         setIsFallbackImage(true);
                     }
                     setIsLoadingImage(false);
-                    
+
                     // Resolve any pending promise waiting for image to load
                     // Use setTimeout to ensure state updates have been flushed
                     setTimeout(() => {
@@ -153,7 +153,7 @@ export function PersonalityResultCard({
                     setHeroImgSrc(FALLBACK_IMAGE);
                     setIsFallbackImage(true);
                     setIsLoadingImage(false);
-                    
+
                     // Resolve any pending promise even on error
                     setTimeout(() => {
                         if (imageLoadResolveRef.current) {
@@ -161,7 +161,7 @@ export function PersonalityResultCard({
                             imageLoadResolveRef.current = null;
                         }
                     }, 0);
-                    
+
                     // Notify parent component about the error
                     if (onImageError) {
                         onImageError();
@@ -238,12 +238,12 @@ export function PersonalityResultCard({
                 imageLoadResolveRef.current = resolve;
             });
         }
-        
+
         // Additional safety check: ensure we have a valid image source
         if (!heroImgSrc || heroImgSrc === FALLBACK_IMAGE) {
             console.warn('Opening share dialog with fallback image');
         }
-        
+
         setIsShareDialogOpen(true);
     };
 

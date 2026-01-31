@@ -62,7 +62,7 @@ export function ShareResultModal({
             console.error('exportRef.current is null!');
             return;
         }
-        
+
         if (!dataUrlImage) {
             console.error('dataUrlImage is null, cannot generate image!');
             return;
@@ -145,7 +145,7 @@ export function ShareResultModal({
                         if (attempts === 0) {
                             await new Promise(resolve => setTimeout(resolve, 200));
                         }
-                        
+
                         // Convert the image to data URL for better compatibility with html-to-image
                         const dataUrl = await convertImageToDataUrl(destination.overrideImageUrl || heroImgSrc);
                         setDataUrlImage(dataUrl);
@@ -183,7 +183,7 @@ export function ShareResultModal({
             }, 150); // Slightly longer delay for iOS
             return () => clearTimeout(timer);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, dataUrlImage]);
 
     return (

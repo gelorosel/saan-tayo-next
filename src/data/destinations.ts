@@ -364,6 +364,7 @@ export const destinations: Destination[] = [
   {
     id: "luzon-relax-bagac",
     name: "Bagac",
+    overrideUnsplashName: "las casas filipinas de acuzar",
     island: "luzon",
     environments: ["beach", "city"],
     activities: ["history", "food_trip", "explore", "relax", "swim"],

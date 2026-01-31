@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { QRCodeSVG } from "qrcode.react";
 import { convertImageToDataUrl } from "@/lib/utils";
+import { Copy, Check } from "lucide-react";
 
 interface UnsplashImageData {
     id?: string;
@@ -55,6 +56,7 @@ export function ShareResultModal({
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
     const [isImageReady, setIsImageReady] = useState(false);
     const [dataUrlImage, setDataUrlImage] = useState<string | null>(null);
+    const [isCopied, setIsCopied] = useState(false);
     const exportRef = useRef<HTMLDivElement>(null);
 
     const generateImage = async () => {
@@ -122,6 +124,39 @@ export function ShareResultModal({
             console.error("Error exporting image:", error);
         } finally {
             setIsExporting(false);
+        }
+    };
+
+    const handleCopyLink = async () => {
+        try {
+            const url = "https://saan-tayo-next.gelorosel.com/";
+            await navigator.clipboard.writeText(url);
+            setIsCopied(true);
+
+            // Reset the "Copied!" text after 2 seconds
+            setTimeout(() => {
+                setIsCopied(false);
+            }, 2000);
+        } catch (error) {
+            console.error("Error copying link:", error);
+            // Fallback for older browsers
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = "https://saan-tayo-next.gelorosel.com/";
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                setIsCopied(true);
+                setTimeout(() => {
+                    setIsCopied(false);
+                }, 2000);
+            } catch (fallbackError) {
+                console.error("Fallback copy failed:", fallbackError);
+                alert("Failed to copy link. Please copy manually: " + "bit.ly/SaanTayoNext");
+            }
         }
     };
 
@@ -361,19 +396,46 @@ export function ShareResultModal({
                     </Card>
                 </div>
 
-                {/* Download button */}
-                {!generatedImage || isGenerating ? null : <div className="flex gap-2 mt-auto">
-                    <Button
-                        onClick={handleExportImage}
-                        disabled={isExporting || isGenerating || !generatedImage}
-                        variant="outline"
-                        className="w-full"
-                        size="md"
-                    >
-                        {!isImageReady ? "Loading..." : isGenerating ? "Generating..." : isExporting ? "Downloading..." : "Download"}
-                    </Button>
+                {/* Action buttons */}
+                {!generatedImage || isGenerating ? null : <div className="mt-auto">
+                    <p className="text-xs mb-0 text-muted-foreground">Share this link with your friends!</p>
+                    <div className="flex flex-row gap-3 mt-0">
+                        {/* Copy Link Field */}
+                        <div className="flex flex-col mt-auto w-[63%]">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={"saan-tayo-next.gelorosel.com"}
+                                    readOnly
+                                    className="min-h-[46px] w-full px-2 py-2 pr-12 text-sm border border-input rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer font-mono text-blue-500 underline"
+                                    onClick={handleCopyLink}
+                                />
+                                <button
+                                    onClick={handleCopyLink}
+                                    disabled={isGenerating || !generatedImage}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 hover:bg-accent rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    aria-label="Copy link"
+                                >
+                                    {isCopied ? (
+                                        <Check className="h-4 w-4 text-green-600" />
+                                    ) : (
+                                        <Copy className="h-4 w-4 text-muted-foreground" />
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                        <Button
+                            onClick={handleExportImage}
+                            disabled={isExporting || isGenerating || !generatedImage}
+                            variant="outline"
+                            className="w-[37%]"
+                            size="md"
+                        >
+                            {!isImageReady ? "Loading..." : isGenerating ? "Generating..." : isExporting ? "Downloading..." : "Download"}
+                        </Button>
+                    </div>
                 </div>}
             </DialogContent>
-        </Dialog>
+        </Dialog >
     );
 }

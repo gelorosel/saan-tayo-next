@@ -13,7 +13,8 @@ export function toQueryName(destination: Destination): string {
     const includeRegion = region && region.toLowerCase() !== name.toLowerCase()
         && !name.toLowerCase().includes(region.toLowerCase());
 
-    return includeRegion ? `${name} ${region}` : name;
+    const queryName = includeRegion ? `${name} ${region}` : name;
+    return queryName.charAt(0).toUpperCase() + queryName.slice(1);
 }
 
 export function getFallbackUnsplashQuery(destination: Destination): string {

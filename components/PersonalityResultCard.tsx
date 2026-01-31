@@ -84,7 +84,7 @@ export function PersonalityResultCard({
         if (onLoadingChange) {
             onLoadingChange(isLoadingImage || isLoadingDescription);
         }
-    }, [isLoadingImage, isLoadingDescription, onLoadingChange]);
+    }, [isLoadingImage, isLoadingDescription]);
 
     useEffect(() => {
         let isStale = false;
@@ -106,7 +106,7 @@ export function PersonalityResultCard({
                     imageDataResult = await fetchUnsplashImage(fallbackQuery, true);
                 }
 
-                // Hardcoded delay for suspense (skip delay when loading for share)
+                // Hardcoded delay for suspe
                 const elapsedTime = Date.now() - startTime;
                 const remainingTime = Math.max(0, 1500 - elapsedTime);
                 if (remainingTime > 0) {
@@ -201,7 +201,7 @@ export function PersonalityResultCard({
         return () => {
             isStale = true;
         };
-    }, [destination.id, preferredActivity, personality?.id, fastMode, onRateLimitReached]);
+    }, [destination.id, preferredActivity, personality?.id, fastMode]);
 
     // Skeleton loading state
     if (!fastMode && (isLoadingImage || isLoadingDescription)) {

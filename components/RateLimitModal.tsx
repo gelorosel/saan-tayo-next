@@ -58,7 +58,7 @@ export function RateLimitModal({ isOpen, onClose, onEnableFastMode }: RateLimitM
                     </div>
                     <DialogDescription className="text-base space-y-4 pt-4">
                         <p>
-                            You've explored <strong>{MAX_DESCRIPTION_REQUESTS} amazing destinations</strong>! To keep this free for everyone, we need to pause here for now.
+                            You've explored <strong>{MAX_DESCRIPTION_REQUESTS} amazing destinations</strong>! Thank you for your support, but we need to pause here for now.
                         </p>
 
                         <div className="bg-muted/50 rounded-lg p-4 space-y-2">

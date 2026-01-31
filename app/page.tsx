@@ -22,6 +22,9 @@ import { PersonalitiesSidebarProvider } from "@/contexts/PersonalitiesSidebarCon
 import { DebugPanel } from "@/components/DebugPanel";
 import { getRemainingRequests, MAX_DESCRIPTION_REQUESTS } from "@/lib/rateLimit";
 import { RateLimitModal } from "@/components/RateLimitModal";
+// import { resetRateLimit, triggerRateLimit } from '@/lib/rateLimit';
+// triggerRateLimit();
+// resetRateLimit();
 
 const FAST_MODE_KEY = "fastMode";
 const ANSWERS_KEY = "quizAnswers";

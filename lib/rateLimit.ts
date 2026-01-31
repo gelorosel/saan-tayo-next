@@ -128,3 +128,17 @@ export function resetRateLimit(): void {
         console.error('Error resetting rate limit:', error);
     }
 }
+
+/**
+ * Reset the rate limit (for testing/admin purposes)
+ */
+export function triggerRateLimit(): void {
+    if (typeof window === 'undefined') return;
+
+    try {
+        localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify({ count: MAX_DESCRIPTION_REQUESTS, resetTime: Date.now() + RATE_LIMIT_TIMEOUT_HOURS * 60 * 60 * 1000 }));
+    } catch (error) {
+        console.error('Error resetting rate limit:', error);
+    }
+}
+

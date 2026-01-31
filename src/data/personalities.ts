@@ -7,7 +7,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Relaxed Escapist",
     category: "core",
     description:
-      "You travel to slow down, not speed up. Vacations are about rest, comfort, and letting go of pressure—sleeping in, good food, and doing less on purpose. You’re happiest when there’s room to breathe and zero guilt about taking it easy.",
+      "You travel to slow down, not to stay busy. For you, vacations are about rest, comfort, good food, and doing less on purpose. You need space to breathe and zero guilt about taking it easy.",
     strengths: [
       "Excellent at fully unwinding and recharging",
       "Keeps trips low-stress and emotionally balanced",
@@ -27,7 +27,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Adventure Seeker",
     category: "core",
     description:
-      "You chase movement, challenge, and stories worth telling. Travel is your excuse to push limits—whether that’s hiking, climbing, diving, or squeezing the most out of every day. Rest is optional, but momentum is essential.",
+      "You chase movement, challenge, and stories worth telling. Travel is your excuse to reach new heights (or depths!) whether that's hiking, climbing, or diving. Rest is optional, but the outdoors is essential.",
     strengths: [
       "High energy and motivation throughout trips",
       "Creates unforgettable, story-worthy experiences",
@@ -47,7 +47,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Curious Wanderer",
     category: "core",
     description:
-      "You’re led by curiosity more than checklists. You love wandering neighborhoods, people-watching, trying local food, and following whatever catches your attention. The best moments are often unplanned and quietly memorable.",
+      "You're led by curiosity more than checklists. You love wandering neighborhoods, people-watching, trying local food, and following whatever catches your attention. The best moments are often unplanned and quietly memorable.",
     strengths: [
       "Naturally open to culture, people, and new perspectives",
       "Excellent at finding hidden gems",
@@ -67,7 +67,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Master Planner",
     category: "rare",
     description:
-      "You believe a great trip starts with great planning. Schedules, bookings, and logistics give you peace of mind—and free you to actually enjoy the experience. You love knowing what’s next and making every day run smoothly.",
+      "You plan everything because that's what makes a trip good. Schedules, bookings, and logistics give you peace of mind and freedom to actually enjoy the experience. You love knowing what's next and making every day run smoothly.",
     strengths: [
       "Minimizes stress through preparation",
       "Maximizes time and efficiency while traveling",
@@ -87,7 +87,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Chill Explorer",
     category: "hybrid",
     description:
-      "You like discovering new places—but without the rush. Your ideal trip blends gentle wandering with plenty of downtime. You’re flexible, low-stress, and happy as long as the day unfolds naturally.",
+      "You like discovering new places but without the rush. You enjoy trips with exploration while keeping them flexible and low-stress. You're not afraid of some downtime as long as the day unfolds naturally.",
     strengths: [
       "Adaptable and easygoing in most situations",
       "Balances exploration with rest",
@@ -107,7 +107,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Purposeful Adventurer",
     category: "hybrid",
     description:
-      "You crave adventure, but with intention. You enjoy having goals, routes, and timelines—even for exciting or physically demanding trips. Planning doesn’t kill the thrill for you; it sharpens it.",
+      "You crave adventure, but with intention. You enjoy having goals, routes, and timelines even for exciting or physically demanding trips. Planning doesn't ruin the fun, it makes sure you do it correctly.",
     strengths: [
       "Combines excitement with efficiency",
       "Excellent at executing challenging plans",
@@ -127,7 +127,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Free-Spirited Nomad",
     category: "rare",
     description:
-      "You value freedom above all else. Fixed plans feel restrictive, and you’d rather see where the road leads than lock yourself into an itinerary. You adapt quickly, move often, and trust that things will work out.",
+      "You value freedom above all else. Fixed plans feel restrictive, and you'd rather see where the road leads than lock yourself into an itinerary. You trust that things work out, and they usually do.",
     strengths: [
       "Highly adaptable and resilient",
       "Comfortable with uncertainty and change",
@@ -147,7 +147,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Soft-Life Traveler",
     category: "hybrid",
     description:
-      "You believe travel should feel good. Comfort, ease, and a pleasant pace matter more than doing everything. Whether it’s a nice hotel, great meals, or relaxed days, you prioritize enjoyment over endurance.",
+      "You believe travel should feel good. Comfort, ease, and a pleasant pace matter more than doing everything. Whether it's a nice hotel, great meals, or relaxed days, you prioritize enjoyment over endurance.",
     strengths: [
       "Excellent at creating enjoyable, comfortable trips",
       "Knows how to savor experiences",
@@ -167,7 +167,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Cultural Strategist",
     category: "hybrid",
     description:
-      "You travel to understand places deeply. History, art, food, and context matter to you, and you enjoy learning as you go. You like a thoughtful balance of structure and exploration to make experiences meaningful.",
+      "You travel to understand places deeply. History, heritage, and local cuisine matter to you, and you enjoy learning as you go. You like a thoughtful balance of structure and exploration to make travel meaningful.",
     strengths: [
       "Engages deeply with culture and history",
       "Adds meaning and context to trips",
@@ -187,7 +187,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Chaos Romantic",
     category: "hybrid",
     description:
-      "You thrive in spontaneity and surprise. Plans are loose suggestions at best, and you love the energy of not knowing what’s next. Your trips are unpredictable, story-filled, and never boring.",
+      "You thrive in spontaneity and surprise. Plans are loose suggestions at best, and you love the energy of not knowing what's next. Your trips are unpredictable, story-filled, and never boring.",
     strengths: [
       "Highly creative and adaptable",
       "Turns accidents into memorable moments",
@@ -207,7 +207,7 @@ export const personalities: PersonalityProfile[] = [
     name: "The Mood-Based Traveler",
     category: "core",
     description:
-      "Your travel style changes with how you feel. Some days you’re out exploring, other days you’re resting—and both are valid. You value flexibility and prefer trips that allow you to listen to your energy in the moment.",
+      "Your travel style changes with how you feel. Some days you're out exploring, other days you're resting. You value flexibility and do whatever feels right for the day.",
     strengths: [
       "Emotionally attuned and self-aware",
       "Flexible and non-judgmental about pacing",

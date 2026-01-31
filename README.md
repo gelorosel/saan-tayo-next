@@ -1,13 +1,14 @@
 # Saan Tayo Next? 🇵🇭
-
 Find your next Philippine destination! A personalized travel recommendation app that matches you with the perfect destinations in the Philippines based on your travel personality, preferences, and style.
 
 This project was inspired by [bchiang7/time-to-have-more-fun](https://github.com/bchiang7/time-to-have-more-fun/tree/main).
 
+<img width="785" height="1050" alt="Screenshot 2026-01-31 at 11 40 24" src="https://github.com/user-attachments/assets/58866e8f-bc22-41f4-9959-677566c73d73" />
+
 ## Features
 
 ### Personality-Based Recommendations
-- 8 unique travel personalities: The Master Planner, The Soft-Life Traveler, The Cultural Strategist, The Chaos Romantic, The Adrenaline Chaser, The Nature Romantic, The Beach Minimalist, The Everywhere Explorer
+- 11 unique travel personalities
 - Personality matching influences destination scoring
 - "Something New" selection explores destinations outside your usual style
 
@@ -161,7 +162,7 @@ saan-tayo-next/
 │   ├── data/                     # Data definitions
 │   │   ├── activities.ts         # Activity types and vibe mapping
 │   │   ├── destinations.ts       # 100+ Philippine destinations
-│   │   ├── personalities.ts      # 8 personality profiles
+│   │   ├── personalities.ts      # 11 personality profiles
 │   │   └── questions.ts          # Quiz questions
 │   └── types/                    # TypeScript type definitions
 ├── lib/                          # Utility functions

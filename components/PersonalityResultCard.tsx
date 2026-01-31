@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Destination } from "@/src/types/destination";
@@ -70,6 +70,7 @@ export function PersonalityResultCard({
     const [description, setDescription] = useState<DescriptionData | null>(null);
     const [isLoadingDescription, setIsLoadingDescription] = useState(false);
     const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+    const imageLoadResolveRef = useRef<(() => void) | null>(null);
 
     const activities = destination.activities;
     const headerName = answers.name
@@ -87,6 +88,14 @@ export function PersonalityResultCard({
     }, [isLoadingImage, isLoadingDescription]);
 
     useEffect(() => {
+        if (fastMode) {
+            setHeroImgSrc(FALLBACK_IMAGE);
+            setIsLoadingImage(false);
+            setIsFallbackImage(true);
+            setImageData(null);
+            return;
+        }
+
         let isStale = false;
 
         async function loadImage() {
@@ -127,6 +136,15 @@ export function PersonalityResultCard({
                         setIsFallbackImage(true);
                     }
                     setIsLoadingImage(false);
+                    
+                    // Resolve any pending promise waiting for image to load
+                    // Use setTimeout to ensure state updates have been flushed
+                    setTimeout(() => {
+                        if (imageLoadResolveRef.current) {
+                            imageLoadResolveRef.current();
+                            imageLoadResolveRef.current = null;
+                        }
+                    }, 0);
                 }
             } catch (error) {
                 console.error('Error loading image:', error);
@@ -135,6 +153,15 @@ export function PersonalityResultCard({
                     setHeroImgSrc(FALLBACK_IMAGE);
                     setIsFallbackImage(true);
                     setIsLoadingImage(false);
+                    
+                    // Resolve any pending promise even on error
+                    setTimeout(() => {
+                        if (imageLoadResolveRef.current) {
+                            imageLoadResolveRef.current();
+                            imageLoadResolveRef.current = null;
+                        }
+                    }, 0);
+                    
                     // Notify parent component about the error
                     if (onImageError) {
                         onImageError();
@@ -202,6 +229,23 @@ export function PersonalityResultCard({
             isStale = true;
         };
     }, [destination.id, preferredActivity, personality?.id, fastMode]);
+
+    // Handler for opening share dialog - waits for image to load
+    const handleShareResults = async () => {
+        // If image is still loading and not in fast mode, wait for it to complete
+        if (isLoadingImage && !fastMode) {
+            await new Promise<void>((resolve) => {
+                imageLoadResolveRef.current = resolve;
+            });
+        }
+        
+        // Additional safety check: ensure we have a valid image source
+        if (!heroImgSrc || heroImgSrc === FALLBACK_IMAGE) {
+            console.warn('Opening share dialog with fallback image');
+        }
+        
+        setIsShareDialogOpen(true);
+    };
 
     // Skeleton loading state
     if (!fastMode && (isLoadingImage || isLoadingDescription)) {
@@ -397,7 +441,7 @@ export function PersonalityResultCard({
 
                     <div className="flex flex-row gap-4">
                         <Button
-                            onClick={() => setIsShareDialogOpen(true)}
+                            onClick={handleShareResults}
                             variant="default"
                             size="md"
                             className="flex-1"

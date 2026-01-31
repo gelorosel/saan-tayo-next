@@ -62,6 +62,11 @@ export function ShareResultModal({
             console.error('exportRef.current is null!');
             return;
         }
+        
+        if (!dataUrlImage) {
+            console.error('dataUrlImage is null, cannot generate image!');
+            return;
+        }
 
         try {
             setIsGenerating(true);
@@ -81,11 +86,9 @@ export function ShareResultModal({
                 })
             );
 
-            // Extra wait to ensure everything is painted
-            await new Promise(resolve => setTimeout(resolve, 300));
-
-            // Detect if on iOS for optimized settings
+            // Extra wait to ensure everything is painted (longer for iOS)
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            await new Promise(resolve => setTimeout(resolve, isIOS ? 500 : 300));
 
             const dataUrl = await toPng(exportRef.current, {
                 quality: 0.95,
@@ -138,6 +141,11 @@ export function ShareResultModal({
 
                 while (attempts < maxAttempts) {
                     try {
+                        // Add delay to ensure DOM has settled and image is fully loaded
+                        if (attempts === 0) {
+                            await new Promise(resolve => setTimeout(resolve, 200));
+                        }
+                        
                         // Convert the image to data URL for better compatibility with html-to-image
                         const dataUrl = await convertImageToDataUrl(destination.overrideImageUrl || heroImgSrc);
                         setDataUrlImage(dataUrl);
@@ -163,18 +171,19 @@ export function ShareResultModal({
 
             loadImageAsDataUrl();
         }
-    }, [isOpen, heroImgSrc]);
+    }, [isOpen, heroImgSrc, destination.overrideImageUrl]);
 
     // Generate image when data URL is ready
     useEffect(() => {
         if (isOpen && dataUrlImage) {
             // Delay to ensure the dialog and hidden element are fully rendered
             const timer = setTimeout(() => {
-                console.log('Starting image generation...');
+                console.log('Starting image generation with dataUrlImage:', dataUrlImage?.substring(0, 50));
                 generateImage();
-            }, 100);
+            }, 150); // Slightly longer delay for iOS
             return () => clearTimeout(timer);
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, dataUrlImage]);
 
     return (

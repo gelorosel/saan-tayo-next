@@ -354,7 +354,7 @@ export default function Home() {
         <div className="max-w-xl w-full">
           <div className="max-w-xl w-full mx-auto">
             <h1 className="text-styled text-4xl mt-6">Saan Tayo Next?</h1>
-            <h2 className="text-xl font-semibold mb-4">Find your next destination</h2>
+            <p className="text-xl font-semibold mb-4">Find your next destination</p>
             {isKillSwitchActive && <p className="text-sm text-muted-foreground mb-4">⚠️ {SERVICE_UNAVAILABLE_MESSAGE}</p>}
 
             {/* Debug Controls */}

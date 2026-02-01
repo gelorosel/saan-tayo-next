@@ -135,6 +135,7 @@ GEMINI_API_KEY=your_google_gemini_api_key
 
 # Optional
 PRIORITIZE_GEMINI_DESCRIPTION=true  # Default: false (uses Wikipedia first)
+NEXT_PUBLIC_KILL_SWITCH=false       # Emergency switch to disable services
 ```
 
 **API Keys:**

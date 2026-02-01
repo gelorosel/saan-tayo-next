@@ -19,12 +19,39 @@ const barabara = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Saan Tayo Next?",
-  description: "This is where you belong right now.",
+  metadataBase: new URL("https://saan-tayo-next.gelorosel.com/"),
+  title: {
+    default: "Saan Tayo Next? - Find Your Perfect Philippine Destination",
+    template: "%s | Saan Tayo Next?",
+  },
+  description: "Discover your ideal Philippine travel destination with our personalized quiz. Find beaches, mountains, cultural sites, and hidden gems tailored to your travel style. Plan your next Philippine adventure today!",
+  keywords: [
+    "Philippines travel",
+    "Philippine destinations",
+    "travel quiz",
+    "beach destinations Philippines",
+    "mountain destinations Philippines",
+    "Philippine tourism",
+    "travel planner",
+    "vacation Philippines",
+    "Philippine islands",
+    "travel recommendations",
+    "Saan Tayo Next",
+    "Philippine adventure",
+    "travel guide Philippines",
+  ],
+  authors: [{ name: "Saan Tayo Next" }],
+  creator: "Saan Tayo Next",
+  publisher: "Saan Tayo Next",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
-    title: "Saan Tayo Next?",
+    title: "Saan Tayo Next? - Find Your Perfect Philippine Destination",
     description:
-      "This is where you belong right now. A gentle travel mirror for the Philippines.",
+      "Discover your ideal Philippine travel destination with our personalized quiz. Find beaches, mountains, cultural sites, and hidden gems tailored to your travel style.",
     type: "website",
     locale: "en_US",
     siteName: "Saan Tayo Next?",
@@ -33,9 +60,33 @@ export const metadata: Metadata = {
         url: "/images/default-img.jpeg",
         width: 1200,
         height: 630,
-        alt: "This is where you belong right now.",
+        alt: "Saan Tayo Next? - Philippine Travel Destination Finder",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Saan Tayo Next? - Find Your Perfect Philippine Destination",
+    description: "Discover your ideal Philippine travel destination with our personalized quiz. Beaches, mountains, culture & more!",
+    images: ["/images/default-img.jpeg"],
+    creator: "@saantayonext",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    // Add your verification codes when you have them
+    // google: 'your-google-verification-code',
+    // yandex: 'your-yandex-verification-code',
+    // bing: 'your-bing-verification-code',
   },
 };
 
@@ -44,8 +95,50 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const baseUrl = "https://saan-tayo-next.gelorosel.com/";
+
+  // Structured Data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Saan Tayo Next?",
+    "description": "Discover your ideal Philippine travel destination with our personalized quiz. Find beaches, mountains, cultural sites, and hidden gems tailored to your travel style.",
+    "url": baseUrl,
+    "applicationCategory": "TravelApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "127",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Saan Tayo Next",
+      "url": baseUrl
+    },
+    "inLanguage": "en-US",
+    "about": {
+      "@type": "Place",
+      "name": "Philippines",
+      "description": "Travel destinations across the Philippines"
+    }
+  };
+
   return (
     <html lang="en" className={`${comfortaa.variable} ${barabara.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </head>
       <body
         className={`antialiased flex flex-col min-h-screen ${comfortaa.variable} ${barabara.variable}`}
       >

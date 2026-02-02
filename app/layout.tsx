@@ -41,8 +41,8 @@ export const metadata: Metadata = {
     "travel guide Philippines",
   ],
   authors: [{ name: "Saan Tayo Next" }],
-  creator: "Saan Tayo Next",
-  publisher: "Saan Tayo Next",
+  creator: "Gelo Rosel",
+  publisher: "Gelo Rosel",
   formatDetection: {
     email: false,
     address: false,
@@ -96,13 +96,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const baseUrl = "https://saan-tayo-next.gelorosel.com/";
+  const baseName = "Saan Tayo Next?";
+  const descriptionText = "Discover your ideal Philippine travel destination with our personalized quiz. Find beaches, mountains, cultural sites, and hidden gems tailored to your travel style.";
 
   // Structured Data for SEO
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "Saan Tayo Next?",
-    "description": "Discover your ideal Philippine travel destination with our personalized quiz. Find beaches, mountains, cultural sites, and hidden gems tailored to your travel style.",
+    "name": baseName,
+    "description": descriptionText,
     "url": baseUrl,
     "applicationCategory": "TravelApplication",
     "operatingSystem": "Any",
@@ -120,7 +122,7 @@ export default function RootLayout({
     },
     "author": {
       "@type": "Organization",
-      "name": "Saan Tayo Next",
+      "name": baseName,
       "url": baseUrl
     },
     "inLanguage": "en-US",
@@ -142,6 +144,8 @@ export default function RootLayout({
       <body
         className={`antialiased flex flex-col min-h-screen ${comfortaa.variable} ${barabara.variable}`}
       >
+        <h1 className="sr-only">{baseName}</h1>
+        <p className="sr-only">{descriptionText}</p>
         <div className="flex-1">
           {children}
         </div>

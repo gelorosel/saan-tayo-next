@@ -20,8 +20,8 @@ export default function Footer() {
               className="underline"
             >
               Gelo Rosel
-            </a>
-            {" "} */}
+            </a> */}
+            {" "}
             &#x2022;
             {" "}
             <a

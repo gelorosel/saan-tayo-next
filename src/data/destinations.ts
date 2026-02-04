@@ -1402,7 +1402,7 @@ export const destinations: Destination[] = [
   {
     id: "banton-romblon",
     name: "Banton Island",
-    island: "visayas",
+    island: "luzon",
     environments: ["beach"],
     activities: ["swim", "explore", "relax", "island_hop", "history"],
     bestSeasons: ["cool_dry", "hot_dry"],
@@ -1524,7 +1524,7 @@ export const destinations: Destination[] = [
   {
     id: "romblon-islands",
     name: "Romblon Islands",
-    island: "visayas",
+    island: "luzon",
     environments: ["beach"],
     activities: ["explore", "island_hop", "snorkel", "natural_wonders"],
     bestSeasons: ["cool_dry", "hot_dry"],
